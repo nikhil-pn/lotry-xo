@@ -1,0 +1,365 @@
+{
+  "generatedAt": "2026-11-21T20:16:12.264Z",
+  "repository": "https://github.com/nikhil-pn/lotry-xo",
+  "rounds": [
+    {
+      "roundId": "round-20261121T1936",
+      "network": "chipnet",
+      "templateIdentifier": "603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d",
+      "ticketPrice": "20000",
+      "seedSatoshis": "2000",
+      "drawHeight": "341551",
+      "refundHeight": "341693",
+      "secretHash": "39f3bcc844a155b42feed71fbfe8a46405d7aafc160e92c15a170532ef72b80f",
+      "roundCategory": "c6c72d696287cc52050eebaed34c24cb511a12941745fd3b050e155a14ad398c",
+      "openedAtHeight": 341549,
+      "openTransactionHash": "a237f153c0b5e98fb082ade21baa38e46c0b4f0bb00e38bbe9e0513363daf569",
+      "status": "open, 3 tickets sold",
+      "ticketsSold": 3,
+      "steps": [
+        {
+          "at": "2026-11-21T19:36:22.008Z",
+          "step": "open",
+          "transactionHash": "a237f153c0b5e98fb082ade21baa38e46c0b4f0bb00e38bbe9e0513363daf569",
+          "tickets": 0,
+          "potSatoshis": "2000",
+          "title": "Round opened",
+          "description": "Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets",
+          "link": "https://chipnet.imaginary.cash/tx/a237f153c0b5e98fb082ade21baa38e46c0b4f0bb00e38bbe9e0513363daf569"
+        },
+        {
+          "at": "2026-11-21T19:37:59.577Z",
+          "step": "buy",
+          "ticketNumber": 1,
+          "buyer": "buyer_a",
+          "transactionHash": "6a902e5d011f6368abfb1fc456a028c5525c9c058e4ac4e1796eec50f796fc62",
+          "title": "Ticket sold",
+          "description": "Ticket #1 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/6a902e5d011f6368abfb1fc456a028c5525c9c058e4ac4e1796eec50f796fc62"
+        },
+        {
+          "at": "2026-11-21T19:38:40.407Z",
+          "step": "buy",
+          "ticketNumber": 2,
+          "buyer": "buyer_b",
+          "transactionHash": "e9e8f86826a57d4aabd853a77dc18c0529c49c4c557b76cf6716cefc346ecf0e",
+          "title": "Ticket sold",
+          "description": "Ticket #2 to buyer B (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/e9e8f86826a57d4aabd853a77dc18c0529c49c4c557b76cf6716cefc346ecf0e"
+        },
+        {
+          "at": "2026-11-21T19:39:05.718Z",
+          "step": "buy",
+          "ticketNumber": 3,
+          "buyer": "buyer_a",
+          "transactionHash": "a3229a3fae4108eb5a3ca0408c01c9c7d0f809ffa78967e5e2f9b41cdc3c0fa0",
+          "title": "Ticket sold",
+          "description": "Ticket #3 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/a3229a3fae4108eb5a3ca0408c01c9c7d0f809ffa78967e5e2f9b41cdc3c0fa0"
+        }
+      ],
+      "invitations": [
+        {
+          "name": "1-open",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/1-open.json"
+        },
+        {
+          "name": "buy-1-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-1-offer.json"
+        },
+        {
+          "name": "buy-1-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-2-buyer_a.json"
+        },
+        {
+          "name": "buy-1-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-3-sealed.json"
+        },
+        {
+          "name": "buy-2-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-1-offer.json"
+        },
+        {
+          "name": "buy-2-2-buyer_b",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-2-buyer_b.json"
+        },
+        {
+          "name": "buy-2-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-3-sealed.json"
+        },
+        {
+          "name": "buy-3-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-1-offer.json"
+        },
+        {
+          "name": "buy-3-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-2-buyer_a.json"
+        },
+        {
+          "name": "buy-3-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-3-sealed.json"
+        }
+      ]
+    },
+    {
+      "roundId": "round-20261121T1949",
+      "network": "chipnet",
+      "templateIdentifier": "603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d",
+      "ticketPrice": "20000",
+      "seedSatoshis": "2000",
+      "drawHeight": "333362",
+      "refundHeight": "333505",
+      "secretHash": "f1cc36cea247cbb77264978d6f6d18dc1ffdce749bd9929ed97cd71c232bd6fd",
+      "roundCategory": "ee827168693366d7d256ab548437c3a0c8e314c88508292d9722f526f479ad90",
+      "openedAtHeight": 341562,
+      "openTransactionHash": "3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e",
+      "status": "finished: ticket #1 claimed the pot",
+      "ticketsSold": 3,
+      "steps": [
+        {
+          "at": "2026-11-21T19:49:16.957Z",
+          "step": "open",
+          "transactionHash": "3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e",
+          "tickets": 0,
+          "potSatoshis": "2000",
+          "title": "Round opened",
+          "description": "Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets",
+          "link": "https://chipnet.imaginary.cash/tx/3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e"
+        },
+        {
+          "at": "2026-11-21T19:49:45.980Z",
+          "step": "buy",
+          "ticketNumber": 1,
+          "buyer": "buyer_a",
+          "transactionHash": "f1b34916085e85a10b0dfa0f33272463423dc5fd7b2f38ffca99a777df59d0f4",
+          "title": "Ticket sold",
+          "description": "Ticket #1 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/f1b34916085e85a10b0dfa0f33272463423dc5fd7b2f38ffca99a777df59d0f4"
+        },
+        {
+          "at": "2026-11-21T19:50:07.705Z",
+          "step": "buy",
+          "ticketNumber": 2,
+          "buyer": "buyer_b",
+          "transactionHash": "4f829aaf43eebd08c360464b72225f10ca6a33d699a588654cd5908670194320",
+          "title": "Ticket sold",
+          "description": "Ticket #2 to buyer B (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/4f829aaf43eebd08c360464b72225f10ca6a33d699a588654cd5908670194320"
+        },
+        {
+          "at": "2026-11-21T19:50:28.223Z",
+          "step": "buy",
+          "ticketNumber": 3,
+          "buyer": "buyer_a",
+          "transactionHash": "504464270b3a898837f9a112e50f62b913826137e6126967fbff3be2039acbc2",
+          "title": "Ticket sold",
+          "description": "Ticket #3 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/504464270b3a898837f9a112e50f62b913826137e6126967fbff3be2039acbc2"
+        },
+        {
+          "at": "2026-11-21T20:03:53.244Z",
+          "step": "draw",
+          "winningTicket": 1,
+          "tickets": 3,
+          "potSatoshis": 62000,
+          "transactionHash": "4e2f31b3f05704e66e4956c35b6fbc16263e63165f8622f773bc23ca4d3c7a5c",
+          "title": "Winner drawn",
+          "description": "Secret revealed; the covenant picks ticket #1 of 3 (pot 62000 sats)",
+          "link": "https://chipnet.imaginary.cash/tx/4e2f31b3f05704e66e4956c35b6fbc16263e63165f8622f773bc23ca4d3c7a5c"
+        },
+        {
+          "at": "2026-11-21T20:04:08.871Z",
+          "step": "claim",
+          "winner": "buyer_a",
+          "ticketNumber": 1,
+          "transactionHash": "3b8c58efc45d1267d071020d3a8881ab2329e0e442d6c7b86fff2a435d21e5d6",
+          "title": "Pot claimed",
+          "description": "The winner (buyer A) spends the pot with winning ticket #1; both NFTs burned",
+          "link": "https://chipnet.imaginary.cash/tx/3b8c58efc45d1267d071020d3a8881ab2329e0e442d6c7b86fff2a435d21e5d6"
+        }
+      ],
+      "invitations": [
+        {
+          "name": "1-open",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/1-open.json"
+        },
+        {
+          "name": "buy-1-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-1-offer.json"
+        },
+        {
+          "name": "buy-1-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-2-buyer_a.json"
+        },
+        {
+          "name": "buy-1-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-3-sealed.json"
+        },
+        {
+          "name": "buy-2-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-1-offer.json"
+        },
+        {
+          "name": "buy-2-2-buyer_b",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-2-buyer_b.json"
+        },
+        {
+          "name": "buy-2-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-3-sealed.json"
+        },
+        {
+          "name": "buy-3-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-1-offer.json"
+        },
+        {
+          "name": "buy-3-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-2-buyer_a.json"
+        },
+        {
+          "name": "buy-3-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-3-sealed.json"
+        },
+        {
+          "name": "claim",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/claim.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/claim.json"
+        },
+        {
+          "name": "draw",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/draw.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/draw.json"
+        }
+      ]
+    },
+    {
+      "roundId": "round-20261121T1951",
+      "network": "chipnet",
+      "templateIdentifier": "603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d",
+      "ticketPrice": "20000",
+      "seedSatoshis": "2000",
+      "drawHeight": "333362",
+      "refundHeight": "333363",
+      "secretHash": "d444a28dcc544564f72e77df901dc59c48017759278fa9b72e1e8d84215d9973",
+      "roundCategory": "01f3902b2205a24d1e65da815f98aa098394d691b224835f7b23ee0f0a11be4b",
+      "openedAtHeight": 341563,
+      "openTransactionHash": "89a163f54b1fe185375d2edb13f9a06ab69a48b186dc702bc70fa4cd11a2389e",
+      "status": "undrawn: 2 of 2 tickets refunded",
+      "ticketsSold": 2,
+      "steps": [
+        {
+          "at": "2026-11-21T19:51:56.632Z",
+          "step": "open",
+          "transactionHash": "89a163f54b1fe185375d2edb13f9a06ab69a48b186dc702bc70fa4cd11a2389e",
+          "tickets": 0,
+          "potSatoshis": "2000",
+          "title": "Round opened",
+          "description": "Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets",
+          "link": "https://chipnet.imaginary.cash/tx/89a163f54b1fe185375d2edb13f9a06ab69a48b186dc702bc70fa4cd11a2389e"
+        },
+        {
+          "at": "2026-11-21T19:52:17.845Z",
+          "step": "buy",
+          "ticketNumber": 1,
+          "buyer": "buyer_b",
+          "transactionHash": "1af214d4ab5b6aa210bb211e24b9c2ea3684d09bbf10ffb3def4dfc13bd7f9ce",
+          "title": "Ticket sold",
+          "description": "Ticket #1 to buyer B (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/1af214d4ab5b6aa210bb211e24b9c2ea3684d09bbf10ffb3def4dfc13bd7f9ce"
+        },
+        {
+          "at": "2026-11-21T19:52:38.208Z",
+          "step": "buy",
+          "ticketNumber": 2,
+          "buyer": "buyer_a",
+          "transactionHash": "c71cf51423d2e88e055a0b24fc727b4eaa919d398314394c85cea92fe9d4d7d1",
+          "title": "Ticket sold",
+          "description": "Ticket #2 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/c71cf51423d2e88e055a0b24fc727b4eaa919d398314394c85cea92fe9d4d7d1"
+        },
+        {
+          "at": "2026-11-21T20:04:27.796Z",
+          "step": "refund",
+          "ticketNumber": 1,
+          "holder": "buyer_b",
+          "transactionHash": "c6fea21452e827632730d8476b8b5f939b2eb83ff6b1a1e25496a0f67bfe8560",
+          "title": "Ticket refunded",
+          "description": "Ticket #1 burned, price paid back to buyer B",
+          "link": "https://chipnet.imaginary.cash/tx/c6fea21452e827632730d8476b8b5f939b2eb83ff6b1a1e25496a0f67bfe8560"
+        },
+        {
+          "at": "2026-11-21T20:04:00.000Z",
+          "step": "refund",
+          "ticketNumber": 2,
+          "holder": "buyer_a",
+          "transactionHash": "1fe5647d591b5e6baab78ee28acfc0139d31dc9686cfd7adbbda35abbbb86b3f",
+          "note": "Broadcast on the first attempt; the CLI then crashed on an Electrum header request before logging, so this line and the missing invitation file were recorded by hand from the pot's next coin.",
+          "title": "Ticket refunded",
+          "description": "Ticket #2 burned, price paid back to buyer A",
+          "link": "https://chipnet.imaginary.cash/tx/1fe5647d591b5e6baab78ee28acfc0139d31dc9686cfd7adbbda35abbbb86b3f"
+        }
+      ],
+      "invitations": [
+        {
+          "name": "1-open",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/1-open.json"
+        },
+        {
+          "name": "buy-1-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-1-offer.json"
+        },
+        {
+          "name": "buy-1-2-buyer_b",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-2-buyer_b.json"
+        },
+        {
+          "name": "buy-1-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-3-sealed.json"
+        },
+        {
+          "name": "buy-2-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-1-offer.json"
+        },
+        {
+          "name": "buy-2-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-2-buyer_a.json"
+        },
+        {
+          "name": "buy-2-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-3-sealed.json"
+        },
+        {
+          "name": "refund-1",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/refund-1.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/refund-1.json"
+        }
+      ]
+    }
+  ]
+}
