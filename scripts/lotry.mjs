@@ -276,7 +276,7 @@ const steps = {
             inputs: [ outpointOf(funding) ],
         });
         // The buyer pays the whole fee; the engine's estimate misses the pot's unlocking script (the covenant is pushed).
-        const { storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: false, feeSatoshis: 2_000 });
+        const { storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: false, feeSatoshis: 1_600 });
         const file = saveInvitation(round.roundId, `buy-${sale}-2-${wallet.toLowerCase()}`, storedInvitation.invitation);
         console.log(`${wallet} took the ticket and signed: ${file}`);
         await closeWallet(engine);
@@ -486,6 +486,22 @@ const steps = {
             }
         }
         console.log(`${wallet}: archived ${archived} unbroadcast invitations, kept ${restored} broadcast ones active`);
+        await closeWallet(engine);
+    },
+
+    // Any wallet: waits until the engine has verified block headers up to the tip, so confirmed coins show up.
+    async sync() {
+        const wallet = positional[0] ?? 'ORGANISER';
+        const engine = await openWallet(wallet);
+        for (let waited = 0; waited < 600_000; waited += 5_000) {
+            const status = await engine.getChainStatus();
+            if (status.verifiedHeight >= status.currentHeight) break;
+            if (waited % 30_000 === 0) console.log(`${wallet}: headers verified ${status.verifiedPercent}% (${status.verifiedHeight}/${status.currentHeight})`);
+            await pause(5_000);
+        }
+        await pause(5_000);
+        const coins = await engine.listUnspentOutputs();
+        console.log(`${wallet}: synced, ${coins.reduce((sum, coin) => sum + BigInt(coin.valueSatoshis), 0n)} sats in ${coins.length} coins`);
         await closeWallet(engine);
     },
 
