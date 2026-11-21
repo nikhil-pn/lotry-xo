@@ -25,11 +25,13 @@ const copyText = async (text) => {
 
 document.querySelectorAll('[data-copy]').forEach((button) => {
   const source = document.getElementById(button.dataset.copy);
-  const hint = button.querySelector('.ember__hint');
+  // The EMBER button shows its state in a small hint; other copy buttons change their own label.
+  const hint = button.querySelector('.ember__hint') ?? button;
+  const idle = hint.textContent;
   let timer;
   button.addEventListener('click', async () => {
     const ok = await copyText(source.textContent.trim());
-    if (hint) hint.textContent = ok ? 'copied' : 'select it';
+    hint.textContent = ok ? 'copied' : 'select it';
     button.classList.toggle('is-copied', ok);
     if (!ok) {
       const range = document.createRange();
@@ -40,7 +42,7 @@ document.querySelectorAll('[data-copy]').forEach((button) => {
     }
     clearTimeout(timer);
     timer = setTimeout(() => {
-      if (hint) hint.textContent = 'copy';
+      hint.textContent = idle;
       button.classList.remove('is-copied');
     }, 1800);
   });

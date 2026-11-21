@@ -264,7 +264,124 @@
       </div>
     </section>
 
+    <!-- Stated plainly -->
+    <section class="section" id="plainly" aria-labelledby="plainly-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>05</b> · Limits</p>
+            <h2 class="h2" id="plainly-title">Stated <em>plainly.</em></h2>
+          </div>
+          <div class="prose">
+            <p>What this round does not do yet, so nobody has to find out the hard way.</p>
+          </div>
+        </div>
+
+        <ul class="limits">
+          <li>
+            <h3>The organiser knows the secret.</h3>
+            <p>So an organiser who also buys the last ticket could steer which ticket wins, like any raffle host who also plays. It still can never take the pot. Planned for v2: buyer-supplied randomness.</p>
+          </li>
+          <li>
+            <h3>Chipnet only.</h3>
+            <p>Every transaction on this page uses test coins on Chipnet, the Bitcoin Cash test network. Nothing here is real money yet.</p>
+          </li>
+          <li>
+            <h3>Tickets are bought from a CLI.</h3>
+            <p>Today a sale runs from the command line: the organiser and the player each run their own step. There is no browser wallet flow yet.</p>
+          </li>
+        </ul>
+
+        <div class="finding">
+          <div class="finding__copy">
+            <p class="eyebrow"><b>Found while building</b></p>
+            <h3>Faster Blocks changed what a lock height means on Chipnet.</h3>
+            <p>Chipnet switched to 1-minute blocks on 15 Nov 2026 (CHIP-2025-03, Faster Blocks). Lock-time heights kept their 10-minute meaning, so a lock height now advances once every ten blocks. We measured the activation height on the live network: at block 341,561 Chipnet accepted <code>nLockTime</code> 333,361 and refused 333,362, which puts activation at block <strong>332,451</strong>.</p>
+            <p>The round's draw and refund heights use this rule (<a href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/chain-time.mjs"><code>src/chain-time.mjs</code></a>). Round 1 was opened before we caught it. Anyone using <code>OP_CHECKLOCKTIMEVERIFY</code> on Chipnet needs it today; mainnet follows on 15 May 2027.</p>
+          </div>
+          <div class="finding__viz" aria-hidden="true">
+            <p class="finding__label">Blocks, 1 minute each</p>
+            <div class="ticks ticks--blocks"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <p class="finding__label">Lock height, still 10 minutes</p>
+            <div class="ticks ticks--locks"><span></span><span></span></div>
+            <pre class="finding__formula">lock height = 332,451 + floor((block − 332,451) / 10)</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Try it -->
+    <section class="section" id="try" aria-labelledby="try-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>06</b> · Try it</p>
+            <h2 class="h2" id="try-title">Run it <em>yourself.</em></h2>
+          </div>
+          <div class="prose">
+            <p>Node 24. Chipnet coins are free from the proof-of-work faucet at chipnet.bch.ninja. Or run nothing at all: import <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json"><code>templates/lotry.json</code></a> into <a href="https://blaze.xo.cash">blaze.xo.cash</a> and open any invitation file from round 2.</p>
+          </div>
+        </div>
+
+        <div class="code">
+          <button class="code__copy" type="button" data-copy="try-code">Copy</button>
+<pre id="try-code"><code><span class="c-cmd">git clone https://github.com/nikhil-pn/lotry-xo &amp;&amp; cd lotry-xo</span>
+<span class="c-cmd">npm install</span>
+<span class="c-cmd">npm test</span>                                    <span class="c-com"># 38 tests: every covenant path, 25+ attacks, BCH 2026 VM</span>
+
+<span class="c-cmd">node scripts/make-wallets.mjs</span>               <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
+<span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>          <span class="c-com"># a wallet's Chipnet address</span>
+<span class="c-cmd">node scripts/faucet.mjs &lt;bchtest:address&gt;</span>   <span class="c-com"># free test coins</span>
+
+<span class="c-cmd">node scripts/lotry.mjs open</span>                 <span class="c-com"># organiser opens a round</span>
+<span class="c-cmd">node scripts/lotry.mjs offer</span>                <span class="c-com"># organiser starts a ticket sale invitation</span>
+<span class="c-cmd">node scripts/lotry.mjs take BUYER_A</span>         <span class="c-com"># player adds coins, takes the ticket, signs</span>
+<span class="c-cmd">node scripts/lotry.mjs seal</span>                 <span class="c-com"># organiser signs the pot input and broadcasts</span>
+<span class="c-cmd">node scripts/lotry.mjs draw</span>                 <span class="c-com"># after the draw lock height</span>
+<span class="c-cmd">node scripts/lotry.mjs claim BUYER_A</span>        <span class="c-com"># the winning ticket takes the pot</span>
+<span class="c-cmd">node scripts/lotry.mjs refund BUYER_B</span>       <span class="c-com"># undrawn rounds, after the refund height</span>
+<span class="c-cmd">node scripts/lotry.mjs status</span>               <span class="c-com"># the pot as the organiser sees it</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section section--last" id="team" aria-labelledby="team-title">
+      <div class="wrap">
+        <p class="eyebrow"><b>07</b> · Team</p>
+        <h2 class="h2" id="team-title">Two people, <em>one round.</em></h2>
+        <div class="team">
+          <div class="person">
+            <h3>Nikhil PN</h3>
+            <p>Builds it: the template, the covenant, the tests and the Chipnet rounds.</p>
+            <a href="https://github.com/nikhil-pn">github.com/nikhil-pn</a>
+          </div>
+          <div class="person">
+            <h3>Hina Hanan</h3>
+            <p>Ideas and product direction. She also presents the film.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <footer class="foot">
+    <div class="wrap foot__inner">
+      <div class="foot__brand">
+        <img src="assets/clover.png" alt="" width="40" height="40">
+        <p><span class="foot__name">Lotry <em>on</em> XO</span><span class="foot__tag">The lottery the organiser can’t run away with.</span></p>
+      </div>
+      <nav class="foot__links" aria-label="Project links">
+        <a href="https://github.com/nikhil-pn/lotry-xo">GitHub</a>
+        <a href="/slides.html">Slides</a>
+        <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/docs/PROOF.md">Proof table</a>
+        <a href="https://www.lotry.fun">Lotry.fun</a>
+        <a href="https://stack.xo.cash">XO stack</a>
+      </nav>
+      <p class="foot__small">Made for BCH BLAZE 2026 · MIT licence · Chipnet test coins only</p>
+    </div>
+  </footer>
 
   <script src="app.js" defer></script>
 </body>
