@@ -74,7 +74,7 @@
         <aside class="hero__ticket" aria-label="Round 2 result">
           <div class="ticket ticket--hero">
             <div class="ticket__row">
-              <span class="ticket__label">Round 2 · Chipnet</span>
+              <span class="ticket__label" data-hero="label">Round 2 · Chipnet</span>
               <span class="ticket__stamp">Claimed</span>
             </div>
             <p class="ticket__big"><span data-hero="pot">62,000</span> <span class="ticket__unit">sats</span></p>
@@ -92,7 +92,7 @@
         <dl class="stats">
           <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">3</dd></div>
           <div><dt>Transactions, all public</dt><dd data-stat="txs">15</dd></div>
-          <div><dt>Tests: every path, 25+ attacks</dt><dd>38</dd></div>
+          <div><dt>Tests: every path, 25+ attacks</dt><dd>43</dd></div>
           <div><dt>Keys that can move the pot</dt><dd>0</dd></div>
         </dl>
       </div>
@@ -146,12 +146,12 @@
             <p class="step__or">or, if never drawn</p>
             <h3 class="step__name">Refund</h3>
             <p class="step__who">Any ticket holder, after the refund height</p>
-            <p class="step__text">Each ticket burns for its price back. Nobody has to say yes, the organiser included.</p>
-            <p class="step__state"><span>pot</span> − price, ticket burned</p>
+            <p class="step__text">Each ticket burns for its price back. Nobody has to say yes, the organiser included. The first refund closes the round: no draw after it.</p>
+            <p class="step__state"><span>pot</span> refunds only</p>
           </li>
         </ol>
 
-        <p class="footnote">The pot's state is its NFT commitment: a 4-byte ticket count while the round is open, then the winning number plus the byte <code>0xd0</code> once drawn. The covenant checks every move against it.</p>
+        <p class="footnote">The pot's state is its NFT commitment: a 4-byte ticket count while the round is open, then the winning number plus the byte <code>0xd0</code> once drawn, or the count plus <code>0xee</code> once refunds begin. The covenant checks every move against it.</p>
       </div>
     </section>
 
@@ -164,7 +164,7 @@
             <h2 class="h2" id="rounds-title">Every step, <em>on chain.</em></h2>
           </div>
           <div class="prose">
-            <p>Three rounds on Chipnet, the Bitcoin Cash test network. Every row below is a real transaction built from an XO invitation, and every invitation file is public, so each step can be replayed in the <a href="https://blaze.xo.cash">XO debug tool</a>. Round 2 is the whole story.</p>
+            <p>Live rounds on Chipnet, the Bitcoin Cash test network. Every row below is a real transaction built from an XO invitation, and every invitation file is public, so each step can be replayed in the <a href="https://blaze.xo.cash">XO debug tool</a>. The first card is the whole story: open, tickets, draw, claim.</p>
           </div>
         </div>
 
@@ -327,7 +327,7 @@
           <button class="code__copy" type="button" data-copy="try-code">Copy</button>
 <pre id="try-code"><code><span class="c-cmd">git clone https://github.com/nikhil-pn/lotry-xo &amp;&amp; cd lotry-xo</span>
 <span class="c-cmd">npm install</span>
-<span class="c-cmd">npm test</span>                                    <span class="c-com"># 38 tests: every covenant path, 25+ attacks, BCH 2026 VM</span>
+<span class="c-cmd">npm test</span>                                    <span class="c-com"># 43 tests: every covenant path, 25+ attacks, BCH 2026 VM</span>
 
 <span class="c-cmd">node scripts/make-wallets.mjs</span>               <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
 <span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>          <span class="c-com"># a wallet's Chipnet address</span>

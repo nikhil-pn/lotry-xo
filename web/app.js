@@ -59,6 +59,18 @@ const ROUND_NOTES = {
     + 'which the chain now reads as a lock height about 57 days away. It stays open as proof of the open and ticket steps.',
 };
 
+// The first Chipnet rounds ran on template v1; v2 changed only the refund path (the first refund closes the round).
+// scripts/export-proof.mjs writes v2 rounds to `rounds` and v1 rounds to `earlierRounds`, from rounds/ and rounds-v1/.
+const V1_TEMPLATE = '603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d';
+const templateVersion = (round, fromEarlier) => {
+  if (round.templateVersion) return Number(round.templateVersion);
+  if (fromEarlier || round.templateIdentifier === V1_TEMPLATE) return 1;
+  return 2;
+};
+const roundFolder = (version) => (version === 1 ? 'rounds-v1' : 'rounds');
+// Invitation links follow the round's folder (v1 rounds were moved from rounds/ to rounds-v1/).
+const inFolder = (url, roundId, folder) => url.replace(`/main/rounds/${roundId}/`, `/main/${folder}/${roundId}/`);
+
 const h = (tag, attrs = {}, ...children) => {
   const el = document.createElement(tag);
   for (const [key, value] of Object.entries(attrs)) {
@@ -154,8 +166,12 @@ const renderStep = (step) => h('li', { class: `tl tl--${step.step}` },
     : null,
 );
 
-const renderInvitations = (round) => {
-  const files = round.invitations ?? [];
+const renderInvitations = (round, folder) => {
+  const files = (round.invitations ?? []).map((file) => ({
+    ...file,
+    url: inFolder(file.url, round.roundId, folder),
+    raw: file.raw ? inFolder(file.raw, round.roundId, folder) : file.raw,
+  }));
   if (files.length === 0) return null;
   return h('details', { class: 'invites' },
     h('summary', {}, `Invitation files (${files.length})`),
@@ -170,8 +186,9 @@ const renderInvitations = (round) => {
   );
 };
 
-const renderRound = (round, number, featured) => {
+const renderRound = ({ round, number, version }, featured) => {
   const info = describeRound(round);
+  const folder = roundFolder(version);
   const note = ROUND_NOTES[round.roundId];
   const facts = [
     [ 'Ticket price', `${sats(round.ticketPrice)} sats` ],
@@ -182,7 +199,7 @@ const renderRound = (round, number, featured) => {
 
   const head = h('div', { class: 'round__head' },
     h('div', {},
-      h('p', { class: 'round__kicker' }, `Round ${number}`, h('span', { class: 'round__id', text: round.roundId })),
+      h('p', { class: 'round__kicker' }, `Round ${number}`, version === 1 ? h('span', { class: 'round__ver', text: 'template v1' }) : null, h('span', { class: 'round__id', text: round.roundId })),
       h('h3', { class: 'round__title', text: info.title }),
     ),
     h('span', { class: `pill pill--${info.kind}`, text: info.pill }),
@@ -200,19 +217,20 @@ const renderRound = (round, number, featured) => {
   const foot = h('p', { class: 'round__foot' },
     'Token category ', h('code', { title: round.roundCategory, text: shortHash(round.roundCategory) }),
     ' · secret hash ', h('code', { title: round.secretHash, text: shortHash(round.secretHash) }),
-    ' · ', h('a', { href: `${REPO}/tree/main/rounds/${round.roundId}` }, 'round files ', svgArrow()),
+    ' · ', h('a', { href: `${REPO}/tree/main/${folder}/${round.roundId}` }, 'round files ', svgArrow()),
   );
 
   return h('article', { class: `round round--${info.kind}${featured ? ' round--featured' : ''}`, id: `round-${number}` },
     featured ? h('p', { class: 'round__flag', text: 'The whole story' }) : null,
     h('div', { class: 'round__grid' }, intro, timeline),
-    renderInvitations(round),
+    renderInvitations(round, folder),
     foot,
   );
 };
 
 const fillHero = (round, info) => {
-  if (!round || info.kind !== 'claimed') return;
+  if (!round || info.kind !== 'claimed') return;  // round = { number, ... }
+  document.querySelectorAll('[data-hero="label"]').forEach((el) => { el.textContent = `Round ${round.number} · Chipnet`; });
   document.querySelectorAll('[data-hero="pot"]').forEach((el) => { el.textContent = sats(info.pot); });
   document.querySelectorAll('[data-hero="winner"]').forEach((el) => { el.textContent = String(info.winner); });
   document.querySelectorAll('[data-hero="tickets"]').forEach((el) => { el.textContent = String(info.tickets); });
@@ -226,21 +244,42 @@ const renderRounds = async () => {
     const response = await fetch('data/rounds.json', { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    const rounds = [ ...(data.rounds ?? []) ].sort((a, b) => a.openedAtHeight - b.openedAtHeight);
-    const numbered = rounds.map((round, index) => ({ round, number: index + 1, info: describeRound(round) }));
+    const all = [
+      ...(data.rounds ?? []).map((round) => ({ round, version: templateVersion(round, false) })),
+      ...(data.earlierRounds ?? []).map((round) => ({ round, version: templateVersion(round, true) })),
+    ].sort((a, b) => a.round.openedAtHeight - b.round.openedAtHeight);
+    if (all.length === 0) throw new Error('no rounds in the file yet');
+    all.forEach((entry, index) => { entry.number = index + 1; entry.info = describeRound(entry.round); });
 
-    // Round 2 (the drawn and claimed one) leads; the rest follow newest first.
-    const featured = numbered.find((entry) => entry.info.kind === 'claimed') ?? numbered[numbered.length - 1];
-    const rest = numbered.filter((entry) => entry !== featured).sort((a, b) => b.round.openedAtHeight - a.round.openedAtHeight);
+    // The newest drawn-and-claimed round leads (current template first); the rest follow newest first,
+    // with v1-template rounds grouped as earlier rounds when there are newer ones.
+    const newestFirst = [ ...all ].reverse();
+    const featured = newestFirst.find((entry) => entry.version !== 1 && entry.info.kind === 'claimed')
+      ?? newestFirst.find((entry) => entry.info.kind === 'claimed')
+      ?? newestFirst[0];
+    const rest = newestFirst.filter((entry) => entry !== featured);
+    const current = rest.filter((entry) => entry.version !== 1);
+    const earlier = rest.filter((entry) => entry.version === 1);
+    const anyCurrent = all.some((entry) => entry.version !== 1);
+    const v1Note = 'These rounds ran on the first version of the template (v1). v2, now in the repo, changes only the refund path: '
+      + 'the first refund closes the round, so it can never be drawn afterwards.';
 
-    list.replaceChildren(
-      renderRound(featured.round, featured.number, true),
-      h('div', { class: 'rounds__rest' }, rest.map((entry) => renderRound(entry.round, entry.number, false))),
-    );
+    const blocks = [];
+    if (!anyCurrent) blocks.push(h('p', { class: 'rounds__note', text: v1Note }));
+    blocks.push(renderRound(featured, true));
+    if (current.length > 0) blocks.push(h('div', { class: 'rounds__rest' }, current.map((entry) => renderRound(entry, false))));
+    if (earlier.length > 0) {
+      if (anyCurrent) {
+        blocks.push(h('div', { class: 'rounds__divider' },
+          h('h3', { text: 'Earlier rounds, template v1' }), h('p', { text: v1Note })));
+      }
+      blocks.push(h('div', { class: 'rounds__rest' }, earlier.map((entry) => renderRound(entry, false))));
+    }
+    list.replaceChildren(...blocks);
 
-    fillHero(featured.round, featured.info);
-    const txs = rounds.reduce((total, round) => total + (round.steps ?? []).filter((step) => step.transactionHash).length, 0);
-    document.querySelectorAll('[data-stat="rounds"]').forEach((el) => { el.textContent = String(rounds.length); });
+    fillHero(featured, featured.info);
+    const txs = all.reduce((total, entry) => total + (entry.round.steps ?? []).filter((step) => step.transactionHash).length, 0);
+    document.querySelectorAll('[data-stat="rounds"]').forEach((el) => { el.textContent = String(all.length); });
     document.querySelectorAll('[data-stat="txs"]').forEach((el) => { el.textContent = String(txs); });
   } catch (error) {
     list.replaceChildren(h('p', { class: 'rounds__status' },
