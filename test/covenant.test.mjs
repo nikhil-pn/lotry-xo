@@ -300,3 +300,17 @@ test('template: the next ticket number it builds is count + 1', () => {
         assert.deepEqual(pushedData('evaluateNextOpenCommitment', { ticketCount: bigIntToVmNumber(count) }), openCommitment(count + 1n));
     }
 });
+
+test('client: round-state helpers produce what the covenant demands', async () => {
+    const state = await import('../src/round-state.mjs');
+    assert.equal(state.openCommitment(0), '00000000');
+    assert.equal(state.nextOpenCommitment(0), '01000000');
+    assert.equal(state.nextOpenCommitment(300), '2d010000');
+    const secretHex = Buffer.from(ROUND.secret).toString('hex');
+    for (const count of [ 1, 2, 7 ]) {
+        const drawn = state.drawnCommitment(secretHex, count);
+        assert.equal(drawn, Buffer.from(drawnCommitment(winnerFor(ROUND.secret, count))).toString('hex'));
+        assert.deepEqual(state.parseCommitment(drawn), { phase: 'drawn', winningTicket: Number(winnerFor(ROUND.secret, count)) });
+    }
+    assert.deepEqual(state.parseCommitment('03000000'), { phase: 'open', ticketCount: 3, ticketNumber: 3 });
+});

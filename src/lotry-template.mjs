@@ -74,7 +74,7 @@ export const lotryTemplate = {
             roles: {
                 organiser: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'seedSatoshis' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'seedSatoshis', 'potCommitment' ],
                     },
                 },
             },
@@ -95,7 +95,7 @@ export const lotryTemplate = {
                 // The organiser runs the round's service: it tracks the pot and adds it to the transaction.
                 organiser: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount', 'nextPotCommitment', 'ticketCommitment' ],
                     },
                 },
                 player: {
@@ -124,7 +124,7 @@ export const lotryTemplate = {
             roles: {
                 organiser: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount', 'roundSecret' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount', 'roundSecret', 'nextPotCommitment' ],
                     },
                 },
             },
@@ -166,7 +166,7 @@ export const lotryTemplate = {
             roles: {
                 player: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount', 'ticketNumber', 'payoutLockingScript' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'potCommitment', 'ticketNumber', 'payoutLockingScript' ],
                         secrets: [ 'playerKey' ],
                     },
                 },
@@ -267,72 +267,36 @@ export const lotryTemplate = {
             name: 'Round pot',
             description: 'The pot before this ticket.',
             icon: 'pot',
-            valueSatoshis: '$(<potSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'minting', commitment: '$(openCommitment)' },
-            },
             unlockingScript: 'potBuyUnlock',
         },
         potDrawInput: {
             name: 'Round pot',
             description: 'The pot when the winner is drawn.',
             icon: 'pot',
-            valueSatoshis: '$(<potSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'minting', commitment: '$(openCommitment)' },
-            },
             unlockingScript: 'potDrawUnlock',
         },
         potClaimInput: {
             name: 'Drawn pot',
             description: 'The pot after the draw.',
             icon: 'pot',
-            valueSatoshis: '$(<potSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'minting', commitment: '$(drawnCommitmentFromWinner)' },
-            },
             unlockingScript: 'potClaimUnlock',
         },
         potRefundInput: {
             name: 'Round pot',
             description: 'The undrawn pot after the refund height.',
             icon: 'pot',
-            valueSatoshis: '$(<potSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'minting', commitment: '$(openCommitment)' },
-            },
             unlockingScript: 'potRefundUnlock',
         },
         ticketClaimInput: {
             name: 'Winning ticket',
             description: 'Ticket #$(<winningTicket>), burned to claim the pot.',
             icon: 'ticket',
-            valueSatoshis: '$(<ticketSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'none', commitment: '$(<winningTicket> <4> OP_NUM2BIN)' },
-            },
             unlockingScript: 'ticketUnlock',
         },
         ticketRefundInput: {
             name: 'Ticket',
             description: 'Ticket #$(<ticketNumber>), burned for a refund.',
             icon: 'ticket',
-            valueSatoshis: '$(<ticketSatoshis>)',
-            token: {
-                category: '$(<roundCategory>)',
-                amount: 0n,
-                nft: { capability: 'none', commitment: '$(<ticketNumber> <4> OP_NUM2BIN)' },
-            },
             unlockingScript: 'ticketUnlock',
         },
     },
@@ -347,7 +311,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'minting', commitment: '$(<0> <4> OP_NUM2BIN)' },
+                nft: { capability: 'minting', commitment: '$(<potCommitment>)' },
             },
         },
         potBoughtOutput: {
@@ -359,7 +323,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'minting', commitment: '$(nextOpenCommitment)' },
+                nft: { capability: 'minting', commitment: '$(<nextPotCommitment>)' },
             },
         },
         ticketOutput: {
@@ -371,7 +335,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'none', commitment: '$(nextOpenCommitment)' },
+                nft: { capability: 'none', commitment: '$(<ticketCommitment>)' },
             },
         },
         potDrawnOutput: {
@@ -383,7 +347,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'minting', commitment: '$(drawnCommitment)' },
+                nft: { capability: 'minting', commitment: '$(<nextPotCommitment>)' },
             },
         },
         potRefundedOutput: {
@@ -395,7 +359,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'minting', commitment: '$(openCommitment)' },
+                nft: { capability: 'minting', commitment: '$(<potCommitment>)' },
             },
         },
         claimPayoutOutput: {
@@ -476,7 +440,8 @@ export const lotryTemplate = {
     },
 
     scripts: {
-        // ---- Round state encodings, shared by the covenant (on chain) and by the template (off chain).
+        // ---- Round state encodings. The covenant enforces them on chain; clients compile these formulas
+        //      to fill potCommitment, nextPotCommitment and ticketCommitment (test/covenant.test.mjs proves they agree).
         openCommitment: '<ticketCount> <4> OP_NUM2BIN',
         nextOpenCommitment: '<ticketCount> OP_1ADD <4> OP_NUM2BIN',
         winningTicketNumber: '<roundSecret> OP_SHA256 <4> OP_SPLIT OP_DROP <0x00> OP_CAT OP_BIN2NUM <ticketCount> OP_MOD OP_1ADD',
@@ -593,6 +558,9 @@ export const lotryTemplate = {
         roundCategory: { name: 'Round category', description: 'Token category of this round: the pot NFT and every ticket.', type: 'token_category' },
         seedSatoshis: { name: 'Seed', description: 'Satoshis the organiser puts in the pot when opening it.', type: 'satoshis' },
         potSatoshis: { name: 'Pot', description: 'Satoshis in the pot right now.', type: 'satoshis' },
+        potCommitment: { name: 'Pot state', description: 'The pot NFT commitment: the ticket count (openCommitment), or the winner (drawnCommitment).', type: 'token_commitment' },
+        nextPotCommitment: { name: 'Next pot state', description: 'The pot NFT commitment after this action: nextOpenCommitment for a ticket, drawnCommitment for a draw.', type: 'token_commitment' },
+        ticketCommitment: { name: 'Ticket number', description: 'The new ticket NFT commitment: the 4-byte ticket number (nextOpenCommitment).', type: 'token_commitment' },
         ticketCount: { name: 'Tickets sold', description: 'Tickets sold so far in this round.', type: 'integer' },
         winningTicket: { name: 'Winning ticket', description: 'The ticket number written into the pot at the draw.', type: 'integer' },
         ticketNumber: { name: 'Ticket number', description: 'The number of the ticket being refunded.', type: 'integer' },
