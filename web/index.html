@@ -98,6 +98,63 @@
       </div>
     </section>
 
+    <!-- How a round works -->
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>01</b> · How a round works</p>
+            <h2 class="h2" id="how-title">A coin with <em>no key.</em></h2>
+          </div>
+          <div class="prose">
+            <p>On Bitcoin Cash, money sits in coins, and every coin carries a small script that says how it may be spent. Most scripts ask for a signature from one key. The pot's script asks for none. It only lists the next moves it allows: one more ticket sold, the right winner written down, the winner paid, or a ticket refunded after the deadline.</p>
+            <p>No key means nothing to lose, leak, or run away with. The organiser runs the round but can never move the money.</p>
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li class="step">
+            <span class="step__num">1</span>
+            <h3 class="step__name">Open</h3>
+            <p class="step__who">Organiser</p>
+            <p class="step__text">Creates the pot: a fresh coin carrying the round's minting NFT. It also publishes the hash of a secret it will reveal at the draw.</p>
+            <p class="step__state"><span>pot</span> 0 tickets</p>
+          </li>
+          <li class="step">
+            <span class="step__num">2</span>
+            <h3 class="step__name">Buy a ticket</h3>
+            <p class="step__who">Organiser and player, together</p>
+            <p class="step__text">One transaction, two people. The organiser adds the pot, the player adds the price and receives ticket #n, a numbered NFT nobody can change.</p>
+            <p class="step__state"><span>pot</span> n tickets, + price</p>
+          </li>
+          <li class="step">
+            <span class="step__num">3</span>
+            <h3 class="step__name">Draw</h3>
+            <p class="step__who">Organiser, after the draw height</p>
+            <p class="step__text">The organiser reveals the secret. The covenant checks it against the hash and works out the winner itself: sha256(secret) mod tickets + 1.</p>
+            <p class="step__state"><span>pot</span> winner #k</p>
+          </li>
+          <li class="step">
+            <span class="step__num">4</span>
+            <h3 class="step__name">Claim</h3>
+            <p class="step__who">Whoever holds the winning ticket</p>
+            <p class="step__text">The winner spends the ticket together with the pot. Both NFTs are burned and the whole pot is paid out.</p>
+            <p class="step__state"><span>pot</span> paid to the winner</p>
+          </li>
+          <li class="step step--alt">
+            <span class="step__num">5</span>
+            <p class="step__or">or, if never drawn</p>
+            <h3 class="step__name">Refund</h3>
+            <p class="step__who">Any ticket holder, after the refund height</p>
+            <p class="step__text">Each ticket burns for its price back. Nobody has to say yes, the organiser included.</p>
+            <p class="step__state"><span>pot</span> − price, ticket burned</p>
+          </li>
+        </ol>
+
+        <p class="footnote">The pot's state is its NFT commitment: a 4-byte ticket count while the round is open, then the winning number plus the byte <code>0xd0</code> once drawn. The covenant checks every move against it.</p>
+      </div>
+    </section>
+
   </main>
 
   <script src="app.js" defer></script>
