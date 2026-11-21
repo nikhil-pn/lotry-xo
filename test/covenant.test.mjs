@@ -250,22 +250,25 @@ test('claim refuses: keeping the ticket', () => {
 });
 
 // ---------- refund ----------
-const refundSpec = ({ locktime = Number(ROUND.refundHeight), potCommitment = openCommitment(3n), ticketCategory = CATEGORY, potAfter = 41_000n } = {}) => ({
+const refundingCommitment = (count) => Uint8Array.from([ ...le4(count), 0xee ]);
+
+const refundSpec = ({ locktime = Number(ROUND.refundHeight), potCommitment = openCommitment(3n), nextCommitment = refundingCommitment(3n), ticketCategory = CATEGORY, potAfter = 41_000n } = {}) => ({
     locktime,
     inputs: [
         { unlockingBytecode: UNLOCK.refund, spends: pot(61_000n, potCommitment) },
         { unlockingBytecode: new Uint8Array(), spends: { lockingBytecode: PLAYER_LOCK, valueSatoshis: 1_000n, token: ticketToken(2n, ticketCategory) } },
     ],
     outputs: [
-        { lockingBytecode: POT_LOCK, valueSatoshis: potAfter, token: potToken(potCommitment) },
+        { lockingBytecode: POT_LOCK, valueSatoshis: potAfter, token: potToken(nextCommitment) },
         { lockingBytecode: PAYOUT_LOCK, valueSatoshis: 20_500n },
     ],
 });
 
-test('refund: an undrawn round pays a ticket back after the refund height', () => accepts(refundSpec()));
+test('refund: an undrawn round pays a ticket back after the refund height and closes the round', () => accepts(refundSpec()));
+test('refund: later refunds keep the round closed', () => accepts(refundSpec({ potCommitment: refundingCommitment(3n) })));
 
 test('refund refuses: before the refund height', () => rejects(refundSpec({ locktime: Number(ROUND.refundHeight) - 1 })));
-test('refund refuses: once the round is drawn', () => rejects(refundSpec({ potCommitment: drawnCommitment(2n) })));
+test('refund refuses: once the round is drawn', () => rejects(refundSpec({ potCommitment: drawnCommitment(2n), nextCommitment: Uint8Array.from([ ...le4(2n), 0xee ]) })));
 test('refund refuses: a ticket of another round', () => rejects(refundSpec({ ticketCategory: OTHER_CATEGORY })));
 test('refund refuses: paying back more than the price', () => rejects(refundSpec({ potAfter: 40_999n })));
 test('refund refuses: keeping the ticket after the refund', () => {
@@ -273,11 +276,22 @@ test('refund refuses: keeping the ticket after the refund', () => {
     spec.outputs[1] = { ...spec.outputs[1], token: ticketToken(2n) };
     rejects(spec);
 });
-test('refund refuses: changing the ticket count', () => {
-    const spec = refundSpec();
-    spec.outputs[0] = { ...spec.outputs[0], token: potToken(openCommitment(2n)) };
+test('refund refuses: leaving the round open after a refund', () => rejects(refundSpec({ nextCommitment: openCommitment(3n) })));
+test('refund refuses: changing the ticket count', () => rejects(refundSpec({ nextCommitment: refundingCommitment(2n) })));
+
+// The bug this state fixes: refund ticket #2, then draw. If #2 won, nobody could ever claim the rest of the pot.
+test('after a refund, the round can never be drawn', () => {
+    const spec = drawSpec();
+    spec.inputs[0] = { ...spec.inputs[0], spends: pot(41_000n, refundingCommitment(3n)) };
+    spec.outputs[0] = { ...spec.outputs[0], valueSatoshis: 41_000n };
     rejects(spec);
 });
+test('after a refund, no one can buy into the round', () => {
+    const spec = buySpec({ count: 3n });
+    spec.inputs[0] = { ...spec.inputs[0], spends: pot(50_000n, refundingCommitment(3n)) };
+    rejects(spec);
+});
+test('after a refund, the pot cannot be claimed', () => rejects(claimSpec({ potCommitment: refundingCommitment(2n) })));
 
 // ---------- the template's off-chain expressions agree with the covenant ----------
 const pushedData = (scriptId, bytecode) => {
@@ -313,6 +327,8 @@ test('client: round-state helpers produce what the covenant demands', async () =
         assert.deepEqual(state.parseCommitment(drawn), { phase: 'drawn', winningTicket: Number(winnerFor(ROUND.secret, count)) });
     }
     assert.deepEqual(state.parseCommitment('03000000'), { phase: 'open', ticketCount: 3, ticketNumber: 3 });
+    assert.equal(state.refundingCommitment(3), '03000000ee');
+    assert.deepEqual(state.parseCommitment('03000000ee'), { phase: 'refunding', ticketCount: 3 });
 });
 
 test('chain time: lock heights follow the Faster Blocks chunk rule measured on chipnet', async () => {

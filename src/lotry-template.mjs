@@ -10,12 +10,13 @@
 //                secret
 //   claim pot    winner      spends the pot together with the winning ticket; both NFTs are burned
 //   refund       any ticket  after the refund height, if the round was never drawn, a ticket is burned
-//                holder      and its price is paid back from the pot
+//                holder      and its price is paid back from the pot; the first refund closes the round for good
 //
 // Nobody, the organiser included, can take the pot any other way: there is no signature path in the covenant.
 //
-// Pot commitment while open:  4-byte little-endian ticket count
-// Pot commitment once drawn:   4-byte little-endian winning ticket number, then the marker byte 0xd0
+// Pot commitment while open:      4-byte little-endian ticket count
+// Pot commitment once drawn:       4-byte little-endian winning ticket number, then the marker byte 0xd0
+// Pot commitment once refunding:   4-byte ticket count, then the marker byte 0xee (only refunds from then on)
 
 const ROUND_VARIABLES = [ 'ticketPrice', 'drawHeight', 'refundHeight', 'secretHash' ];
 
@@ -160,13 +161,13 @@ export const lotryTemplate = {
 
         refundTicket: {
             name: 'Refund a ticket',
-            description: 'After the refund height, if the round was never drawn, burn a ticket and get its price back from the pot.',
+            description: 'After the refund height, if the round was never drawn, burn a ticket and get its price back from the pot. The first refund closes the round: it can no longer be drawn.',
             icon: 'refund',
 
             roles: {
                 player: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'potCommitment', 'ticketNumber', 'payoutLockingScript' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'nextPotCommitment', 'ticketNumber', 'payoutLockingScript' ],
                         secrets: [ 'playerKey' ],
                     },
                 },
@@ -359,7 +360,7 @@ export const lotryTemplate = {
             token: {
                 category: '$(<roundCategory>)',
                 amount: 0n,
-                nft: { capability: 'minting', commitment: '$(<potCommitment>)' },
+                nft: { capability: 'minting', commitment: '$(<nextPotCommitment>)' },
             },
         },
         claimPayoutOutput: {
@@ -447,6 +448,7 @@ export const lotryTemplate = {
         winningTicketNumber: '<roundSecret> OP_SHA256 <4> OP_SPLIT OP_DROP <0x00> OP_CAT OP_BIN2NUM <ticketCount> OP_MOD OP_1ADD',
         drawnCommitment: 'winningTicketNumber <4> OP_NUM2BIN <0xd0> OP_CAT',
         drawnCommitmentFromWinner: '<winningTicket> <4> OP_NUM2BIN <0xd0> OP_CAT',
+        refundingCommitment: '<ticketCount> <4> OP_NUM2BIN <0xee> OP_CAT',
 
         // ---- Covenant building blocks. The pot is always input 0 and output 0.
         // The 32-byte round category: the pot's category without its minting capability byte.
@@ -503,12 +505,17 @@ export const lotryTemplate = {
         `,
 
         // 4. Refund: after the refund height, an undrawn pot pays back one ticket price for one burned ticket.
+        //    The first refund moves the pot to the refunding state (count, then 0xee) for good: from then on it can
+        //    only refund, so it can never be drawn onto a ticket that was already burned for its refund.
         potRefund: `
             <refundHeight> OP_CHECKLOCKTIMEVERIFY OP_DROP
-            potIsOpen OP_DROP
+            OP_0 OP_UTXOTOKENCOMMITMENT
+            OP_DUP OP_SIZE OP_NIP OP_4 OP_NUMEQUAL
+            OP_NOTIF OP_4 OP_SPLIT <0xee> OP_EQUALVERIFY OP_ENDIF
+            <0xee> OP_CAT
+            OP_0 OP_OUTPUTTOKENCOMMITMENT OP_EQUALVERIFY
             input1IsTicket
             potCarriesOn
-            OP_0 OP_OUTPUTTOKENCOMMITMENT OP_0 OP_UTXOTOKENCOMMITMENT OP_EQUALVERIFY
             OP_0 OP_OUTPUTVALUE OP_0 OP_UTXOVALUE <ticketPrice> OP_SUB OP_NUMEQUALVERIFY
             OP_TXOUTPUTCOUNT OP_3 OP_LESSTHANOREQUAL OP_VERIFY
             output1HasNoToken
@@ -559,7 +566,7 @@ export const lotryTemplate = {
         seedSatoshis: { name: 'Seed', description: 'Satoshis the organiser puts in the pot when opening it.', type: 'satoshis' },
         potSatoshis: { name: 'Pot', description: 'Satoshis in the pot right now.', type: 'satoshis' },
         potCommitment: { name: 'Pot state', description: 'The pot NFT commitment: the ticket count (openCommitment), or the winner (drawnCommitment).', type: 'token_commitment' },
-        nextPotCommitment: { name: 'Next pot state', description: 'The pot NFT commitment after this action: nextOpenCommitment for a ticket, drawnCommitment for a draw.', type: 'token_commitment' },
+        nextPotCommitment: { name: 'Next pot state', description: 'The pot NFT commitment after this action: nextOpenCommitment for a ticket, drawnCommitment for a draw, refundingCommitment for a refund.', type: 'token_commitment' },
         ticketCommitment: { name: 'Ticket number', description: 'The new ticket NFT commitment: the 4-byte ticket number (nextOpenCommitment).', type: 'token_commitment' },
         ticketCount: { name: 'Tickets sold', description: 'Tickets sold so far in this round.', type: 'integer' },
         winningTicket: { name: 'Winning ticket', description: 'The ticket number written into the pot at the draw.', type: 'integer' },

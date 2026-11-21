@@ -11,6 +11,7 @@ const compiler = createCompilerBch({
         pushOpenCommitment: '<$(openCommitment)>',
         pushNextOpenCommitment: '<$(nextOpenCommitment)>',
         pushDrawnCommitment: '<$(drawnCommitment)>',
+        pushRefundingCommitment: '<$(refundingCommitment)>',
     },
     variables: { ticketCount: { type: 'AddressData' }, roundSecret: { type: 'AddressData' } },
     vm: createVirtualMachineBch2026(),
@@ -35,11 +36,15 @@ export const nextOpenCommitment = (ticketCount) => evaluate('pushNextOpenCommitm
 export const drawnCommitment = (roundSecretHex, ticketCount) =>
     evaluate('pushDrawnCommitment', { roundSecret: hexToBin(roundSecretHex), ticketCount: count(ticketCount) });
 
+/** Pot commitment after a refund: the count stays, the 0xee marker closes the round to anything but refunds. */
+export const refundingCommitment = (ticketCount) => evaluate('pushRefundingCommitment', { ticketCount: count(ticketCount) });
+
 /** Reads a pot or ticket commitment back into numbers. */
 export const parseCommitment = (commitmentHex) => {
     const bytes = hexToBin(commitmentHex);
     const number = new DataView(bytes.buffer, bytes.byteOffset).getUint32(0, true);
     if (bytes.length === 4) return { phase: 'open', ticketCount: number, ticketNumber: number };
     if (bytes.length === 5 && bytes[4] === 0xd0) return { phase: 'drawn', winningTicket: number };
+    if (bytes.length === 5 && bytes[4] === 0xee) return { phase: 'refunding', ticketCount: number };
     throw new Error(`Not a Lotry commitment: ${commitmentHex}`);
 };

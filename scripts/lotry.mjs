@@ -15,7 +15,7 @@ import { binToHex, decodeTransaction, hexToBin } from '@bitauth/libauth';
 import { DUST_LIMIT_SATOSHIS } from '@xo-cash/engine';
 import { lotryTemplate } from '../src/lotry-template.mjs';
 import { blocksUntilLockHeight, currentLockHeight } from '../src/chain-time.mjs';
-import { drawnCommitment, nextOpenCommitment, openCommitment, parseCommitment } from '../src/round-state.mjs';
+import { drawnCommitment, nextOpenCommitment, openCommitment, parseCommitment, refundingCommitment } from '../src/round-state.mjs';
 import { closeWallet, openWallet, persist } from './lib-engine.mjs';
 import {
     latestRoundId, loadInvitation, logStep, readRound, readSecret, readSteps, saveInvitation, stringify, txLink, writeRound, writeSecret,
@@ -381,7 +381,7 @@ const steps = {
         }
         await syncSales(engine, round, wallet);
         const pot = await findPot(engine, round, { wait: 30_000 });
-        if (pot === undefined || pot.state.phase !== 'open') throw new Error('No undrawn pot visible to this wallet');
+        if (pot === undefined || ![ 'open', 'refunding' ].includes(pot.state.phase)) throw new Error('No undrawn pot visible to this wallet');
         const ticket = await findTicket(engine, round);
         if (ticket === undefined) throw new Error(`${wallet} holds no ticket of this round`);
         const ticketNumber = parseCommitment(ticket.tokenNftCommitment).ticketNumber;
@@ -394,7 +394,7 @@ const steps = {
             variables: [
                 ...roundVariables(round, 'player'),
                 variable('potSatoshis', 'player', BigInt(pot.valueSatoshis)),
-                variable('potCommitment', 'player', pot.tokenNftCommitment),
+                variable('nextPotCommitment', 'player', refundingCommitment(pot.state.ticketCount)),
                 variable('ticketNumber', 'player', BigInt(ticketNumber)),
                 variable('payoutLockingScript', 'player', payoutLockingScript),
             ],
