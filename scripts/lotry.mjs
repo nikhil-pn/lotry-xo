@@ -5,7 +5,8 @@
 //   node scripts/lotry.mjs offer [round]                    organiser starts a ticket sale invitation
 //   node scripts/lotry.mjs take  <BUYER_A|BUYER_B> [round]  the player joins it, adds a ticket, pays, signs
 //   node scripts/lotry.mjs seal  [round]                    organiser signs the pot input and broadcasts
-//   node scripts/lotry.mjs draw  [round]                    organiser reveals the secret after the draw height
+//   node scripts/lotry.mjs close [round]                    organiser (anyone) stops sales after the draw height
+//   node scripts/lotry.mjs draw  [round]                    organiser reveals the secret on the closed pot
 //   node scripts/lotry.mjs claim <BUYER_A|BUYER_B> [round]  the winner takes the pot
 //   node scripts/lotry.mjs refund <BUYER_A|BUYER_B> [round] a player gets a ticket price back from an undrawn round
 //   node scripts/lotry.mjs status [round]                   pot state as the organiser sees it
@@ -15,7 +16,10 @@ import { binToHex, decodeTransaction, hexToBin } from '@bitauth/libauth';
 import { DUST_LIMIT_SATOSHIS } from '@xo-cash/engine';
 import { lotryTemplate } from '../src/lotry-template.mjs';
 import { blocksUntilLockHeight, currentLockHeight } from '../src/chain-time.mjs';
-import { drawnCommitment, nextOpenCommitment, openCommitment, parseCommitment, refundingCommitment } from '../src/round-state.mjs';
+import {
+    afterRefundCommitment, closedCommitment, drawnCommitment, nextOpenCommitment, openCommitment, parseCommitment, potLockingBytecode,
+} from '../src/round-state.mjs';
+import { verifyGenesis } from './lib-genesis.mjs';
 import { closeWallet, openWallet, persist } from './lib-engine.mjs';
 import {
     latestRoundId, loadInvitation, logStep, readRound, readSecret, readSteps, saveInvitation, stringify, txLink, writeRound, writeSecret,
@@ -35,6 +39,7 @@ const roundVariables = (round, roleIdentifier) => [
     variable('ticketPrice', roleIdentifier, BigInt(round.ticketPrice)),
     variable('drawHeight', roleIdentifier, BigInt(round.drawHeight)),
     variable('refundHeight', roleIdentifier, BigInt(round.refundHeight)),
+    variable('claimHeight', roleIdentifier, BigInt(round.claimHeight)),
     variable('secretHash', roleIdentifier, round.secretHash),
     variable('roundCategory', roleIdentifier, round.roundCategory),
 ];
@@ -143,6 +148,7 @@ const steps = {
             // Lock heights, not block heights: since Faster Blocks one lock height is ten 1-minute blocks.
             drawHeight: String(currentLockHeight(currentHeight) + Number(flag('draw-in', '1'))),
             refundHeight: String(currentLockHeight(currentHeight) + Number(flag('refund-in', '144'))),
+            claimHeight: String(currentLockHeight(currentHeight) + Number(flag('claim-in', '288'))),
             secretHash: createHash('sha256').update(secret).digest('hex'),
             roundCategory: genesisCoin.outpointTransactionHash,
             openedAtHeight: currentHeight,
@@ -171,7 +177,7 @@ const steps = {
         writeRound(round);
         saveInvitation(round.roundId, '1-open', storedInvitation.invitation);
         logStep(round.roundId, { step: 'open', transactionHash: builtTransaction.transactionHash, tickets: 0, potSatoshis: round.seedSatoshis });
-        console.log(`Opened ${round.roundId}\n  category ${round.roundCategory}\n  draw from lock height ${round.drawHeight}, refunds from ${round.refundHeight}\n  ${txLink(builtTransaction.transactionHash)}`);
+        console.log(`Opened ${round.roundId}\n  category ${round.roundCategory}\n  sales close and draw from lock height ${round.drawHeight}, refunds from ${round.refundHeight}, unclaimed pots refund from ${round.claimHeight}\n  ${txLink(builtTransaction.transactionHash)}`);
         await closeWallet(engine);
     },
 
@@ -250,6 +256,9 @@ const steps = {
         const sale = nextSaleNumber(round.roundId);
         const engine = await openWallet(wallet);
         await importLotry(engine);
+        // Before paying, check the round was opened honestly: one pot NFT, no pre-minted tickets.
+        const genesis = await verifyGenesis(round, potLockingBytecode(round));
+        console.log(`Genesis checked: ${genesis}`);
         const offered = loadInvitation(round.roundId, `buy-${sale}-1-offer`);
         const accepted = await engine.acceptInvitation(offered, { roleIdentifier: 'player' });
         const { invitationIdentifier } = accepted.invitation;
@@ -289,17 +298,54 @@ const steps = {
         await closeWallet(engine);
     },
 
-    // Organiser: after the draw height, reveals the secret. The covenant itself checks which ticket won.
-    async draw() {
+    // Anyone (the organiser here): after the draw height, stop ticket sales so the count is frozen before any reveal.
+    async close() {
         const round = readRound(positional[0] ?? latestRoundId());
         const engine = await openWallet('ORGANISER');
         await importLotry(engine);
         const { currentHeight } = await engine.getChainStatus();
         if (currentLockHeight(currentHeight) < Number(round.drawHeight)) {
-            throw new Error(`The draw opens at lock height ${round.drawHeight}, in about ${blocksUntilLockHeight(Number(round.drawHeight), currentHeight)} blocks`);
+            throw new Error(`Sales close at lock height ${round.drawHeight}, in about ${blocksUntilLockHeight(Number(round.drawHeight), currentHeight)} blocks`);
         }
         const pot = await findPot(engine, round, { wait: 20_000 });
         if (pot === undefined || pot.state.phase !== 'open') throw new Error('No open pot for this round');
+        const template = await engine.getTemplate(round.templateIdentifier);
+        const created = await engine.createInvitation({
+            templateIdentifier: round.templateIdentifier,
+            actionIdentifier: 'closeRound',
+            intent: findIntent('closeRound', template.lockingScripts.potLockingScript.roles.organiser.actions),
+            variables: [
+                ...roundVariables(round, 'organiser'),
+                variable('potSatoshis', 'organiser', BigInt(pot.valueSatoshis)),
+                variable('ticketCount', 'organiser', BigInt(pot.state.ticketCount)),
+                variable('nextPotCommitment', 'organiser', closedCommitment(pot.state.ticketCount)),
+            ],
+            inputs: [ outpointOf(pot, 'potCloseInput') ],
+        });
+        const { invitationIdentifier } = created.invitation;
+        const feeCoin = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 5_000n);
+        await engine.appendInvitation(invitationIdentifier, {
+            templateIdentifier: round.templateIdentifier, actionIdentifier: 'closeRound',
+            outputs: [ { outputIdentifier: 'potClosedOutput' } ], inputs: [ outpointOf(feeCoin) ],
+        });
+        const { builtTransaction, storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: true, feeSatoshis: 1_500 });
+        saveInvitation(round.roundId, 'close', storedInvitation.invitation);
+        logStep(round.roundId, { step: 'close', tickets: pot.state.ticketCount, potSatoshis: pot.valueSatoshis, transactionHash: builtTransaction.transactionHash });
+        console.log(`Sales closed at ${pot.state.ticketCount} tickets: ${txLink(builtTransaction.transactionHash)}`);
+        await closeWallet(engine);
+    },
+
+    // Organiser: reveals the secret on the closed pot, once the close is confirmed. The covenant checks which ticket won.
+    async draw() {
+        const round = readRound(positional[0] ?? latestRoundId());
+        const engine = await openWallet('ORGANISER');
+        await importLotry(engine);
+        const pot = await findPot(engine, round, { wait: 20_000 });
+        if (pot === undefined || pot.state.phase !== 'closed') throw new Error('Close the round first (no closed pot found)');
+        // Reveal only on a confirmed close: an unconfirmed close could still lose to a conflicting ticket sale.
+        if (pot.minedAtHeight === 0 || pot.status === 'pending') {
+            throw new Error('The close is not confirmed yet; wait for the next block (about a minute) and run draw again');
+        }
         const secretHex = binToHex(readSecret(round.roundId));
         const nextPotCommitment = drawnCommitment(secretHex, pot.state.ticketCount);
         const { winningTicket } = parseCommitment(nextPotCommitment);
@@ -376,12 +422,14 @@ const steps = {
         const engine = await openWallet(wallet);
         await importLotry(engine);
         const { currentHeight } = await engine.getChainStatus();
-        if (currentLockHeight(currentHeight) < Number(round.refundHeight)) {
-            throw new Error(`Refunds open at lock height ${round.refundHeight}, in about ${blocksUntilLockHeight(Number(round.refundHeight), currentHeight)} blocks`);
-        }
         await syncSales(engine, round, wallet);
         const pot = await findPot(engine, round, { wait: 30_000 });
-        if (pot === undefined || ![ 'open', 'refunding' ].includes(pot.state.phase)) throw new Error('No undrawn pot visible to this wallet');
+        if (pot === undefined) throw new Error('No pot visible to this wallet');
+        // A drawn pot can only be refunded once its claim deadline has passed; any other state from the refund height.
+        const refundLocktime = Number(pot.state.phase === 'drawn' ? round.claimHeight : round.refundHeight);
+        if (currentLockHeight(currentHeight) < refundLocktime) {
+            throw new Error(`This pot can be refunded from lock height ${refundLocktime}, in about ${blocksUntilLockHeight(refundLocktime, currentHeight)} blocks`);
+        }
         const ticket = await findTicket(engine, round);
         if (ticket === undefined) throw new Error(`${wallet} holds no ticket of this round`);
         const ticketNumber = parseCommitment(ticket.tokenNftCommitment).ticketNumber;
@@ -394,7 +442,8 @@ const steps = {
             variables: [
                 ...roundVariables(round, 'player'),
                 variable('potSatoshis', 'player', BigInt(pot.valueSatoshis)),
-                variable('nextPotCommitment', 'player', refundingCommitment(pot.state.ticketCount)),
+                variable('nextPotCommitment', 'player', afterRefundCommitment(pot.tokenNftCommitment)),
+                variable('refundLocktime', 'player', BigInt(refundLocktime)),
                 variable('ticketNumber', 'player', BigInt(ticketNumber)),
                 variable('payoutLockingScript', 'player', payoutLockingScript),
             ],
@@ -427,7 +476,7 @@ const steps = {
 };
 
 if (steps[command] === undefined || command === 'makeGenesisCoin') {
-    console.log('Commands: open, offer, take, seal, draw, claim, refund, status');
+    console.log('Commands: open, offer, take, seal, close, draw, claim, refund, status');
     process.exit(1);
 }
 await steps[command]();

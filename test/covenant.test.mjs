@@ -19,6 +19,7 @@ const ROUND = {
     ticketPrice: 20_000n,
     drawHeight: 300_000n,
     refundHeight: 300_500n,
+    claimHeight: 301_000n,
     secret: hexToBin('6c6f7472792d6f6e2d786f2d726f756e642d736563726574212121212121212121'),
 };
 ROUND.secretHash = new Uint8Array(createHash('sha256').update(ROUND.secret).digest());
@@ -30,7 +31,7 @@ const compiler = createCompilerBch({
         evaluateDrawnCommitment: '<$(drawnCommitment)>',
         evaluateNextOpenCommitment: '<$(nextOpenCommitment)>',
     },
-    variables: Object.fromEntries([ 'ticketPrice', 'drawHeight', 'refundHeight', 'secretHash', 'roundSecret', 'ticketCount' ]
+    variables: Object.fromEntries([ 'ticketPrice', 'drawHeight', 'refundHeight', 'claimHeight', 'secretHash', 'roundSecret', 'ticketCount' ]
         .map((name) => [ name, { type: 'AddressData' } ])),
     lockingScriptTypes: { potRedeem: 'p2sh32' },
     unlockingScripts: {
@@ -38,6 +39,7 @@ const compiler = createCompilerBch({
         potDrawUnlock: 'potRedeem',
         potClaimUnlock: 'potRedeem',
         potRefundUnlock: 'potRedeem',
+        potCloseUnlock: 'potRedeem',
     },
     vm,
 });
@@ -47,6 +49,7 @@ const bytecodeData = (extra = {}) => ({
         ticketPrice: bigIntToVmNumber(ROUND.ticketPrice),
         drawHeight: bigIntToVmNumber(ROUND.drawHeight),
         refundHeight: bigIntToVmNumber(ROUND.refundHeight),
+        claimHeight: bigIntToVmNumber(ROUND.claimHeight),
         secretHash: ROUND.secretHash,
         ...extra,
     },
@@ -65,6 +68,7 @@ const UNLOCK = {
     drawWrongSecret: compile('potDrawUnlock', { roundSecret: utf8ToBin('not the secret') }),
     claim: compile('potClaimUnlock'),
     refund: compile('potRefundUnlock'),
+    close: compile('potCloseUnlock'),
 };
 
 // Anyone-can-spend stand-ins for player coins: the covenant only looks at their tokens, never at who signs.
@@ -82,6 +86,7 @@ const le4 = (number) => {
 };
 const openCommitment = (count) => le4(count);
 const drawnCommitment = (winner) => Uint8Array.from([ ...le4(winner), 0xd0 ]);
+const closedCommitment = (count) => Uint8Array.from([ ...le4(count), 0xc1 ]);
 
 const winnerFor = (secret, count) => {
     const digest = createHash('sha256').update(secret).digest();
@@ -189,11 +194,47 @@ test('buy refuses: the pot at input 1', () => {
     rejects(spec);
 });
 
-// ---------- draw ----------
-const drawSpec = ({ count = 3n, potValue = 61_000n, locktime = Number(ROUND.drawHeight), unlock = UNLOCK.draw, winner } = {}) => ({
+// ---------- close ----------
+const closeSpec = ({ count = 3n, potValue = 61_000n, locktime = Number(ROUND.drawHeight), potCommitment } = {}) => ({
     locktime,
     inputs: [
-        { unlockingBytecode: unlock, spends: pot(potValue, openCommitment(count)) },
+        { unlockingBytecode: UNLOCK.close, spends: pot(potValue, potCommitment ?? openCommitment(count)) },
+        { unlockingBytecode: new Uint8Array(), spends: funding(10_000n) },
+    ],
+    outputs: [
+        { lockingBytecode: POT_LOCK, valueSatoshis: potValue, token: potToken(closedCommitment(count)) },
+        { lockingBytecode: PLAYER_LOCK, valueSatoshis: 9_000n },
+    ],
+});
+
+test('close: after the draw height, ticket sales stop at the current count', () => accepts(closeSpec()));
+test('close refuses: before the draw height', () => rejects(closeSpec({ locktime: Number(ROUND.drawHeight) - 1 })));
+test('close refuses: changing the count while closing', () => {
+    const spec = closeSpec();
+    spec.outputs[0] = { ...spec.outputs[0], token: potToken(closedCommitment(4n)) };
+    rejects(spec);
+});
+test('close refuses: taking satoshis out of the pot', () => {
+    const spec = closeSpec();
+    spec.outputs[0] = { ...spec.outputs[0], valueSatoshis: 60_000n };
+    rejects(spec);
+});
+test('close refuses: minting a ticket while closing', () => {
+    const spec = closeSpec();
+    spec.outputs[1] = { ...spec.outputs[1], token: ticketToken(4n) };
+    rejects(spec);
+});
+test('close refuses: closing twice', () => rejects(closeSpec({ potCommitment: closedCommitment(3n) })));
+test('after the close, no one can buy a ticket', () => {
+    const spec = buySpec({ count: 3n });
+    spec.inputs[0] = { ...spec.inputs[0], spends: pot(50_000n, closedCommitment(3n)) };
+    rejects(spec);
+});
+
+// ---------- draw ----------
+const drawSpec = ({ count = 3n, potValue = 61_000n, unlock = UNLOCK.draw, winner, potCommitment } = {}) => ({
+    inputs: [
+        { unlockingBytecode: unlock, spends: pot(potValue, potCommitment ?? closedCommitment(count)) },
         { unlockingBytecode: new Uint8Array(), spends: funding(10_000n) },
     ],
     outputs: [
@@ -206,7 +247,7 @@ test('draw: the secret picks sha256(secret) mod tickets + 1', () => accepts(draw
 test('draw: one ticket always wins', () => accepts(drawSpec({ count: 1n })));
 test('draw: works on a big round', () => accepts(drawSpec({ count: 997n })));
 
-test('draw refuses: before the draw height', () => rejects(drawSpec({ locktime: Number(ROUND.drawHeight) - 1 })));
+test('draw refuses: a pot whose sales were never closed', () => rejects(drawSpec({ potCommitment: openCommitment(3n) })));
 test('draw refuses: the wrong secret', () => rejects(drawSpec({ unlock: UNLOCK.drawWrongSecret })));
 test('draw refuses: writing a different winner', () => {
     const real = winnerFor(ROUND.secret, 3n);
@@ -223,6 +264,7 @@ test('draw refuses: minting a ticket during the draw', () => {
     spec.outputs[1] = { ...spec.outputs[1], token: ticketToken(1n) };
     rejects(spec);
 });
+test('draw refuses: drawing twice', () => rejects(drawSpec({ potCommitment: drawnCommitment(2n) })));
 
 // ---------- claim ----------
 const claimSpec = ({ winner = 2n, ticketNumber = 2n, ticketCategory = CATEGORY, potCommitment } = {}) => ({
@@ -236,6 +278,11 @@ const claimSpec = ({ winner = 2n, ticketNumber = 2n, ticketCategory = CATEGORY, 
 test('claim: the winning ticket takes the whole pot', () => accepts(claimSpec()));
 
 test('claim refuses: a losing ticket', () => rejects(claimSpec({ ticketNumber: 3n })));
+test('claim refuses: a fungible token of the round posing as the winning ticket', () => {
+    const spec = claimSpec();
+    spec.inputs[1] = { ...spec.inputs[1], spends: { lockingBytecode: PLAYER_LOCK, valueSatoshis: 1_000n, token: { amount: 1n, category: CATEGORY } } };
+    rejects(spec);
+});
 test('claim refuses: a winning number from another round', () => rejects(claimSpec({ ticketCategory: OTHER_CATEGORY })));
 test('claim refuses: claiming before the draw', () => rejects(claimSpec({ potCommitment: openCommitment(3n) })));
 test('claim refuses: keeping the minting NFT', () => {
@@ -252,24 +299,28 @@ test('claim refuses: keeping the ticket', () => {
 // ---------- refund ----------
 const refundingCommitment = (count) => Uint8Array.from([ ...le4(count), 0xee ]);
 
-const refundSpec = ({ locktime = Number(ROUND.refundHeight), potCommitment = openCommitment(3n), nextCommitment = refundingCommitment(3n), ticketCategory = CATEGORY, potAfter = 41_000n } = {}) => ({
+const refundSpec = ({ locktime = Number(ROUND.refundHeight), potCommitment = openCommitment(3n), nextCommitment, ticket = ticketToken(2n), potAfter = 41_000n } = {}) => ({
     locktime,
     inputs: [
         { unlockingBytecode: UNLOCK.refund, spends: pot(61_000n, potCommitment) },
-        { unlockingBytecode: new Uint8Array(), spends: { lockingBytecode: PLAYER_LOCK, valueSatoshis: 1_000n, token: ticketToken(2n, ticketCategory) } },
+        { unlockingBytecode: new Uint8Array(), spends: { lockingBytecode: PLAYER_LOCK, valueSatoshis: 1_000n, token: ticket } },
     ],
     outputs: [
-        { lockingBytecode: POT_LOCK, valueSatoshis: potAfter, token: potToken(nextCommitment) },
+        { lockingBytecode: POT_LOCK, valueSatoshis: potAfter, token: potToken(nextCommitment ?? Uint8Array.from([ ...potCommitment.slice(0, 4), 0xee ])) },
         { lockingBytecode: PAYOUT_LOCK, valueSatoshis: 20_500n },
     ],
 });
 
-test('refund: an undrawn round pays a ticket back after the refund height and closes the round', () => accepts(refundSpec()));
-test('refund: later refunds keep the round closed', () => accepts(refundSpec({ potCommitment: refundingCommitment(3n) })));
+test('refund: an undrawn round pays a ticket back after the refund height and ends the round', () => accepts(refundSpec()));
+test('refund: a closed round that was never drawn refunds too', () => accepts(refundSpec({ potCommitment: closedCommitment(3n) })));
+test('refund: later refunds keep the round ended', () => accepts(refundSpec({ potCommitment: refundingCommitment(3n) })));
+test('refund: a drawn pot nobody claimed refunds after the claim height', () => accepts(refundSpec({ locktime: Number(ROUND.claimHeight), potCommitment: drawnCommitment(1n) })));
 
 test('refund refuses: before the refund height', () => rejects(refundSpec({ locktime: Number(ROUND.refundHeight) - 1 })));
-test('refund refuses: once the round is drawn', () => rejects(refundSpec({ potCommitment: drawnCommitment(2n), nextCommitment: Uint8Array.from([ ...le4(2n), 0xee ]) })));
-test('refund refuses: a ticket of another round', () => rejects(refundSpec({ ticketCategory: OTHER_CATEGORY })));
+test('refund refuses: a drawn pot before the claim height', () => rejects(refundSpec({ locktime: Number(ROUND.claimHeight) - 1, potCommitment: drawnCommitment(1n) })));
+test('refund refuses: a ticket of another round', () => rejects(refundSpec({ ticket: ticketToken(2n, OTHER_CATEGORY) })));
+test('refund refuses: a fungible token of the round posing as a ticket', () => rejects(refundSpec({ ticket: { amount: 1n, category: CATEGORY } })));
+test('refund refuses: a ticket that also carries fungible tokens', () => rejects(refundSpec({ ticket: { ...ticketToken(2n), amount: 5n } })));
 test('refund refuses: paying back more than the price', () => rejects(refundSpec({ potAfter: 40_999n })));
 test('refund refuses: keeping the ticket after the refund', () => {
     const spec = refundSpec();
@@ -280,12 +331,8 @@ test('refund refuses: leaving the round open after a refund', () => rejects(refu
 test('refund refuses: changing the ticket count', () => rejects(refundSpec({ nextCommitment: refundingCommitment(2n) })));
 
 // The bug this state fixes: refund ticket #2, then draw. If #2 won, nobody could ever claim the rest of the pot.
-test('after a refund, the round can never be drawn', () => {
-    const spec = drawSpec();
-    spec.inputs[0] = { ...spec.inputs[0], spends: pot(41_000n, refundingCommitment(3n)) };
-    spec.outputs[0] = { ...spec.outputs[0], valueSatoshis: 41_000n };
-    rejects(spec);
-});
+test('after a refund, the round can never be drawn', () => rejects(drawSpec({ potCommitment: refundingCommitment(3n) })));
+test('after a refund, the round can never be closed', () => rejects(closeSpec({ potCommitment: refundingCommitment(3n) })));
 test('after a refund, no one can buy into the round', () => {
     const spec = buySpec({ count: 3n });
     spec.inputs[0] = { ...spec.inputs[0], spends: pot(50_000n, refundingCommitment(3n)) };
@@ -328,7 +375,11 @@ test('client: round-state helpers produce what the covenant demands', async () =
     }
     assert.deepEqual(state.parseCommitment('03000000'), { phase: 'open', ticketCount: 3, ticketNumber: 3 });
     assert.equal(state.refundingCommitment(3), '03000000ee');
-    assert.deepEqual(state.parseCommitment('03000000ee'), { phase: 'refunding', ticketCount: 3 });
+    assert.deepEqual(state.parseCommitment('03000000ee'), { phase: 'refunding', number: 3 });
+    assert.equal(state.closedCommitment(3), '03000000c1');
+    assert.deepEqual(state.parseCommitment('03000000c1'), { phase: 'closed', ticketCount: 3 });
+    assert.equal(state.afterRefundCommitment('02000000d0'), '02000000ee');
+    assert.equal(state.potLockingBytecode({ ...ROUND, ticketPrice: ROUND.ticketPrice, secretHash: Buffer.from(ROUND.secretHash).toString('hex') }), Buffer.from(POT_LOCK).toString('hex'));
 });
 
 test('chain time: lock heights follow the Faster Blocks chunk rule measured on chipnet', async () => {

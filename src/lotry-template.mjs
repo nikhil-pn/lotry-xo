@@ -5,20 +5,24 @@
 //
 //   open round   organiser   genesis of a new token category, pot holds a minting NFT, commitment = 0 tickets
 //   buy ticket   anyone      pot grows by the ticket price and mints ticket #n (an immutable NFT) to the buyer
-//   draw         anyone who  after the draw height, reveals the organiser's secret; the winning number
-//                knows the   sha256(secret) mod tickets + 1 is written into the pot's commitment
+//   close        anyone      after the draw height, ticket sales stop and the count is frozen
+//   draw         whoever     reveals the organiser's secret on a closed pot; the covenant writes the winning
+//                knows the   number sha256(secret) mod tickets + 1 into the pot's commitment
 //                secret
 //   claim pot    winner      spends the pot together with the winning ticket; both NFTs are burned
-//   refund       any ticket  after the refund height, if the round was never drawn, a ticket is burned
-//                holder      and its price is paid back from the pot; the first refund closes the round for good
+//   refund       any ticket  after the refund height if the round was never drawn, or after the claim height if
+//                holder      the winner never claimed: a ticket is burned for its price; the first refund ends the round
 //
-// Nobody, the organiser included, can take the pot any other way: there is no signature path in the covenant.
+// No key can spend the pot: it only ever pays the winning ticket or refunds tickets.
+// Trust, stated plainly: the organiser knows the secret, so an organiser who also buys tickets before the close
+// could steer which ticket wins. The covenant guarantees the pot can't be taken, not that the organiser doesn't play.
 //
 // Pot commitment while open:      4-byte little-endian ticket count
+// Pot commitment once closed:      4-byte ticket count, then the marker byte 0xc1
 // Pot commitment once drawn:       4-byte little-endian winning ticket number, then the marker byte 0xd0
-// Pot commitment once refunding:   4-byte ticket count, then the marker byte 0xee (only refunds from then on)
+// Pot commitment once refunding:   4 bytes kept from before, then the marker byte 0xee (only refunds from then on)
 
-const ROUND_VARIABLES = [ 'ticketPrice', 'drawHeight', 'refundHeight', 'secretHash' ];
+const ROUND_VARIABLES = [ 'ticketPrice', 'drawHeight', 'refundHeight', 'claimHeight', 'secretHash' ];
 
 const NO_BALANCE = { satoshis: 0n, fungibleTokens: 0n, nonfungibleTokens: 0 };
 
@@ -26,16 +30,16 @@ export const lotryTemplate = {
     $schema: 'https://libauth.org/schemas/wallet-template-v0.schema.json',
 
     name: 'Lotry',
-    description: 'An on-chain lottery round. Tickets are NFTs, the pot is a covenant nobody can take, and the winner is drawn from a committed secret.',
+    description: 'An on-chain lottery round. Tickets are NFTs, the pot is a keyless covenant that only pays the winning ticket or refunds, and the winner is drawn from a committed secret.',
     icon: 'lotry',
 
-    version: '1',
+    version: '2',
     supported: [ 'BCH_2025_05', 'BCH_2026_05' ],
 
     resources: [
         {
             name: 'Lotry.fun',
-            description: 'The original Lotry, a tokenized lottery on Base (Base Batch India 2025 runner-up). This template migrates its core round to Bitcoin Cash.',
+            description: 'The original Lotry, a tokenized lottery built on Base for Base Batch India 2025 (runner-up), now running on Solana. This template migrates its core round to Bitcoin Cash.',
             url: 'https://www.lotry.fun',
         },
         {
@@ -48,7 +52,7 @@ export const lotryTemplate = {
     roles: {
         organiser: {
             name: 'Organiser',
-            description: 'Opens a round, keeps the secret that decides the winner, and reveals it at the draw. Can never spend the pot.',
+            description: 'Opens a round, keeps the secret that decides the winner, closes sales and reveals the secret at the draw. Can never spend the pot.',
             icon: 'organiser',
         },
         player: {
@@ -117,9 +121,29 @@ export const lotryTemplate = {
             transaction: 'buyTicketTransaction',
         },
 
+        closeRound: {
+            name: 'Close ticket sales',
+            description: 'After the draw height, freeze the ticket count so the secret is only revealed on a closed round.',
+            icon: 'close',
+
+            roles: {
+                organiser: {
+                    requirements: {
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'ticketCount', 'nextPotCommitment' ],
+                    },
+                },
+            },
+
+            requirements: {
+                participants: [ { role: 'organiser', slots: { min: 1, max: 1 } } ],
+            },
+
+            transaction: 'closeRoundTransaction',
+        },
+
         drawRound: {
             name: 'Draw the winner',
-            description: 'Reveal the round secret after the draw height and write the winning ticket number into the pot.',
+            description: 'Reveal the round secret on the closed pot; the covenant writes the winning ticket number into it.',
             icon: 'draw',
 
             roles: {
@@ -161,13 +185,13 @@ export const lotryTemplate = {
 
         refundTicket: {
             name: 'Refund a ticket',
-            description: 'After the refund height, if the round was never drawn, burn a ticket and get its price back from the pot. The first refund closes the round: it can no longer be drawn.',
+            description: 'Burn a ticket for its price back: after the refund height if the round was never drawn, or after the claim height if the winner never claimed. The first refund ends the round.',
             icon: 'refund',
 
             roles: {
                 player: {
                     requirements: {
-                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'nextPotCommitment', 'ticketNumber', 'payoutLockingScript' ],
+                        variables: [ ...ROUND_VARIABLES, 'roundCategory', 'potSatoshis', 'nextPotCommitment', 'ticketNumber', 'payoutLockingScript', 'refundLocktime' ],
                         secrets: [ 'playerKey' ],
                     },
                 },
@@ -213,6 +237,20 @@ export const lotryTemplate = {
             composable: true,
         },
 
+        closeRoundTransaction: {
+            name: 'Sales closed',
+            description: 'Ticket sales closed at $(<ticketCount>) tickets.',
+            icon: 'close',
+
+            inputs: [ { input: 'potCloseInput', inputIndex: 0 } ],
+            outputs: [ { output: 'potClosedOutput', outputIndex: 0 } ],
+
+            version: 2,
+            // The covenant checks the lock time, so the transaction must carry it.
+            locktime: '$(<drawHeight>)',
+            composable: true,
+        },
+
         drawRoundTransaction: {
             name: 'Winner drawn',
             description: 'Ticket #$(winningTicketNumber) won the pot of $(<potSatoshis>) satoshis.',
@@ -222,8 +260,7 @@ export const lotryTemplate = {
             outputs: [ { output: 'potDrawnOutput', outputIndex: 0 } ],
 
             version: 2,
-            // The covenant checks the lock time, so the transaction must carry it.
-            locktime: '$(<drawHeight>)',
+            locktime: 0,
             composable: true,
         },
 
@@ -258,7 +295,8 @@ export const lotryTemplate = {
             ],
 
             version: 2,
-            locktime: '$(<refundHeight>)',
+            // refundHeight for a round that was never drawn, claimHeight for a drawn pot nobody claimed.
+            locktime: '$(<refundLocktime>)',
             composable: false,
         },
     },
@@ -270,9 +308,15 @@ export const lotryTemplate = {
             icon: 'pot',
             unlockingScript: 'potBuyUnlock',
         },
+        potCloseInput: {
+            name: 'Round pot',
+            description: 'The pot when ticket sales close.',
+            icon: 'pot',
+            unlockingScript: 'potCloseUnlock',
+        },
         potDrawInput: {
             name: 'Round pot',
-            description: 'The pot when the winner is drawn.',
+            description: 'The closed pot when the winner is drawn.',
             icon: 'pot',
             unlockingScript: 'potDrawUnlock',
         },
@@ -339,6 +383,18 @@ export const lotryTemplate = {
                 nft: { capability: 'none', commitment: '$(<ticketCommitment>)' },
             },
         },
+        potClosedOutput: {
+            name: 'Closed pot',
+            description: 'Ticket sales closed at $(<ticketCount>) tickets; waiting for the draw.',
+            icon: 'pot',
+            lockingScript: 'potLockingScript',
+            valueSatoshis: '$(<potSatoshis>)',
+            token: {
+                category: '$(<roundCategory>)',
+                amount: 0n,
+                nft: { capability: 'minting', commitment: '$(<nextPotCommitment>)' },
+            },
+        },
         potDrawnOutput: {
             name: 'Drawn pot',
             description: 'The pot waiting for ticket #$(winningTicketNumber) to claim it.',
@@ -402,6 +458,7 @@ export const lotryTemplate = {
                     state: { variables: [ 'roundCategory' ] },
                     actions: [
                         { action: 'buyTicket', role: 'organiser' },
+                        { action: 'closeRound', role: 'organiser' },
                         { action: 'drawRound', role: 'organiser' },
                     ],
                     selectable: false,
@@ -447,6 +504,7 @@ export const lotryTemplate = {
         nextOpenCommitment: '<ticketCount> OP_1ADD <4> OP_NUM2BIN',
         winningTicketNumber: '<roundSecret> OP_SHA256 <4> OP_SPLIT OP_DROP <0x00> OP_CAT OP_BIN2NUM <ticketCount> OP_MOD OP_1ADD',
         drawnCommitment: 'winningTicketNumber <4> OP_NUM2BIN <0xd0> OP_CAT',
+        closedCommitment: '<ticketCount> <4> OP_NUM2BIN <0xc1> OP_CAT',
         drawnCommitmentFromWinner: '<winningTicket> <4> OP_NUM2BIN <0xd0> OP_CAT',
         refundingCommitment: '<ticketCount> <4> OP_NUM2BIN <0xee> OP_CAT',
 
@@ -458,8 +516,9 @@ export const lotryTemplate = {
         // The pot's commitment has the open (4 bytes) or drawn (5 bytes) shape; leaves the commitment on the stack.
         potIsOpen: 'OP_0 OP_UTXOTOKENCOMMITMENT OP_SIZE OP_4 OP_NUMEQUALVERIFY',
         potIsDrawn: 'OP_0 OP_UTXOTOKENCOMMITMENT OP_SIZE OP_5 OP_NUMEQUALVERIFY',
-        // Input 1 is a ticket of this round: an immutable NFT, so its category has no capability byte.
-        input1IsTicket: 'OP_1 OP_UTXOTOKENCATEGORY roundCategoryOnly OP_EQUALVERIFY',
+        // Input 1 is a ticket of this round: an immutable NFT (its category has no capability byte) with a
+        // 4-byte number and no fungible amount, so fungible-only tokens of the category can never pass as tickets.
+        input1IsTicket: 'OP_1 OP_UTXOTOKENCATEGORY roundCategoryOnly OP_EQUALVERIFY OP_1 OP_UTXOTOKENAMOUNT OP_0 OP_NUMEQUALVERIFY OP_1 OP_UTXOTOKENCOMMITMENT OP_SIZE OP_4 OP_NUMEQUALVERIFY OP_DROP',
         // Output N (when it exists) carries no token, so no NFT of the round can be copied or kept.
         output1HasNoToken: 'OP_TXOUTPUTCOUNT OP_1 OP_GREATERTHAN OP_IF OP_1 OP_OUTPUTTOKENCATEGORY OP_0 OP_EQUALVERIFY OP_ENDIF',
         output2HasNoToken: 'OP_TXOUTPUTCOUNT OP_2 OP_GREATERTHAN OP_IF OP_2 OP_OUTPUTTOKENCATEGORY OP_0 OP_EQUALVERIFY OP_ENDIF',
@@ -477,11 +536,23 @@ export const lotryTemplate = {
             output2HasNoToken
         `,
 
-        // 2. Draw: after the draw height, anyone holding the secret fixes the winner: sha256(secret) mod tickets + 1.
-        potDraw: `
+        // 2. Close: after the draw height, anyone can stop ticket sales. The count is frozen before any reveal,
+        //    so a secret seen in a failed or pending draw can't be used to steer the count.
+        potClose: `
             <drawHeight> OP_CHECKLOCKTIMEVERIFY OP_DROP
+            potIsOpen <0xc1> OP_CAT
+            OP_0 OP_OUTPUTTOKENCOMMITMENT OP_EQUALVERIFY
+            potCarriesOn
+            OP_0 OP_OUTPUTVALUE OP_0 OP_UTXOVALUE OP_NUMEQUALVERIFY
+            OP_TXOUTPUTCOUNT OP_2 OP_LESSTHANOREQUAL OP_VERIFY
+            output1HasNoToken
+        `,
+
+        // 3. Draw: on a closed pot, whoever reveals the secret makes the covenant write the winner:
+        //    sha256(secret) mod tickets + 1.
+        potDraw: `
             OP_DUP OP_SHA256 <secretHash> OP_EQUALVERIFY
-            potIsOpen
+            OP_0 OP_UTXOTOKENCOMMITMENT OP_4 OP_SPLIT <0xc1> OP_EQUALVERIFY
             OP_BIN2NUM OP_DUP OP_0 OP_GREATERTHAN OP_VERIFY
             OP_SWAP OP_SHA256 <4> OP_SPLIT OP_DROP <0x00> OP_CAT OP_BIN2NUM
             OP_SWAP OP_MOD OP_1ADD
@@ -493,7 +564,7 @@ export const lotryTemplate = {
             output1HasNoToken
         `,
 
-        // 3. Claim: the drawn pot is spent with the winning ticket at input 1. Every token is burned.
+        // 4. Claim: the drawn pot is spent with the winning ticket at input 1. Every token is burned.
         potClaim: `
             potIsDrawn
             OP_4 OP_SPLIT <0xd0> OP_EQUALVERIFY
@@ -504,14 +575,22 @@ export const lotryTemplate = {
             output1HasNoToken
         `,
 
-        // 4. Refund: after the refund height, an undrawn pot pays back one ticket price for one burned ticket.
-        //    The first refund moves the pot to the refunding state (count, then 0xee) for good: from then on it can
-        //    only refund, so it can never be drawn onto a ticket that was already burned for its refund.
+        // 5. Refund: burn a ticket for its price back, after the refund height if the round was never drawn (open or
+        //    closed), or after the claim height if it was drawn but nobody claimed (a lost winning ticket must not lock
+        //    the pot forever). The first refund marks the pot refunding (0xee) for good: no buys, draw or claim after it.
         potRefund: `
             <refundHeight> OP_CHECKLOCKTIMEVERIFY OP_DROP
             OP_0 OP_UTXOTOKENCOMMITMENT
             OP_DUP OP_SIZE OP_NIP OP_4 OP_NUMEQUAL
-            OP_NOTIF OP_4 OP_SPLIT <0xee> OP_EQUALVERIFY OP_ENDIF
+            OP_NOTIF
+                OP_4 OP_SPLIT
+                OP_DUP <0xd0> OP_EQUAL
+                OP_IF
+                    OP_DROP <claimHeight> OP_CHECKLOCKTIMEVERIFY OP_DROP
+                OP_ELSE
+                    OP_DUP <0xee> OP_EQUAL OP_SWAP <0xc1> OP_EQUAL OP_BOOLOR OP_VERIFY
+                OP_ENDIF
+            OP_ENDIF
             <0xee> OP_CAT
             OP_0 OP_OUTPUTTOKENCOMMITMENT OP_EQUALVERIFY
             input1IsTicket
@@ -522,20 +601,22 @@ export const lotryTemplate = {
             output2HasNoToken
         `,
 
-        // The pot covenant. The unlocking script picks a path with 1 to 4 (the secret goes under the 2).
+        // The pot covenant. The unlocking script picks a path with 1 to 5 (the secret goes under the 2).
         potRedeem: `
             OP_INPUTINDEX OP_0 OP_NUMEQUALVERIFY
             OP_DUP OP_1 OP_NUMEQUAL OP_IF OP_DROP potBuy OP_ELSE
             OP_DUP OP_2 OP_NUMEQUAL OP_IF OP_DROP potDraw OP_ELSE
             OP_DUP OP_3 OP_NUMEQUAL OP_IF OP_DROP potClaim OP_ELSE
-            OP_4 OP_NUMEQUALVERIFY potRefund
-            OP_ENDIF OP_ENDIF OP_ENDIF
+            OP_DUP OP_4 OP_NUMEQUAL OP_IF OP_DROP potRefund OP_ELSE
+            OP_5 OP_NUMEQUALVERIFY potClose
+            OP_ENDIF OP_ENDIF OP_ENDIF OP_ENDIF
             OP_1
         `,
         potBuyUnlock: 'OP_1',
         potDrawUnlock: '<roundSecret> OP_2',
         potClaimUnlock: 'OP_3',
         potRefundUnlock: 'OP_4',
+        potCloseUnlock: 'OP_5',
 
         ticketLock: 'OP_DUP OP_HASH160 <$(<playerKey.public_key> OP_HASH160)> OP_EQUALVERIFY OP_CHECKSIG',
         ticketUnlock: '<playerKey.schnorr_signature.all_outputs> <playerKey.public_key>',
@@ -558,15 +639,17 @@ export const lotryTemplate = {
 
     variables: {
         ticketPrice: { name: 'Ticket price', description: 'Satoshis paid into the pot for one ticket.', type: 'satoshis' },
-        drawHeight: { name: 'Draw height', description: 'Block height from which the winner can be drawn.', type: 'integer' },
-        refundHeight: { name: 'Refund height', description: 'Block height from which tickets of an undrawn round can be refunded.', type: 'integer' },
+        drawHeight: { name: 'Draw height', description: 'Lock height from which ticket sales can be closed and the winner drawn (since Faster Blocks, one lock height = ten 1-minute blocks).', type: 'integer' },
+        refundHeight: { name: 'Refund height', description: 'Lock height from which tickets of a round that was never drawn can be refunded.', type: 'integer' },
+        claimHeight: { name: 'Claim height', description: 'Lock height from which a drawn pot nobody claimed can be refunded, so a lost winning ticket never locks the pot.', type: 'integer' },
+        refundLocktime: { name: 'Refund lock time', description: 'refundHeight for a round never drawn, claimHeight for a drawn pot nobody claimed.', type: 'integer' },
         secretHash: { name: 'Secret hash', description: 'SHA-256 of the organiser secret that decides the winner.', type: 'bytes' },
         roundSecret: { name: 'Round secret', description: 'The organiser secret, revealed at the draw.', type: 'bytes' },
         roundCategory: { name: 'Round category', description: 'Token category of this round: the pot NFT and every ticket.', type: 'token_category' },
         seedSatoshis: { name: 'Seed', description: 'Satoshis the organiser puts in the pot when opening it.', type: 'satoshis' },
         potSatoshis: { name: 'Pot', description: 'Satoshis in the pot right now.', type: 'satoshis' },
-        potCommitment: { name: 'Pot state', description: 'The pot NFT commitment: the ticket count (openCommitment), or the winner (drawnCommitment).', type: 'token_commitment' },
-        nextPotCommitment: { name: 'Next pot state', description: 'The pot NFT commitment after this action: nextOpenCommitment for a ticket, drawnCommitment for a draw, refundingCommitment for a refund.', type: 'token_commitment' },
+        potCommitment: { name: 'Pot state', description: 'The pot NFT commitment: open (openCommitment), closed (closedCommitment), drawn (drawnCommitment) or refunding (refundingCommitment).', type: 'token_commitment' },
+        nextPotCommitment: { name: 'Next pot state', description: 'The pot NFT commitment after this action: nextOpenCommitment for a ticket, closedCommitment for a close, drawnCommitment for a draw, refundingCommitment for a refund.', type: 'token_commitment' },
         ticketCommitment: { name: 'Ticket number', description: 'The new ticket NFT commitment: the 4-byte ticket number (nextOpenCommitment).', type: 'token_commitment' },
         ticketCount: { name: 'Tickets sold', description: 'Tickets sold so far in this round.', type: 'integer' },
         winningTicket: { name: 'Winning ticket', description: 'The ticket number written into the pot at the draw.', type: 'integer' },
@@ -584,6 +667,7 @@ export const lotryTemplate = {
         { name: 'draw', hash: '0000000000000000000000' },
         { name: 'claim', hash: '0000000000000000000000' },
         { name: 'refund', hash: '0000000000000000000000' },
+        { name: 'close', hash: '0000000000000000000000' },
         { name: 'pot', hash: '0000000000000000000000' },
     ],
 };
