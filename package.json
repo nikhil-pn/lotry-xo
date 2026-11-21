@@ -13,5 +13,8 @@
     "@xo-cash/types": "^0.0.8",
     "@xo-cash/utils": "^0.0.12",
     "fake-indexeddb": "^6.2.8"
+  },
+  "scripts": {
+    "test": "node --test test/"
   }
 }
