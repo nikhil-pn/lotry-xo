@@ -55,8 +55,10 @@ const findIntent = (actionIdentifier, intents) => {
 // Adds change if there is any worth keeping, signs every input this wallet owns, and optionally broadcasts.
 // The engine's fee estimate does not see the size of the pot's unlocking script (the whole covenant is pushed),
 // so transactions that spend the pot pass an explicit fee and get their change output built here.
-const finish = async (engine, invitationIdentifier, { broadcast, feeSatoshis }) => {
-    if (feeSatoshis === undefined) {
+const finish = async (engine, invitationIdentifier, { broadcast, feeSatoshis, addChange = true }) => {
+    if (!addChange) {
+        // Another participant already settled the change and the fee; adding ours would eat their fee.
+    } else if (feeSatoshis === undefined) {
         const availability = await engine.calculateChangeAvailability(invitationIdentifier);
         if (availability.canAddChange) await engine.addChangeToInvitation(invitationIdentifier);
     } else {
@@ -79,7 +81,8 @@ const finish = async (engine, invitationIdentifier, { broadcast, feeSatoshis }) 
         const preview = await engine.buildInvitationTransactionFromMergedCommit(invitationIdentifier);
         const decoded = decodeTransaction(hexToBin(preview.serializedTransaction));
         if (process.env.LOTRY_DRY_RUN === "hex") console.log(preview.serializedTransaction);
-        console.log(stringify({ dryRun: true, locktime: decoded.locktime, sequenceNumbers: decoded.inputs.map((input) => input.sequenceNumber), outputs: decoded.outputs.length, chain: await engine.getChainStatus() }));
+        const change = await engine.calculateChange(invitationIdentifier);
+        console.log(stringify({ dryRun: true, bytes: preview.transactionByteLength, leftoverAfterOutputs: change.valueSatoshis, locktime: decoded.locktime, sequenceNumbers: decoded.inputs.map((input) => input.sequenceNumber), outputs: decoded.outputs.map((output) => output.valueSatoshis), unlockingSizes: decoded.inputs.map((input) => input.unlockingBytecode.length) }));
         process.exit(0);
     }
     const missing = await engine.listMissingRequirements(invitationIdentifier);
@@ -272,7 +275,8 @@ const steps = {
             outputs: [ { outputIdentifier: 'ticketOutput', roleIdentifier: 'player' } ],
             inputs: [ outpointOf(funding) ],
         });
-        const { storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: false });
+        // The buyer pays the whole fee; the engine's estimate misses the pot's unlocking script (the covenant is pushed).
+        const { storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: false, feeSatoshis: 2_000 });
         const file = saveInvitation(round.roundId, `buy-${sale}-2-${wallet.toLowerCase()}`, storedInvitation.invitation);
         console.log(`${wallet} took the ticket and signed: ${file}`);
         await closeWallet(engine);
@@ -289,7 +293,7 @@ const steps = {
         const taken = loadInvitation(round.roundId, files[0].replace(/\.json$/, ''));
         const updated = await engine.updateInvitation(taken);
         const { invitationIdentifier } = updated.invitation;
-        const { builtTransaction, storedInvitation, missing } = await finish(engine, invitationIdentifier, { broadcast: true });
+        const { builtTransaction, storedInvitation, missing } = await finish(engine, invitationIdentifier, { broadcast: true, addChange: false });
         saveInvitation(round.roundId, `buy-${sale}-3-sealed`, storedInvitation.invitation);
         const ticketNumber = sale;
         logStep(round.roundId, { step: 'buy', ticketNumber, buyer: files[0].split('-').at(-1).replace('.json', ''), transactionHash: builtTransaction.transactionHash });
@@ -459,6 +463,29 @@ const steps = {
         saveInvitation(round.roundId, `refund-${ticketNumber}`, storedInvitation.invitation);
         logStep(round.roundId, { step: 'refund', ticketNumber, holder: wallet.toLowerCase(), transactionHash: builtTransaction.transactionHash });
         console.log(`${wallet} refunded ticket #${ticketNumber}: ${txLink(builtTransaction.transactionHash)}`);
+        await closeWallet(engine);
+    },
+
+    // Any wallet: archives its invitations that were never broadcast (releasing the coins they reserved),
+    // and keeps every broadcast one active.
+    async abandon() {
+        const wallet = positional[0] ?? 'ORGANISER';
+        const engine = await openWallet(wallet);
+        const wasBroadcast = (invitation) => Object.values(invitation.result?.transactions ?? {})
+            .some((transaction) => transaction.broadcastedAtTimestamp !== undefined);
+        let archived = 0;
+        let restored = 0;
+        for (const stored of await engine.listInvitations({ archived: 'include' })) {
+            const { invitationIdentifier } = stored.invitation;
+            const isArchived = stored.isArchived === true;
+            if (wasBroadcast(stored.invitation)) {
+                if (isArchived) { await engine.unarchiveInvitation(invitationIdentifier).catch(() => {}); restored += 1; }
+            } else if (!isArchived) {
+                await engine.archiveInvitation(invitationIdentifier);
+                archived += 1;
+            }
+        }
+        console.log(`${wallet}: archived ${archived} unbroadcast invitations, kept ${restored} broadcast ones active`);
         await closeWallet(engine);
     },
 
