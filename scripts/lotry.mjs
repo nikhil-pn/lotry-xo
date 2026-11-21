@@ -48,9 +48,24 @@ const findIntent = (actionIdentifier, intents) => {
 };
 
 // Adds change if there is any worth keeping, signs every input this wallet owns, and optionally broadcasts.
-const finish = async (engine, invitationIdentifier, { broadcast }) => {
-    const availability = await engine.calculateChangeAvailability(invitationIdentifier);
-    if (availability.canAddChange) await engine.addChangeToInvitation(invitationIdentifier);
+// The engine's fee estimate does not see the size of the pot's unlocking script (the whole covenant is pushed),
+// so transactions that spend the pot pass an explicit fee and get their change output built here.
+const finish = async (engine, invitationIdentifier, { broadcast, feeSatoshis }) => {
+    if (feeSatoshis === undefined) {
+        const availability = await engine.calculateChangeAvailability(invitationIdentifier);
+        if (availability.canAddChange) await engine.addChangeToInvitation(invitationIdentifier);
+    } else {
+        const leftover = BigInt((await engine.calculateChange(invitationIdentifier)).valueSatoshis);
+        const change = leftover - BigInt(feeSatoshis);
+        if (change >= BigInt(DUST_LIMIT_SATOSHIS)) {
+            const invitation = (await engine.getInvitation(invitationIdentifier)).invitation;
+            await engine.appendInvitation(invitationIdentifier, {
+                templateIdentifier: invitation.templateIdentifier,
+                actionIdentifier: invitation.actionIdentifier,
+                outputs: [ { lockingBytecode: hexToBin(await engine.generateLockingBytecodeFromDefaultPolicy('receive')), valueSatoshis: change } ],
+            });
+        }
+    }
     for (const inputIndex of await engine.listOwnInputIndexes(invitationIdentifier)) {
         await engine.signInvitation(invitationIdentifier, inputIndex);
     }
@@ -309,7 +324,7 @@ const steps = {
             outputs: [ { outputIdentifier: 'potDrawnOutput' } ],
             inputs: [ outpointOf(feeCoin) ],
         });
-        const { builtTransaction, storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: true });
+        const { builtTransaction, storedInvitation } = await finish(engine, invitationIdentifier, { broadcast: true, feeSatoshis: 1_500 });
         saveInvitation(round.roundId, 'draw', storedInvitation.invitation);
         logStep(round.roundId, { step: 'draw', winningTicket, tickets: pot.state.ticketCount, potSatoshis: pot.valueSatoshis, transactionHash: builtTransaction.transactionHash });
         console.log(`Ticket #${winningTicket} of ${pot.state.ticketCount} won ${pot.valueSatoshis} sats: ${txLink(builtTransaction.transactionHash)}`);
