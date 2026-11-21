@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lotry on XO · BCH BLAZE 2026 slides</title>
+  <meta name="description" content="Lotry on XO, the BCH BLAZE 2026 deck (Widget Factory template): story, benefits, BCH usage, vision.">
+  <meta name="theme-color" content="#0b0b0a">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face { font-family: "Instrument Serif"; src: url("fonts/instrument-serif.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: block; }
+    @font-face { font-family: "Instrument Serif"; src: url("fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; font-weight: 400; font-display: block; }
+    @font-face { font-family: "Inter Tight"; src: url("fonts/inter-tight.woff2") format("woff2"); font-style: normal; font-weight: 400 700; font-display: block; }
+
+    :root {
+      --bg: #0b0b0a;
+      --bg-2: #141412;
+      --bg-3: #1c1c19;
+      --line: rgba(243, 241, 234, 0.13);
+      --line-2: rgba(243, 241, 234, 0.22);
+      --text: #f3f1ea;
+      --soft: #d6d3c9;
+      --muted: #9c998f;
+      --paper: #ebe7dc;
+      --ink: #121210;
+      --ink-soft: #55534c;
+      --mint: #2fe68f;
+      --mint-ink: #04180d;
+      --serif: "Instrument Serif", Georgia, serif;
+      --sans: "Inter Tight", system-ui, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #050505; }
+    body {
+      font-family: var(--sans);
+      color: var(--soft);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+    h1, h2, h3, p, ul { margin: 0; }
+    h1, h2, h3 { font-weight: 400; color: var(--text); }
+    img { display: block; }
+    a { color: inherit; }
+
+    /* ---------- One slide: 1280 x 720 ---------- */
+
+    .slide {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background: var(--bg);
+      padding: 72px 88px;
+    }
+    .slide::before {
+      /* lotry.fun's faint grid */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(243, 241, 234, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243, 241, 234, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, #000 30%, transparent 85%);
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, #000 30%, transparent 85%);
+      pointer-events: none;
+    }
+    .slide > * { position: relative; }
+    .slide__corner {
+      position: absolute;
+      top: 28px;
+      left: 32px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--mint);
+      color: var(--mint-ink);
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+    .slide__num {
+      position: absolute;
+      right: 36px;
+      bottom: 28px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .slide__num b { color: var(--text); font-weight: 600; }
+    .mint { color: var(--mint); }
+    em { font-style: italic; }
+
+    /* paper ticket with perforated edges (lotry.fun) */
+    .paper {
+      --hole: 10px;
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 8px;
+      -webkit-mask:
+        radial-gradient(circle var(--hole) at 0 50%, transparent 98%, #000) left / 51% 30px repeat-y,
+        radial-gradient(circle var(--hole) at 100% 50%, transparent 98%, #000) right / 51% 30px repeat-y;
+      mask:
+        radial-gradient(circle var(--hole) at 0 50%, transparent 98%, #000) left / 51% 30px repeat-y,
+        radial-gradient(circle var(--hole) at 100% 50%, transparent 98%, #000) right / 51% 30px repeat-y;
+    }
+
+    /* ---------- 1. Title ---------- */
+
+    .s-title { display: grid; grid-template-columns: 1fr 420px; gap: 72px; align-items: center; padding-top: 96px; padding-bottom: 96px; }
+    .s-title h1 { font-family: var(--serif); font-size: 128px; line-height: 0.92; letter-spacing: -0.02em; }
+    .s-title h1 em { color: var(--muted); }
+    .s-title .tagline { margin-top: 26px; font-family: var(--serif); font-style: italic; font-size: 42px; line-height: 1.05; color: var(--mint); text-wrap: balance; }
+    .s-title .team { margin-top: 30px; font-size: 24px; font-weight: 600; color: var(--text); }
+    .links { margin-top: 56px; display: flex; flex-wrap: wrap; gap: 14px 30px; font-size: 18px; color: var(--soft); }
+    .links span { display: inline-flex; align-items: center; gap: 9px; }
+    .links svg { width: 19px; height: 19px; fill: none; stroke: var(--mint); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .links svg.fill { fill: var(--mint); stroke: none; }
+    .title-card { width: 420px; height: 420px; padding: 34px 44px; transform: rotate(-2.5deg); display: flex; flex-direction: column; }
+    .title-card__top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+    .title-card__stamp { background: var(--mint); color: var(--ink); border: 1.5px solid var(--ink); border-radius: 4px; padding: 2px 8px; font-size: 11px; transform: rotate(3deg); }
+    .title-card img { width: 172px; height: 172px; margin: 20px auto 14px; transform: rotate(8deg); }
+    .title-card__big { font-family: var(--serif); font-size: 56px; line-height: 1; text-align: center; color: var(--ink); }
+    .title-card__big em { font-size: 0.5em; color: var(--ink-soft); }
+    .title-card__small { margin-top: 8px; text-align: center; font-size: 15px; color: var(--ink-soft); }
+
+    /* ---------- 2. Story ---------- */
+
+    .bar {
+      display: inline-block;
+      background: var(--mint);
+      color: var(--mint-ink);
+      font-family: var(--serif);
+      font-size: 44px;
+      line-height: 1;
+      padding: 12px 28px 14px;
+      margin-left: -28px;
+    }
+    .s-story { padding-top: 84px; }
+    .s-story .cols { margin-top: 44px; display: grid; grid-template-columns: 1fr 470px; gap: 40px; align-items: start; }
+    .story-text { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 34px 36px; }
+    .story-text p { font-size: 23px; line-height: 1.45; color: var(--soft); }
+    .story-text p + p { margin-top: 16px; }
+    .story-text strong { color: var(--text); font-weight: 600; }
+    .story-line { border: 1px solid var(--mint); border-radius: 12px; padding: 32px 34px; background: var(--bg-2); }
+    .era + .era { margin-top: 24px; padding-top: 24px; border-top: 1px dashed var(--line-2); }
+    .era__when { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .era__what { margin-top: 6px; font-family: var(--serif); font-size: 40px; line-height: 1.05; color: var(--text); }
+    .era__sub { margin-top: 8px; font-size: 18px; line-height: 1.4; color: var(--soft); }
+    .era--now .era__when { color: var(--mint); }
+    .story-proof { margin-top: 24px; font-size: 16px; line-height: 1.45; color: var(--muted); }
+
+    /* ---------- 3 + 5. Title left, bullets right (template layout) ---------- */
+
+    .s-list { display: grid; grid-template-columns: 330px 1fr; gap: 56px; align-items: center; }
+    .s-list h2 { font-family: var(--serif); font-size: 64px; line-height: 1; letter-spacing: -0.01em; }
+    .s-list h2 em { color: var(--mint); }
+    .s-list .rule { margin-top: 22px; width: 64px; height: 12px; background: var(--mint); }
+    .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 34px 40px; }
+    .bullets { list-style: none; padding: 0; }
+    .bullets > li { position: relative; padding-left: 30px; font-size: 26px; line-height: 1.25; font-weight: 600; color: var(--text); }
+    .bullets > li + li { margin-top: 15px; }
+    .bullets > li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 11px; height: 11px; border-radius: 50%; background: var(--mint); }
+    .bullets ul { list-style: none; padding: 0; margin-top: 4px; }
+    .bullets ul li { position: relative; padding-left: 22px; font-size: 18.5px; line-height: 1.35; font-weight: 400; color: var(--soft); }
+    .bullets ul li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--muted); }
+
+    /* ---------- 4. BCH usage ---------- */
+
+    .s-usage { padding-top: 60px; }
+    .s-usage h2 { text-align: center; font-family: var(--serif); font-size: 72px; line-height: 1; }
+    .s-usage h2 em { color: var(--mint); }
+    .s-usage .lead { margin-top: 12px; text-align: center; font-size: 21px; color: var(--soft); }
+    .s-usage .cols { margin-top: 34px; display: grid; grid-template-columns: 1fr 560px; gap: 36px; align-items: start; }
+    .uses { display: grid; gap: 14px; }
+    .use { border-left: 3px solid var(--mint); padding: 2px 0 2px 16px; }
+    .use h3 { font-size: 20px; font-weight: 700; color: var(--text); }
+    .use p { margin-top: 4px; font-size: 16px; line-height: 1.38; color: var(--soft); }
+    .use code { font-family: var(--mono); font-size: 13.5px; color: var(--text); }
+    .codecard { background: #f4f2ec; color: #1d1d1a; border-radius: 10px; padding: 18px 22px 20px; }
+    .codecard__head { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6961; }
+    .codecard pre { margin: 10px 0 0; font-family: var(--mono); font-size: 13.4px; line-height: 1.62; white-space: pre; }
+    .codecard .k { color: #0d7a45; font-weight: 600; }
+    .codecard .v { color: #8a4b00; }
+    .codecard .c { color: #8b8980; }
+
+    /* ---------- 6. Thank you ---------- */
+
+    .s-thanks { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .s-thanks img { width: 150px; height: 150px; transform: rotate(8deg); }
+    .s-thanks h2 { margin-top: 10px; font-family: var(--serif); font-size: 168px; line-height: 0.9; letter-spacing: -0.02em; }
+    .s-thanks h2 em { color: var(--mint); }
+    .s-thanks .team { margin-top: 34px; font-size: 24px; font-weight: 600; color: var(--text); }
+    .s-thanks .links { justify-content: center; margin-top: 30px; }
+    .s-thanks .before { margin-top: 18px; font-size: 16px; color: var(--muted); }
+
+    /* ---------- Screen: one slide at a time, scaled to fit ---------- */
+
+    @media screen {
+      .deck { min-height: 100vh; min-height: 100dvh; }
+      .frame { position: relative; overflow: hidden; margin: 0 auto; }
+      .frame .slide { transform-origin: 0 0; transform: scale(var(--scale, 1)); }
+      .deck--single .frame { display: none; }
+      .deck--single .frame.is-active { display: block; }
+      .deck--single { display: grid; place-items: center; padding-bottom: 56px; }
+      .deck--stack { padding: 16px 0 72px; }
+      .deck--stack .frame { margin-bottom: 14px; border-radius: 6px; }
+      .ui {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        font-size: 14px;
+        color: var(--muted);
+        background: rgba(5, 5, 5, 0.9);
+        border-top: 1px solid var(--line);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .ui button {
+        font: inherit;
+        color: var(--text);
+        background: var(--bg-3);
+        border: 1px solid var(--line-2);
+        border-radius: 999px;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .ui button:hover { border-color: var(--mint); }
+      .ui a { color: var(--soft); text-decoration: none; }
+      .ui a:hover { color: var(--mint); }
+      .ui .count { min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; color: var(--text); }
+      .deck--stack ~ .ui button, .deck--stack ~ .ui .count { display: none; }
+    }
+
+    /* ---------- Print: six 1280 x 720 pages ---------- */
+
+    @page { size: 1280px 720px; margin: 0; }
+    @media print {
+      html, body { background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .ui { display: none !important; }
+      .deck { display: block !important; padding: 0 !important; }
+      .frame { display: block !important; width: 1280px !important; height: 720px !important; margin: 0 !important; border-radius: 0 !important; overflow: hidden; break-after: page; page-break-after: always; }
+      .frame:last-child { break-after: auto; page-break-after: auto; }
+      .frame .slide { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck" aria-label="Lotry on XO slides">
+
+    <!-- 1. Title (Widget Factory slides 1 + 2: name, team, links, image; the one-line pitch and the repo) -->
+    <div class="frame"><section class="slide s-title" aria-label="Slide 1: title">
+      <span class="slide__corner">BCH BLAZE 2026</span>
+      <div>
+        <h1>Lotry <em>on</em> XO</h1>
+        <p class="tagline">The lottery the organiser can’t run away with.</p>
+        <p class="team">Team: Nikhil PN &amp; Hina Hanan</p>
+        <div class="links">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>lotry.exprmnts.fun</span>
+          <span><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L1.8 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z"/></svg><span id="x-handle">@X_HANDLE_PENDING</span></span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>github.com/nikhil-pn/lotry-xo</span>
+        </div>
+      </div>
+      <div class="paper title-card">
+        <div class="title-card__top"><span>Round 2 · Chipnet</span><span class="title-card__stamp">Claimed</span></div>
+        <img src="assets/clover.png" alt="" width="190" height="190">
+        <p class="title-card__big">62,000 <em>sats</em></p>
+        <p class="title-card__small">won by ticket #1, drawn by the covenant</p>
+      </div>
+      <p class="slide__num"><b>01</b> / 06</p>
+    </section></div>
+
+    <!-- 2. The Story -->
+    <div class="frame"><section class="slide s-story" aria-label="Slide 2: the story of Lotry">
+      <h2 class="bar">The Story of Lotry</h2>
+      <div class="cols">
+        <div class="story-text">
+          <p>In 2025 we built <strong>Lotry.fun on Base</strong> at Base Batch India, where it was a <strong>runner-up</strong>. Tickets were tokens, a contract held the pot, and Chainlink VRF picked the winner.</p>
+          <p>But the pot sat in a contract with an owner, and the owner triggered the payout. Players had to trust that key.</p>
+          <p>On Bitcoin Cash a coin can carry its own rules. So for BLAZE we moved the core round there: <strong>the pot is a coin with no key</strong>, and the chain itself checks the draw, the payout and every refund.</p>
+        </div>
+        <div class="story-line">
+          <div class="era">
+            <p class="era__when">2025 · Base Batch India · runner-up</p>
+            <p class="era__what">Lotry.fun on Base</p>
+            <p class="era__sub">ERC-20 tickets · owner-held pot · Chainlink VRF</p>
+          </div>
+          <div class="era era--now">
+            <p class="era__when">Nov 2026 · BCH BLAZE</p>
+            <p class="era__what">Lotry on XO</p>
+            <p class="era__sub">NFT tickets · keyless pot · commit-reveal checked on chain · refunds</p>
+          </div>
+          <p class="story-proof">Written during BLAZE. Live on Chipnet: 3 rounds, 15 transactions, every invitation file public.</p>
+        </div>
+      </div>
+      <p class="slide__num"><b>02</b> / 06</p>
+    </section></div>
+
+    <!-- 3. Benefits -->
+    <div class="frame"><section class="slide s-list" aria-label="Slide 3: benefits">
+      <div>
+        <h2>Benefits of Lotry <em>on XO</em></h2>
+        <div class="rule"></div>
+      </div>
+      <div class="panel">
+        <ul class="bullets">
+          <li>The organiser can never touch the pot
+            <ul><li>no key, no admin path, no signature check at all</li></ul></li>
+          <li>Tickets are real NFTs you hold
+            <ul><li>numbered CashTokens in the player's own wallet</li></ul></li>
+          <li>The winner is checked by the chain
+            <ul><li>the covenant computes sha256(secret) mod tickets + 1</li></ul></li>
+          <li>Refunds if the organiser vanishes
+            <ul><li>every ticket pays back after the refund height</li></ul></li>
+          <li>Sub-cent fees on Bitcoin Cash</li>
+          <li>One reviewable template
+            <ul><li>every rule in one file; 38 tests, 25+ attacks refused</li></ul></li>
+        </ul>
+      </div>
+      <p class="slide__num"><b>03</b> / 06</p>
+    </section></div>
+
+    <!-- 4. BCH Usage -->
+    <div class="frame"><section class="slide s-usage" aria-label="Slide 4: BCH usage">
+      <h2>BCH <em>Usage</em></h2>
+      <p class="lead">Every rule of the round runs in Bitcoin Cash script. Nothing off chain holds the money.</p>
+      <div class="cols">
+        <div class="uses">
+          <div class="use">
+            <h3>CashTokens: genesis + a minting NFT as state</h3>
+            <p>Opening a round creates its own token category. The pot's minting NFT commitment is the round: ticket count, then the winner.</p>
+          </div>
+          <div class="use">
+            <h3>Covenant introspection</h3>
+            <p>The pot checks its next self: same script, same category, value + price, count + 1, one immutable ticket out (<code>OP_OUTPUTVALUE</code>, <code>OP_UTXOTOKENCOMMITMENT</code>).</p>
+          </div>
+          <div class="use">
+            <h3>OP_CHECKLOCKTIMEVERIFY, after Faster Blocks</h3>
+            <p>Draw and refund heights in lock heights, which now advance once every ten 1-minute blocks. We measured Chipnet's activation: block 332,451.</p>
+          </div>
+          <div class="use">
+            <h3>XO invitations, two parties</h3>
+            <p>A sale is one transaction: the organiser adds the pot, the player adds coins and takes the ticket, each signs their own part.</p>
+          </div>
+        </div>
+        <div class="codecard">
+          <p class="codecard__head">The draw path of the pot covenant</p>
+<pre><span class="v">&lt;drawHeight&gt;</span> <span class="k">OP_CHECKLOCKTIMEVERIFY</span> OP_DROP
+OP_DUP <span class="k">OP_SHA256</span> <span class="v">&lt;secretHash&gt;</span> OP_EQUALVERIFY
+potIsOpen                    <span class="c">// 4-byte ticket count</span>
+OP_BIN2NUM OP_DUP OP_0 OP_GREATERTHAN OP_VERIFY
+OP_SWAP OP_SHA256 &lt;4&gt; OP_SPLIT OP_DROP
+&lt;0x00&gt; OP_CAT OP_BIN2NUM
+OP_SWAP <span class="k">OP_MOD OP_1ADD</span>        <span class="c">// winner</span>
+OP_4 OP_NUM2BIN &lt;0xd0&gt; OP_CAT
+OP_0 <span class="k">OP_OUTPUTTOKENCOMMITMENT</span> OP_EQUALVERIFY
+potCarriesOn                 <span class="c">// same script + NFT</span>
+OP_0 OP_OUTPUTVALUE OP_0 OP_UTXOVALUE
+OP_NUMEQUALVERIFY            <span class="c">// keeps every sat</span></pre>
+        </div>
+      </div>
+      <p class="slide__num"><b>04</b> / 06</p>
+    </section></div>
+
+    <!-- 5. The Vision -->
+    <div class="frame"><section class="slide s-list" aria-label="Slide 5: the vision">
+      <div>
+        <h2>The Vision for <em>Lotry</em></h2>
+        <div class="rule"></div>
+      </div>
+      <div class="panel">
+        <ul class="bullets">
+          <li>Buy a ticket from a browser wallet
+            <ul><li>WizardConnect: connect, approve, hold the ticket</li></ul></li>
+          <li>Buyer-supplied randomness
+            <ul><li>mix in every buyer's input, so the organiser alone can't steer the draw</li></ul></li>
+          <li>Recurring daily rounds
+            <ul><li>a new pot every day, refunds always on</li></ul></li>
+          <li>Mainnet after May 2027
+            <ul><li>once Faster Blocks reaches mainnet (15 May 2027)</li></ul></li>
+        </ul>
+      </div>
+      <p class="slide__num"><b>05</b> / 06</p>
+    </section></div>
+
+    <!-- 6. Thank you -->
+    <div class="frame"><section class="slide s-thanks" aria-label="Slide 6: thank you">
+      <img src="assets/clover.png" alt="" width="150" height="150">
+      <h2>Thank <em>you!</em></h2>
+      <p class="team">Nikhil PN &amp; Hina Hanan</p>
+      <div class="links">
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>lotry.exprmnts.fun</span>
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>github.com/nikhil-pn/lotry-xo</span>
+      </div>
+      <p class="before">Before BLAZE: lotry.fun (Base, 2025) · github.com/exprmnts/Lotry_contract</p>
+      <p class="slide__num"><b>06</b> / 06</p>
+    </section></div>
+
+  </main>
+
+  <nav class="ui" aria-label="Slide controls">
+    <button type="button" data-go="-1" aria-label="Previous slide">‹</button>
+    <span class="count" aria-live="polite"><span data-count>1</span> / 6</span>
+    <button type="button" data-go="1" aria-label="Next slide">›</button>
+    <a href="slides.pdf">PDF</a>
+    <a href="/">Site</a>
+  </nav>
+
+  <script>
+    'use strict';
+    (() => {
+      const deck = document.getElementById('deck');
+      const frames = [ ...deck.querySelectorAll('.frame') ];
+      const counter = document.querySelector('[data-count]');
+      const W = 1280;
+      const H = 720;
+      let index = 0;
+
+      const fromHash = () => {
+        const n = parseInt(location.hash.slice(1), 10);
+        return Number.isFinite(n) && n >= 1 && n <= frames.length ? n - 1 : 0;
+      };
+
+      // Wide screens show one slide at a time; narrow portrait screens get every slide stacked.
+      const layout = () => {
+        const stacked = window.innerWidth < 720 && window.innerHeight > window.innerWidth;
+        deck.classList.toggle('deck--stack', stacked);
+        deck.classList.toggle('deck--single', !stacked);
+        const scale = stacked
+          ? (window.innerWidth - 16) / W
+          : Math.min((window.innerWidth - 32) / W, (window.innerHeight - 52 - 32) / H);
+        for (const frame of frames) {
+          frame.style.width = `${Math.floor(W * scale)}px`;
+          frame.style.height = `${Math.floor(H * scale)}px`;
+          frame.firstElementChild.style.setProperty('--scale', scale);
+        }
+      };
+
+      const show = (next) => {
+        index = Math.max(0, Math.min(frames.length - 1, next));
+        frames.forEach((frame, i) => frame.classList.toggle('is-active', i === index));
+        counter.textContent = String(index + 1);
+        const hash = `#${index + 1}`;
+        if (location.hash !== hash) history.replaceState(null, '', hash);
+      };
+
+      document.querySelectorAll('[data-go]').forEach((button) => {
+        button.addEventListener('click', () => show(index + Number(button.dataset.go)));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        if ([ 'ArrowRight', 'PageDown', ' ', 'Enter' ].includes(event.key)) { event.preventDefault(); show(index + 1); }
+        else if ([ 'ArrowLeft', 'PageUp', 'Backspace' ].includes(event.key)) { event.preventDefault(); show(index - 1); }
+        else if (event.key === 'Home') show(0);
+        else if (event.key === 'End') show(frames.length - 1);
+      });
+
+      // Click: left third goes back, the rest goes forward (single-slide mode only).
+      deck.addEventListener('click', (event) => {
+        if (!deck.classList.contains('deck--single') || event.target.closest('a, button')) return;
+        const rect = deck.getBoundingClientRect();
+        show(index + (event.clientX - rect.left < rect.width / 3 ? -1 : 1));
+      });
+
+      let touchX = null;
+      deck.addEventListener('touchstart', (event) => { touchX = event.touches[0].clientX; }, { passive: true });
+      deck.addEventListener('touchend', (event) => {
+        if (touchX === null || !deck.classList.contains('deck--single')) return;
+        const dx = event.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
+        touchX = null;
+      });
+
+      window.addEventListener('resize', layout);
+      window.addEventListener('hashchange', () => show(fromHash()));
+      layout();
+      show(fromHash());
+    })();
+  </script>
+</body>
+</html>
