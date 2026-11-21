@@ -31,7 +31,7 @@ export const latestRoundId = () => {
     return ids.at(-1);
 };
 
-const secretFile = (roundId) => path.join('state', 'secrets', `${roundId}.json`);
+const secretFile = (roundId) => path.join(process.env.LOTRY_STATE ?? 'state', 'secrets', `${roundId}.json`);
 
 export const writeSecret = (roundId, secret) => {
     fs.mkdirSync(path.dirname(secretFile(roundId)), { recursive: true });

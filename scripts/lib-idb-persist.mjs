@@ -71,7 +71,10 @@ export const restoreDatabases = async (snapshot) => {
     }
 };
 
-export const snapshotPath = (name) => path.join('state', `${name.toLowerCase()}.idb.bin`);
+// LOTRY_STATE picks the state folder, so a second set of wallets (LOTRY_ENV) keeps its own databases.
+export const STATE_DIR = process.env.LOTRY_STATE ?? 'state';
+
+export const snapshotPath = (name) => path.join(STATE_DIR, `${name.toLowerCase()}.idb.bin`);
 
 export const loadSnapshot = async (name) => {
     const file = snapshotPath(name);
@@ -80,7 +83,7 @@ export const loadSnapshot = async (name) => {
 };
 
 export const saveSnapshot = async (name, filter) => {
-    fs.mkdirSync('state', { recursive: true });
+    fs.mkdirSync(STATE_DIR, { recursive: true });
     const file = snapshotPath(name);
     fs.writeFileSync(`${file}.tmp`, v8.serialize(await dumpDatabases(filter)));
     fs.renameSync(`${file}.tmp`, file);

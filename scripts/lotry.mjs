@@ -19,7 +19,7 @@ import { blocksUntilLockHeight, currentLockHeight } from '../src/chain-time.mjs'
 import {
     afterRefundCommitment, closedCommitment, drawnCommitment, nextOpenCommitment, openCommitment, parseCommitment, potLockingBytecode,
 } from '../src/round-state.mjs';
-import { verifyGenesis } from './lib-genesis.mjs';
+import { isMined, verifyGenesis } from './lib-genesis.mjs';
 import { closeWallet, openWallet, persist } from './lib-engine.mjs';
 import {
     latestRoundId, loadInvitation, logStep, readRound, readSecret, readSteps, saveInvitation, stringify, txLink, writeRound, writeSecret,
@@ -347,7 +347,7 @@ const steps = {
         const pot = await findPot(engine, round, { wait: 20_000 });
         if (pot === undefined || pot.state.phase !== 'closed') throw new Error('Close the round first (no closed pot found)');
         // Reveal only on a confirmed close: an unconfirmed close could still lose to a conflicting ticket sale.
-        if (pot.minedAtHeight === 0 || pot.status === 'pending') {
+        if (!await isMined(potLockingBytecode(round), pot.outpointTransactionHash)) {
             throw new Error('The close is not confirmed yet; wait for the next block (about a minute) and run draw again');
         }
         const secretHex = binToHex(readSecret(round.roundId));

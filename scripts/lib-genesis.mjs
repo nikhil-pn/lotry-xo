@@ -4,7 +4,7 @@
 // built from the round's public variables. A pre-minted ticket, a second minting NFT, fungible tokens of the
 // category or a head-start count would all fail here.
 import { createRequire } from 'node:module';
-import { binToHex, decodeTransaction, hexToBin } from '@bitauth/libauth';
+import { binToHex, decodeTransaction, hexToBin, sha256 } from '@bitauth/libauth';
 
 const require = createRequire(import.meta.url);
 
@@ -23,6 +23,28 @@ const fetchTransactionHex = async (transactionHash) => {
         }
     }
     throw new Error(`Could not fetch the genesis transaction ${transactionHash}`);
+};
+
+/**
+ * Whether a transaction paying a locking script is mined, from the script's Electrum history (height > 0 = in a block).
+ * Uses only the standard scripthash API, which every Chipnet Electrum server supports.
+ */
+export const isMined = async (lockingBytecodeHex, transactionHash) => {
+    const { ElectrumClient } = await import(require.resolve('@electrum-cash/network'));
+    const scriptHash = binToHex(sha256.hash(hexToBin(lockingBytecodeHex)).reverse());
+    for (const host of [ 'chipnet.imaginary.cash', 'chipnet.bch.ninja' ]) {
+        const client = new ElectrumClient('lotry-confirmations', '1.5', host);
+        try {
+            await client.connect();
+            const history = await client.request('blockchain.scripthash.get_history', scriptHash);
+            if (Array.isArray(history)) return history.some((entry) => entry.tx_hash === transactionHash && entry.height > 0);
+        } catch {
+            // try the next server
+        } finally {
+            await client.disconnect().catch(() => {});
+        }
+    }
+    throw new Error(`Could not read the history of script ${scriptHash}`);
 };
 
 const hexOrReversed = (bytes) => [ binToHex(bytes), binToHex(Uint8Array.from(bytes).reverse()) ];

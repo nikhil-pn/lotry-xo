@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { closeWallet, openWallet, toCashAddress } from './lib-engine.mjs';
 
 const name = process.argv[2] ?? 'ORGANISER';
-const ADDRESS_FILE = 'state/funding-addresses.json';
+const ADDRESS_FILE = `${process.env.LOTRY_STATE ?? 'state'}/funding-addresses.json`;
 const known = fs.existsSync(ADDRESS_FILE) ? JSON.parse(fs.readFileSync(ADDRESS_FILE, 'utf8')) : {};
 
 const engine = await openWallet(name);
