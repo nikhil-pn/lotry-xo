@@ -1,0 +1,4 @@
+{"at":"2026-11-21T19:49:16.957Z","step":"open","transactionHash":"3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e","tickets":0,"potSatoshis":"2000"}
+{"at":"2026-11-21T19:49:45.980Z","step":"buy","ticketNumber":1,"buyer":"buyer_a","transactionHash":"f1b34916085e85a10b0dfa0f33272463423dc5fd7b2f38ffca99a777df59d0f4"}
+{"at":"2026-11-21T19:50:07.705Z","step":"buy","ticketNumber":2,"buyer":"buyer_b","transactionHash":"4f829aaf43eebd08c360464b72225f10ca6a33d699a588654cd5908670194320"}
+{"at":"2026-11-21T19:50:28.223Z","step":"buy","ticketNumber":3,"buyer":"buyer_a","transactionHash":"504464270b3a898837f9a112e50f62b913826137e6126967fbff3be2039acbc2"}
