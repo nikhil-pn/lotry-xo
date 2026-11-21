@@ -136,7 +136,7 @@ const steps = {
         const { currentHeight } = await engine.getChainStatus();
 
         let genesisCoin = (await engine.listSpendableUnspentOutputs())
-            .find((output) => output.outpointIndex === 0 && output.token === undefined && BigInt(output.valueSatoshis) >= 20_000n);
+            .find((output) => output.outpointIndex === 0 && output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 6_000n);
         if (genesisCoin === undefined) {
             genesisCoin = await steps.makeGenesisCoin(engine);
         }
@@ -146,7 +146,7 @@ const steps = {
             roundId: `round-${new Date().toISOString().replace(/[-:]/g, '').slice(0, 13)}`,
             network: 'chipnet',
             templateIdentifier,
-            ticketPrice: flag('price', '20000'),
+            ticketPrice: flag('price', '2000'),
             seedSatoshis: flag('seed', '2000'),
             // Lock heights, not block heights: since Faster Blocks one lock height is ten 1-minute blocks.
             drawHeight: String(currentLockHeight(currentHeight) + Number(flag('draw-in', '1'))),
@@ -189,8 +189,8 @@ const steps = {
         const [ walletTemplate ] = await engine.listTemplatesForDefaultPolicy('receive');
         const walletTemplateIdentifier = walletTemplate.templateIdentifier;
         const template = await engine.getTemplate(walletTemplateIdentifier);
-        const funding = (await engine.listSpendableUnspentOutputs()).find((output) => output.token === undefined && BigInt(output.valueSatoshis) >= 60_000n);
-        if (funding === undefined) throw new Error('The organiser needs at least 60000 sats: fund it with scripts/faucet.mjs');
+        const funding = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 12_000n);
+        if (funding === undefined) throw new Error('The organiser needs one coin of at least 12000 sats: fund it, then run "consolidate ORGANISER"');
         const receivingScript = template.lockingScripts.receivingLockingScript;
         const sendIntent = findIntent('sendSatoshis', receivingScript.roles.receiver.actions);
         const recipient = await engine.generateLockingBytecodeFromDefaultPolicy('receive');
@@ -199,7 +199,7 @@ const steps = {
             actionIdentifier: 'sendSatoshis',
             intent: sendIntent,
             variables: [
-                variable('transferredSatoshis', 'sender', 50_000n),
+                variable('transferredSatoshis', 'sender', 8_000n),
                 variable('recipientLockingscript', 'sender', recipient),
             ],
             inputs: [ { outpointTransactionHash: hexToBin(funding.outpointTransactionHash), outpointIndex: funding.outpointIndex } ],
@@ -486,6 +486,35 @@ const steps = {
             }
         }
         console.log(`${wallet}: archived ${archived} unbroadcast invitations, kept ${restored} broadcast ones active`);
+        await closeWallet(engine);
+    },
+
+    // Any wallet: merges every plain coin into one, at output 0 (faucet payouts arrive as many small coins).
+    async consolidate() {
+        const wallet = positional[0] ?? 'ORGANISER';
+        const engine = await openWallet(wallet);
+        const coins = (await engine.listSpendableUnspentOutputs()).filter((output) => output.tokenCategory === undefined);
+        if (coins.length < 2) throw new Error(`${wallet} has ${coins.length} plain coin(s); nothing to merge`);
+        const total = coins.reduce((sum, coin) => sum + BigInt(coin.valueSatoshis), 0n);
+        const fee = 200n + 160n * BigInt(coins.length);
+        const [ walletTemplate ] = await engine.listTemplatesForDefaultPolicy('receive');
+        const template = await engine.getTemplate(walletTemplate.templateIdentifier);
+        const created = await engine.createInvitation({
+            templateIdentifier: walletTemplate.templateIdentifier,
+            actionIdentifier: 'sendSatoshis',
+            intent: findIntent('sendSatoshis', template.lockingScripts.receivingLockingScript.roles.receiver.actions),
+            variables: [
+                variable('transferredSatoshis', 'sender', total - fee),
+                variable('recipientLockingscript', 'sender', await engine.generateLockingBytecodeFromDefaultPolicy('receive')),
+            ],
+            inputs: coins.map((coin) => outpointOf(coin)),
+        });
+        const { invitationIdentifier } = created.invitation;
+        await engine.appendInvitation(invitationIdentifier, {
+            templateIdentifier: walletTemplate.templateIdentifier, actionIdentifier: 'sendSatoshis', outputs: [ { outputIdentifier: 'transferSatoshisOutput' } ],
+        });
+        const { builtTransaction } = await finish(engine, invitationIdentifier, { broadcast: true, addChange: false });
+        console.log(`${wallet}: merged ${coins.length} coins into ${total - fee} sats: ${txLink(builtTransaction.transactionHash)}`);
         await closeWallet(engine);
     },
 

@@ -7,7 +7,7 @@
 now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.cash) template:
 [`src/lotry-template.mjs`](src/lotry-template.mjs) (as XO JSON: [`templates/lotry.json`](templates/lotry.json)).
 
-**Play it in your browser:** [lotry-xo.vercel.app/play.html](https://lotry-xo.vercel.app/play.html). Every button builds a real
+**Play it in your browser:** [lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html). Every button builds a real
 transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
 
 - One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
