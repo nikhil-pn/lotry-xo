@@ -3,15 +3,18 @@
 > **BCH BLAZE 2026** · deadline **22 Nov 2026, 09:00 UTC-5 (14:00 UTC)** · bounties: **Migrate to XO**, **Build with XO**
 
 **The lottery the organiser can't run away with.**
-[Lotry.fun](https://www.lotry.fun), our on-chain lottery on Base (Base Batch India 2025 runner-up), migrated to Bitcoin Cash
-as one [XO](https://stack.xo.cash) template: [`src/lotry-template.mjs`](src/lotry-template.mjs)
-(as XO JSON: [`templates/lotry.json`](templates/lotry.json), identifier `603c2fdf…53fa9d`).
+[Lotry.fun](https://www.lotry.fun), our on-chain lottery (built on Base for Base Batch India 2025, where it was runner-up;
+now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.cash) template:
+[`src/lotry-template.mjs`](src/lotry-template.mjs) (as XO JSON: [`templates/lotry.json`](templates/lotry.json)).
 
-- One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. Nobody, the organiser included, can spend it except by the round's rules.
+**Play it in your browser:** [lotry-xo.vercel.app/play.html](https://lotry-xo.vercel.app/play.html). Every button builds a real
+transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
+
+- One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
 - **Tickets are numbered NFTs** (CashTokens) that the players hold in their own wallets.
-- **The chain picks the winner.** The organiser commits to a secret when opening the round; at the draw it must reveal it, and the covenant itself computes `sha256(secret) mod tickets + 1`.
-- **If the organiser never draws, every ticket can be refunded** after the refund height.
-- Everything runs through **XO invitations**: a ticket sale is a two-party invitation (the organiser adds the pot, the player adds coins and receives the ticket), and the draw, claim and refund are **follow-up actions** of the pot and of the ticket.
+- **The chain picks the winner.** The organiser commits to a secret when opening the round. After the draw height anyone closes ticket sales, then the organiser reveals the secret and the covenant itself computes `sha256(secret) mod tickets + 1`.
+- **Nothing gets stuck:** if the round is never drawn, every ticket refunds after the refund height; if the winner never claims, every ticket refunds after the claim deadline.
+- Everything runs through **XO invitations**: a ticket sale is a two-party invitation (the organiser adds the pot, the player adds coins and receives the ticket), and close, draw, claim and refund are **follow-up actions** of the pot and of the ticket.
 
 ## Live on Chipnet
 
@@ -54,21 +57,28 @@ result, and the draw transaction verifies and can be stepped opcode by opcode:
                                                                                                   one ticket burned, its price paid back
 ```
 
-The pot's NFT commitment is the round's state: a 4-byte ticket count while open, the 4-byte winning number plus a `0xd0`
-marker once drawn. The covenant (`potRedeem` in the template) has four paths, picked by the unlocking script:
+The pot's NFT commitment is the round's state: a 4-byte ticket count while open, then a marker byte for each later
+phase: `0xc1` closed, `0xd0` drawn (the 4 bytes become the winning number), `0xee` refunding. The covenant (`potRedeem`)
+has five paths, picked by the unlocking script:
 
 | Path | Who | The covenant enforces |
 |---|---|---|
-| 1 buy | anyone | the pot carries on (same script, same minting NFT), grows by exactly the ticket price, its count goes up by one, output 1 is an **immutable** ticket NFT numbered with the new count, and no other output carries a token (no extra tickets) |
-| 2 draw | whoever knows the secret | `OP_CHECKLOCKTIMEVERIFY` past the draw height, `sha256(secret)` equals the committed hash, at least one ticket sold, the new commitment is exactly `sha256(secret) mod tickets + 1`, the pot keeps every satoshi |
+| 1 buy | anyone, while open | the pot carries on (same script, same minting NFT), grows by exactly the ticket price, its count goes up by one, output 1 is an **immutable** ticket NFT numbered with the new count, and no other output carries a token (no extra tickets) |
+| 5 close | anyone, after the draw height | `OP_CHECKLOCKTIMEVERIFY` past the draw height; the count is frozen (`…c1`), value and NFT unchanged. Sales stop **before** any reveal |
+| 2 draw | whoever knows the secret | the pot is closed, `sha256(secret)` equals the committed hash, at least one ticket sold, the new commitment is exactly `sha256(secret) mod tickets + 1`, the pot keeps every satoshi |
 | 3 claim | the winner | the pot is drawn, input 1 is a ticket of this round whose number is the winning number, and no output carries a token: the pot NFT and the ticket are burned and the satoshis go wherever the winner says |
-| 4 refund | any ticket holder | past the refund height and still undrawn, input 1 is a ticket of this round, the pot carries on with the same count and exactly one ticket price less, and the ticket is burned |
+| 4 refund | any ticket holder | past the refund height if never drawn (open or closed), or past the **claim deadline** if drawn and unclaimed; input 1 is a real ticket (immutable NFT, 4-byte number, no fungible amount); the pot carries on with exactly one ticket price less, marked refunding for good, and the ticket is burned |
 
-There is no signature path in the covenant, so the organiser has no way to take the pot. 38 tests
-([`test/covenant.test.mjs`](test/covenant.test.mjs)) run every path and 26 attacks (underpaying, skipping a ticket
-number, minting a second ticket in the change, a ticket with minting power, drawing early, the wrong secret, writing a
-different winner, claiming with a losing ticket or a ticket of another round, keeping the pot NFT, refunding twice…) in
-libauth's BCH 2026 VM, and check that every rejection comes from the covenant itself.
+There is no signature path in the covenant. 57 tests ([`test/covenant.test.mjs`](test/covenant.test.mjs)) run every path
+and 41 attacks in libauth's BCH 2026 VM, and check that every rejection comes from the covenant itself; 3 more
+([`test/sandbox.test.mjs`](test/sandbox.test.mjs)) play whole rounds and ten cheats through the browser sandbox's engine.
+
+### Reviewed, then hardened
+An independent adversarial review of the first version found four issues; all are fixed and tested:
+1. **Refund then draw could lock the pot**: if a refunded ticket was then drawn, nobody could claim. The first refund now ends the round.
+2. **A leaked secret could steer the draw**: the reveal sits in the mempool, and a failed draw left sales open. Sales now close (count frozen) before the reveal, and the CLI only reveals once the close is mined.
+3. **Fake tickets**: fungible tokens of the round's category could pass as tickets in refunds. Tickets must now be immutable NFTs with a 4-byte number and no amount, and buyers check the round's genesis (one minting NFT at zero tickets, locked to the covenant) before paying ([`scripts/lib-genesis.mjs`](scripts/lib-genesis.mjs)).
+4. **A lost winning ticket locked the pot forever**: a claim deadline now turns an unclaimed pot into refunds.
 
 ## The XO template
 
@@ -76,10 +86,10 @@ libauth's BCH 2026 VM, and check that every rejection comes from the covenant it
 |---|---|
 | Roles | `organiser` (opens, runs the pot, draws) and `player` (buys, claims, refunds) |
 | Start | `openRound`, the only entry point |
-| Actions | `openRound`, `buyTicket` (two participants: organiser + player), `drawRound`, `claimPot`, `refundTicket` |
+| Actions | `openRound`, `buyTicket` (two participants: organiser + player), `closeRound`, `drawRound`, `claimPot`, `refundTicket` |
 | Locking scripts | `potLockingScript` (P2SH32 covenant, state = the public round variables), `ticketLockingScript` (P2PKH of a key the player's wallet generates for each ticket) |
-| Follow-ups | the pot offers `buyTicket` and `drawRound` to the organiser; **the ticket itself offers `claimPot` and `refundTicket` to its player** |
-| Formulas | `openCommitment`, `nextOpenCommitment`, `drawnCommitment` and `winningTicketNumber` are template scripts; clients compile them to fill the commitment variables ([`src/round-state.mjs`](src/round-state.mjs)), and the tests prove they match what the covenant enforces |
+| Follow-ups | the pot offers `buyTicket`, `closeRound` and `drawRound` to the organiser; **the ticket itself offers `claimPot` and `refundTicket` to its player** |
+| Formulas | `openCommitment`, `nextOpenCommitment`, `closedCommitment`, `drawnCommitment`, `refundingCommitment` and `winningTicketNumber` are template scripts; clients compile them to fill the commitment variables ([`src/round-state.mjs`](src/round-state.mjs)), and the tests prove they match what the covenant enforces |
 
 A ticket sale as an invitation: the organiser creates `buyTicket`, adds the pot input and the new pot output and shares
 it (`buy-N-1-offer.json`); the player accepts with the `player` role, which generates a fresh `playerKey`, adds the
@@ -144,9 +154,10 @@ To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash)
 
 ## Stated plainly
 
-- **The organiser knows the secret.** An organiser who also buys the last ticket could steer which ticket wins, like any
-  raffle host who also plays. The covenant still guarantees they can never take the pot. A v2 would mix in
-  buyer-supplied randomness.
+- **The organiser knows the secret.** An organiser who also buys tickets before sales close could steer which ticket
+  wins, like any raffle host who also plays. The covenant guarantees the pot can only pay a winning ticket or refunds;
+  it can't stop the organiser from playing. Removing that trust needs every buyer to add randomness (commit-reveal by
+  all players), our next step.
 - **Chipnet only**, test coins. Ticket buying works from the CLI with any XO wallet; there is no browser wallet flow yet.
 - A buyer should check the round's genesis transaction (one minting NFT, commitment 0) before buying; the CLI's rounds
   are all opened that way.
