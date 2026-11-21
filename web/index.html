@@ -155,6 +155,28 @@
       </div>
     </section>
 
+    <!-- Live proof -->
+    <section class="section" id="rounds" aria-labelledby="rounds-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>02</b> · Live proof</p>
+            <h2 class="h2" id="rounds-title">Every step, <em>on chain.</em></h2>
+          </div>
+          <div class="prose">
+            <p>Three rounds on Chipnet, the Bitcoin Cash test network. Every row below is a real transaction built from an XO invitation, and every invitation file is public, so each step can be replayed in the <a href="https://blaze.xo.cash">XO debug tool</a>. Round 2 is the whole story.</p>
+          </div>
+        </div>
+
+        <div class="rounds" id="rounds-list" aria-live="polite">
+          <p class="rounds__status">Loading the rounds from <code>data/rounds.json</code>…</p>
+        </div>
+        <noscript>
+          <p class="rounds__status">The rounds load with JavaScript. The same proof, as a table: <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/docs/PROOF.md">docs/PROOF.md</a>.</p>
+        </noscript>
+      </div>
+    </section>
+
   </main>
 
   <script src="app.js" defer></script>
