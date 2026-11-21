@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lotry on XO: the lottery the organiser can't run away with</title>
+  <meta name="description" content="Lotry.fun, migrated to Bitcoin Cash as an XO template. One round lives in one coin with no key: nobody, the organiser included, can take the pot. Live on Chipnet.">
+  <meta name="theme-color" content="#0b0b0a">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Lotry on XO">
+  <meta property="og:description" content="The lottery the organiser can't run away with. A Bitcoin Cash XO template, live on Chipnet.">
+  <meta property="og:url" content="https://lotry.exprmnts.fun">
+  <meta property="og:image" content="https://lotry.exprmnts.fun/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- BCH BLAZE 2026: required banner -->
+  <div class="blaze" role="region" aria-label="BCH BLAZE 2026 links">
+    <div class="blaze__inner">
+      <span class="blaze__tag">BCH BLAZE 2026</span>
+      <a href="/slides.html">Slides</a>
+      <span class="blaze__sep" aria-hidden="true">·</span>
+      <a href="https://github.com/nikhil-pn/lotry-xo">GitHub</a>
+      <span class="blaze__sep" aria-hidden="true">·</span>
+      <span class="blaze__group">Before BLAZE: <a href="https://www.lotry.fun">Lotry.fun (Base, 2025)</a> · <a href="https://github.com/exprmnts/Lotry_contract">old contracts</a></span>
+      <span class="blaze__sep" aria-hidden="true">·</span>
+      <span class="blaze__group">EMBER2026 votes:
+        <button class="ember" type="button" data-copy="ember-address" title="Copy the address">
+          <span id="ember-address">ADDRESS_PENDING</span>
+          <span class="ember__hint" aria-live="polite">copy</span>
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <header class="top">
+    <div class="wrap top__inner">
+      <a class="brand" href="#top" aria-label="Lotry on XO, home">
+        <img src="assets/clover.png" alt="" width="28" height="28">
+        <span>Lotry <em>on</em> XO</span>
+      </a>
+      <nav class="top__nav" aria-label="Sections">
+        <a href="#how">How it works</a>
+        <a href="#rounds">Live rounds</a>
+        <a href="#xo">Why XO</a>
+        <a href="#plainly">Limits</a>
+        <a href="#try">Try it</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Lotry.fun, migrated to Bitcoin Cash · an XO template · live on Chipnet</p>
+          <h1>The lottery the organiser <em>can’t run away with.</em></h1>
+          <p class="hero__sub">One round lives in one coin, the pot. The pot is locked by rules with no key, so nobody, the organiser included, can take it. The chain itself checks the draw, pays the winner, or refunds every ticket.</p>
+          <div class="hero__actions">
+            <a class="btn btn--solid" href="#rounds">See the live rounds</a>
+            <a class="btn btn--ghost" href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs">Read the template</a>
+          </div>
+          <p class="hero__credit">From the team behind <a href="https://www.lotry.fun">Lotry.fun</a>, Base Batch India 2025 runner-up.</p>
+        </div>
+
+        <aside class="hero__ticket" aria-label="Round 2 result">
+          <div class="ticket ticket--hero">
+            <div class="ticket__row">
+              <span class="ticket__label">Round 2 · Chipnet</span>
+              <span class="ticket__stamp">Claimed</span>
+            </div>
+            <p class="ticket__big"><span data-hero="pot">62,000</span> <span class="ticket__unit">sats</span></p>
+            <p class="ticket__line">won by ticket <strong>#<span data-hero="winner">1</span></strong> of <span data-hero="tickets">3</span></p>
+            <p class="ticket__mono">winner = sha256(secret) mod <span data-hero="tickets">3</span> + 1</p>
+            <div class="ticket__foot">
+              <a data-hero="claim" href="https://chipnet.imaginary.cash/tx/3b8c58efc45d1267d071020d3a8881ab2329e0e442d6c7b86fff2a435d21e5d6">See the claim on the explorer <svg class="i" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
+            </div>
+            <img class="ticket__clover" src="assets/clover.png" alt="" width="96" height="96">
+          </div>
+        </aside>
+      </div>
+
+      <div class="wrap">
+        <dl class="stats">
+          <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">3</dd></div>
+          <div><dt>Transactions, all public</dt><dd data-stat="txs">15</dd></div>
+          <div><dt>Tests: every path, 25+ attacks</dt><dd>38</dd></div>
+          <div><dt>Keys that can move the pot</dt><dd>0</dd></div>
+        </dl>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
