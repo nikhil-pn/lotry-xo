@@ -314,3 +314,13 @@ test('client: round-state helpers produce what the covenant demands', async () =
     }
     assert.deepEqual(state.parseCommitment('03000000'), { phase: 'open', ticketCount: 3, ticketNumber: 3 });
 });
+
+test('chain time: lock heights follow the Faster Blocks chunk rule measured on chipnet', async () => {
+    const { currentLockHeight, lockHeightOfBlock, blocksUntilLockHeight } = await import('../src/chain-time.mjs');
+    assert.equal(currentLockHeight(341561), 333361);
+    assert.equal(lockHeightOfBlock(332000), 332000);
+    assert.equal(lockHeightOfBlock(332461), 332452);
+    assert.equal(blocksUntilLockHeight(333361, 341561), 0);
+    const wait = blocksUntilLockHeight(333362, 341561);
+    assert.ok(wait >= 1 && wait <= 10);
+});
