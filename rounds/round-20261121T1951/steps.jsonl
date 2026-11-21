@@ -1,3 +1,5 @@
 {"at":"2026-11-21T19:51:56.632Z","step":"open","transactionHash":"89a163f54b1fe185375d2edb13f9a06ab69a48b186dc702bc70fa4cd11a2389e","tickets":0,"potSatoshis":"2000"}
 {"at":"2026-11-21T19:52:17.845Z","step":"buy","ticketNumber":1,"buyer":"buyer_b","transactionHash":"1af214d4ab5b6aa210bb211e24b9c2ea3684d09bbf10ffb3def4dfc13bd7f9ce"}
 {"at":"2026-11-21T19:52:38.208Z","step":"buy","ticketNumber":2,"buyer":"buyer_a","transactionHash":"c71cf51423d2e88e055a0b24fc727b4eaa919d398314394c85cea92fe9d4d7d1"}
+{"at":"2026-11-21T20:04:27.796Z","step":"refund","ticketNumber":1,"holder":"buyer_b","transactionHash":"c6fea21452e827632730d8476b8b5f939b2eb83ff6b1a1e25496a0f67bfe8560"}
+{"at": "2026-11-21T20:04:00.000Z", "step": "refund", "ticketNumber": 2, "holder": "buyer_a", "transactionHash": "1fe5647d591b5e6baab78ee28acfc0139d31dc9686cfd7adbbda35abbbb86b3f", "note": "Broadcast on the first attempt; the CLI then crashed on an Electrum header request before logging, so this line and the missing invitation file were recorded by hand from the pot's next coin."}

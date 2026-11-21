@@ -79,6 +79,8 @@ const finish = async (engine, invitationIdentifier, { broadcast, feeSatoshis }) 
     }
     const missing = await engine.listMissingRequirements(invitationIdentifier);
     const { builtTransaction, storedInvitation } = await engine.executeAction(invitationIdentifier, { broadcastTransaction: true });
+    // Save right away: a later network hiccup must not lose the record of a transaction that is already on chain.
+    await persist();
     return { builtTransaction, storedInvitation, missing };
 };
 
