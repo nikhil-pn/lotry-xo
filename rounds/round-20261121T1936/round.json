@@ -1,0 +1,13 @@
+{
+  "roundId": "round-20261121T1936",
+  "network": "chipnet",
+  "templateIdentifier": "603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d",
+  "ticketPrice": "20000",
+  "seedSatoshis": "2000",
+  "drawHeight": "341551",
+  "refundHeight": "341693",
+  "secretHash": "39f3bcc844a155b42feed71fbfe8a46405d7aafc160e92c15a170532ef72b80f",
+  "roundCategory": "c6c72d696287cc52050eebaed34c24cb511a12941745fd3b050e155a14ad398c",
+  "openedAtHeight": 341549,
+  "openTransactionHash": "a237f153c0b5e98fb082ade21baa38e46c0b4f0bb00e38bbe9e0513363daf569"
+}
