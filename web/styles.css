@@ -737,6 +737,88 @@ code, pre { font-family: var(--mono); }
 .round--featured .round__note { color: #2b2a26; }
 .round--featured :focus-visible { outline-color: var(--ink); }
 
+/* ---------- Migration table ---------- */
+
+.compare {
+  margin-top: clamp(40px, 5vw, 60px);
+  border-top: 1px solid var(--line-2);
+}
+.compare__row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15.5px;
+  align-items: baseline;
+}
+.compare__row > span:nth-child(2) { color: var(--muted); }
+.compare__row > span:nth-child(3) { color: var(--text); }
+.compare__row--head {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 14px 0;
+}
+.compare__row--head > span:nth-child(3) { color: var(--mint); }
+.compare__what { font-family: var(--serif); font-size: 24px; color: var(--text); line-height: 1.1; }
+.compare code {
+  font-size: 0.86em;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0 5px;
+  color: var(--soft);
+}
+.footnote a { color: var(--soft); text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+
+/* ---------- Why XO ---------- */
+
+.why {
+  margin-top: clamp(40px, 5vw, 60px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.why__item {
+  border-top: 1px solid var(--line-2);
+  padding-top: 20px;
+}
+.why__num { font-family: var(--serif); font-style: italic; font-size: 20px; color: var(--mint); }
+.why__item h3 { margin-top: 8px; font-family: var(--serif); font-size: 30px; line-height: 1.05; }
+.why__item p:last-child { margin-top: 12px; font-size: 15.5px; }
+.why__item a { color: var(--text); text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+.why__item code { font-size: 0.88em; }
+
+.shot {
+  margin: clamp(48px, 6vw, 72px) 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 20px clamp(28px, 4vw, 56px);
+  align-items: end;
+}
+.shot img {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line-2);
+  opacity: 0.94;
+}
+.shot figcaption {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 14px;
+  color: var(--muted);
+  border-top: 1px solid var(--line-2);
+  padding-top: 16px;
+}
+.shot figcaption strong { display: block; font-family: var(--serif); font-weight: 400; font-size: 24px; color: var(--text); margin-bottom: 8px; line-height: 1.1; }
+.shot figcaption a { color: var(--soft); }
+.shot figcaption code { font-size: 0.92em; color: var(--soft); }
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 960px) {
@@ -744,6 +826,12 @@ code, pre { font-family: var(--mono); }
   .split { grid-template-columns: 1fr; align-items: start; }
   .round--featured .round__grid { grid-template-columns: 1fr; }
   .rounds__rest { grid-template-columns: 1fr; }
+  .why { grid-template-columns: 1fr; gap: 28px; }
+  .shot { grid-template-columns: 1fr; }
+  .shot img, .shot figcaption { grid-column: 1; grid-row: auto; }
+  .compare__row { grid-template-columns: 1fr 1fr; gap: 6px 18px; }
+  .compare__what { grid-column: 1 / -1; font-size: 22px; }
+  .compare__row--head > span:first-child { display: none; }
   .steps { grid-template-columns: 1fr; gap: 0; }
   .step { padding: 0 0 34px 64px; }
   .step::before { top: 0; bottom: 0; left: 19px; right: auto; border-top: 0; border-left: 1px solid var(--line-2); }
@@ -772,6 +860,10 @@ code, pre { font-family: var(--mono); }
   .round--featured { padding: 28px 26px 24px; }
   .tl { grid-template-columns: 18px minmax(0, 1fr); }
   .tl__tx { grid-column: 2; justify-self: start; margin-top: 8px; }
+  .compare__row { grid-template-columns: 1fr; font-size: 15px; }
+  .compare__row--head { display: none; }
+  .compare__row > span:nth-child(2)::before { content: "Base: "; color: var(--muted); font-weight: 600; }
+  .compare__row > span:nth-child(3)::before { content: "BCH: "; color: var(--mint); font-weight: 600; }
   .ticket--hero { padding: 26px 28px 24px; transform: rotate(-1.5deg); }
   .ticket__clover { width: 64px; height: 64px; bottom: 66px; right: 16px; }
 }

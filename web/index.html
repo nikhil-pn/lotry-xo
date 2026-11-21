@@ -177,6 +177,93 @@
       </div>
     </section>
 
+    <!-- Migrated from Lotry.fun -->
+    <section class="section" id="migrated" aria-labelledby="migrated-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>03</b> · Migrated from Lotry.fun</p>
+            <h2 class="h2" id="migrated-title">Same round, <em>no owner.</em></h2>
+          </div>
+          <div class="prose">
+            <p><a href="https://www.lotry.fun">Lotry.fun</a> is our lottery on Base, a Base Batch India 2025 runner-up. For BLAZE we moved its core round, the part where money waits for a winner, to Bitcoin Cash. The Solidity code was the spec; everything here was written during BLAZE.</p>
+          </div>
+        </div>
+
+        <div class="compare" role="table" aria-label="Lotry.fun on Base compared with Lotry on XO">
+          <div class="compare__row compare__row--head" role="row">
+            <span role="columnheader"></span>
+            <span role="columnheader">Lotry.fun · Base · Solidity</span>
+            <span role="columnheader">Lotry on XO · Bitcoin Cash</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">Ticket</span>
+            <span role="cell">An ERC-20 token from <code>LotryTicket.sol</code></span>
+            <span role="cell">An immutable CashToken NFT, numbered by the pot and held in the player's own wallet</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">Pot</span>
+            <span role="cell">Held by a contract with an owner</span>
+            <span role="cell">One coin locked to a covenant with no key at all</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">Randomness</span>
+            <span role="cell">Chainlink VRF (<code>RandomWalletPicker.sol</code>)</span>
+            <span role="cell">Commit-reveal: the secret's hash is fixed at open, and the covenant checks the reveal and computes the winner</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">Payout</span>
+            <span role="cell">The owner calls <code>distributeRewards(winner)</code></span>
+            <span role="cell">The winner claims by burning the winning ticket together with the pot</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">If no draw</span>
+            <span role="cell">No refund if the draw never comes; tickets can only be sold back on the bonding curve</span>
+            <span role="cell">Every ticket refundable after the refund height</span>
+          </div>
+        </div>
+        <p class="footnote">Before BLAZE: <a href="https://www.lotry.fun">lotry.fun</a> and the original contracts at <a href="https://github.com/exprmnts/Lotry_contract">exprmnts/Lotry_contract</a>.</p>
+      </div>
+    </section>
+
+    <!-- Why XO -->
+    <section class="section" id="xo" aria-labelledby="xo-title">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow"><b>04</b> · Why XO</p>
+            <h2 class="h2" id="xo-title">The whole app, <em>one template.</em></h2>
+          </div>
+          <div class="prose">
+            <p><a href="https://stack.xo.cash">XO</a> is General Protocols' template stack for Bitcoin Cash: a wallet loads a template and knows every action it offers, who takes part, and what each transaction must look like.</p>
+          </div>
+        </div>
+
+        <div class="why">
+          <article class="why__item">
+            <p class="why__num">i.</p>
+            <h3>One reviewable file</h3>
+            <p>Roles, actions, transactions and the covenant itself live in <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs"><code>lotry-template.mjs</code></a> (as XO JSON: <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json"><code>lotry.json</code></a>). Read one file and you know every way the money can move.</p>
+          </article>
+          <article class="why__item">
+            <p class="why__num">ii.</p>
+            <h3>Invitations: each side adds its part</h3>
+            <p>A ticket sale is one transaction built by two people. The organiser starts an invitation with the pot; the player joins, adds coins, receives the ticket and signs. Each signs only their own inputs.</p>
+          </article>
+          <article class="why__item">
+            <p class="why__num">iii.</p>
+            <h3>Follow-up actions</h3>
+            <p>Coins know what can happen next. The pot offers the next sale and the draw to the organiser; a ticket offers claim and refund to whoever holds it, with no custom wallet code.</p>
+          </article>
+        </div>
+
+        <figure class="shot">
+          <img src="assets/xo-ticket-sale.jpg" alt="The XO debug tool showing a Lotry buyTicket invitation: seven signed commits, one from the organiser role and one from the player role, resulting in a buyTicket transaction." width="1000" height="646" loading="lazy">
+          <figcaption><strong>Seen in the XO debug tool</strong>Round 2, ticket #2, opened in the XO debug tool at <a href="https://blaze.xo.cash">blaze.xo.cash</a>: commits signed by the organiser and the player, merged into one <code>buyTicket</code> transaction (<a href="https://chipnet.imaginary.cash/tx/4f829aaf43eebd08c360464b72225f10ca6a33d699a588654cd5908670194320">4f829aaf…194320</a>).</figcaption>
+        </figure>
+      </div>
+    </section>
+
   </main>
 
   <script src="app.js" defer></script>
