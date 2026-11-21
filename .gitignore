@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.env
+state/
+.xo/
+*.sqlite
+*.db
+dist/
+.vercel
