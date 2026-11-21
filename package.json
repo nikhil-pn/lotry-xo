@@ -15,6 +15,10 @@
     "fake-indexeddb": "^6.2.8"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "build:play": "esbuild web-src/play.mjs --bundle --format=esm --target=es2022 --minify --legal-comments=none --outfile=web/play.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2"
   }
 }

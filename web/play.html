@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Play a round, try to cheat · Lotry on XO</title>
+  <meta name="description" content="Play a Lotry round in your browser against the real Bitcoin Cash covenant, then try to cheat it. Every button is a real transaction checked by the BCH 2026 virtual machine.">
+  <meta name="theme-color" content="#0b0b0a">
+  <meta property="og:title" content="Play a Lotry round. Try to cheat.">
+  <meta property="og:description" content="Every button is a real Bitcoin Cash transaction checked against the real covenant, in your browser.">
+  <meta property="og:image" content="https://lotry.exprmnts.fun/assets/og.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="play.css">
+</head>
+<body class="play-page">
+
+  <div class="blaze" role="region" aria-label="BCH BLAZE 2026 links">
+    <div class="blaze__inner">
+      <span class="blaze__tag">BCH BLAZE 2026</span>
+      <a href="/slides.html">Slides</a>
+      <span class="blaze__sep" aria-hidden="true">·</span>
+      <a href="https://github.com/nikhil-pn/lotry-xo">GitHub</a>
+      <span class="blaze__sep" aria-hidden="true">·</span>
+      <a href="/">Live rounds on Chipnet</a>
+    </div>
+  </div>
+
+  <header class="top">
+    <div class="wrap top__inner">
+      <a class="brand" href="/" aria-label="Lotry on XO, home">
+        <img src="assets/clover.png" alt="" width="28" height="28">
+        <span>Lotry <em>on</em> XO</span>
+      </a>
+      <nav class="top__nav" aria-label="Sections">
+        <a href="/#how">How it works</a>
+        <a href="/#rounds">Live rounds</a>
+        <a href="/play.html" aria-current="page">Play</a>
+        <a href="/#plainly">Limits</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap play">
+    <section class="play__intro">
+      <p class="eyebrow">Sandbox · real covenant · runs in your browser</p>
+      <h1 class="play__title">Play a round. <em>Try to cheat.</em></h1>
+      <p class="play__lede">Every button builds a real Bitcoin Cash transaction against the real Lotry pot covenant, compiled from
+        <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs">our XO template</a>, and runs it through the
+        BCH 2026 virtual machine right here. The coins are pretend and player signatures are skipped, so you can try anything.
+        The pot's rules are exactly the ones on chain.</p>
+      <p class="play__status" id="engine-status">Loading the BCH virtual machine…</p>
+    </section>
+
+    <section class="play__grid" aria-live="polite">
+      <!-- The pot -->
+      <article class="pot-card" id="pot-card">
+        <div class="pot-card__top">
+          <span class="pot-card__label">The pot</span>
+          <span class="badge" id="pot-phase">OPEN</span>
+        </div>
+        <div class="pot-card__value"><span id="pot-value">2,000</span> <em>sats</em></div>
+        <p class="pot-card__line" id="pot-line">No key can spend this coin.</p>
+        <dl class="pot-card__facts">
+          <div><dt>NFT commitment</dt><dd><code id="pot-commitment">00000000</code></dd></div>
+          <div><dt>Ticket price</dt><dd id="ticket-price">20,000 sats</dd></div>
+          <div><dt>Secret hash</dt><dd><code id="secret-hash">…</code></dd></div>
+          <div><dt>Secret</dt><dd><code id="secret-value">hidden until the draw</code></dd></div>
+        </dl>
+        <div class="clock" aria-label="Lock height">
+          <div class="clock__head"><span>Lock height</span><strong id="lock-height">1</strong></div>
+          <div class="clock__rail">
+            <span class="clock__fill" id="clock-fill"></span>
+            <span class="clock__mark" style="left: 30%" data-label="close + draw">10</span>
+            <span class="clock__mark" style="left: 63%" data-label="refunds">20</span>
+            <span class="clock__mark" style="left: 96%" data-label="claim deadline">30</span>
+          </div>
+          <div class="clock__buttons">
+            <button type="button" class="btn btn--ghost btn--small" data-advance="1">+1</button>
+            <button type="button" class="btn btn--ghost btn--small" data-advance="5">+5</button>
+            <button type="button" class="btn btn--ghost btn--small" data-advance="10">+10</button>
+          </div>
+        </div>
+        <div class="tickets">
+          <span class="tickets__label">Tickets</span>
+          <ul class="tickets__list" id="tickets"><li class="tickets__empty">None sold yet</li></ul>
+        </div>
+      </article>
+
+      <!-- Honest moves -->
+      <article class="panel">
+        <h2 class="panel__title">Play it straight</h2>
+        <div class="moves">
+          <div class="move">
+            <span class="move__step">1</span>
+            <div>
+              <p class="move__name">Buy a ticket</p>
+              <div class="move__buttons">
+                <button type="button" class="btn btn--solid btn--small" data-buy="You">as You</button>
+                <button type="button" class="btn btn--ghost btn--small" data-buy="Alice">as Alice</button>
+                <button type="button" class="btn btn--ghost btn--small" data-buy="Bob">as Bob</button>
+              </div>
+            </div>
+          </div>
+          <div class="move">
+            <span class="move__step">2</span>
+            <div>
+              <p class="move__name">Close sales <span class="move__hint">from lock height 10, anyone can</span></p>
+              <div class="move__buttons"><button type="button" class="btn btn--ghost btn--small" data-action="close">Close sales</button></div>
+            </div>
+          </div>
+          <div class="move">
+            <span class="move__step">3</span>
+            <div>
+              <p class="move__name">Draw <span class="move__hint">the organiser reveals the secret</span></p>
+              <div class="move__buttons"><button type="button" class="btn btn--ghost btn--small" data-action="draw">Reveal &amp; draw</button></div>
+            </div>
+          </div>
+          <div class="move">
+            <span class="move__step">4</span>
+            <div>
+              <p class="move__name">Claim <span class="move__hint">the winning ticket takes it all</span></p>
+              <div class="move__buttons"><button type="button" class="btn btn--ghost btn--small" data-action="claim">Winner claims</button></div>
+            </div>
+          </div>
+          <div class="move">
+            <span class="move__step">↺</span>
+            <div>
+              <p class="move__name">Refund <span class="move__hint">from lock height 20 if never drawn, 30 if never claimed</span></p>
+              <div class="move__buttons">
+                <button type="button" class="btn btn--ghost btn--small" data-refund="You">You</button>
+                <button type="button" class="btn btn--ghost btn--small" data-refund="Alice">Alice</button>
+                <button type="button" class="btn btn--ghost btn--small" data-refund="Bob">Bob</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--small play__reset" id="reset">New round</button>
+      </article>
+
+      <!-- Cheats -->
+      <article class="panel panel--cheat">
+        <h2 class="panel__title">Try to cheat</h2>
+        <p class="panel__note">Each card sends a real transaction that breaks one rule. Watch the covenant refuse it.</p>
+        <div class="cheats" id="cheats"></div>
+      </article>
+    </section>
+
+    <section class="log">
+      <div class="log__head">
+        <h2 class="panel__title">What the virtual machine said</h2>
+        <span class="log__legend"><span class="ok">✓ accepted</span> <span class="no">✗ refused</span></span>
+      </div>
+      <ol class="log__list" id="log"><li class="log__empty">Your transactions appear here.</li></ol>
+    </section>
+
+    <details class="covenant">
+      <summary>Read the covenant these transactions run against</summary>
+      <pre id="covenant-source"></pre>
+    </details>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__inner">
+      <span>Lotry on XO · BCH BLAZE 2026 · Nikhil PN &amp; Hina Hanan</span>
+      <a href="https://github.com/nikhil-pn/lotry-xo">github.com/nikhil-pn/lotry-xo</a>
+    </div>
+  </footer>
+
+  <script type="module" src="play.js"></script>
+</body>
+</html>

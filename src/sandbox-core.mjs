@@ -147,7 +147,7 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
                 { lockingBytecode: ANYONE, valueSatoshis: 100_000n - pay - 1_000n - 2_000n, token: extraTicket ? ticketToken(next + 1) : undefined },
             ];
             return run({
-                label: label ?? `${player} buys ticket #${next}`, actor: player, kind,
+                label: label ?? `${player} ${player === 'You' ? 'buy' : 'buys'} ticket #${next}`, actor: player, kind,
                 inputs: [ { coin: state.pot, unlockingBytecode: unlock.buy }, { coin, unlockingBytecode: new Uint8Array() } ],
                 outputs,
                 apply: () => {
@@ -201,7 +201,7 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
             if (ticket === undefined) return cannot('Claim the pot', player, phase === 'drawn' ? `${player} doesn't hold ticket #${number}.` : `${player} holds no ticket.`, kind);
             const outputs = [ { lockingBytecode: ANYONE, valueSatoshis: state.pot.valueSatoshis + 1_000n - 1_000n } ];
             return run({
-                label: label ?? `${player} claims with ticket #${ticket.number}`, actor: player, kind,
+                label: label ?? `${player} ${player === 'You' ? 'claim' : 'claims'} the pot with ticket #${ticket.number}`, actor: player, kind,
                 inputs: [ { coin: state.pot, unlockingBytecode: unlock.claim }, { coin: ticket.coin, unlockingBytecode: new Uint8Array() } ],
                 outputs,
                 apply: () => {
@@ -225,7 +225,7 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
                 { lockingBytecode: ANYONE, valueSatoshis: ticketPrice },
             ];
             return run({
-                label: label ?? `${player} refunds ticket #${ticket.number}`, actor: player, kind, locktime,
+                label: label ?? `${player} ${player === 'You' ? 'refund' : 'refunds'} ticket #${ticket.number}`, actor: player, kind, locktime,
                 inputs: [ { coin: state.pot, unlockingBytecode: unlock.refund }, { coin: ticket.coin, unlockingBytecode: new Uint8Array() } ],
                 outputs,
                 stoppedBy: phase === 'drawn' && state.height < claimHeight ? `A drawn pot only refunds after the claim deadline (lock height ${claimHeight}).`
@@ -250,7 +250,7 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
                 const { phase } = potPhase();
                 const fee = newCoin(ANYONE, 10_000n);
                 // He picks whichever path the pot is in right now; none of them lets value leave to an arbitrary script.
-                const path = { open: unlock.close, closed: unlock.draw, drawn: unlock.claim, refunding: unlock.refund }[phase];
+                const path = { open: unlock.buy, closed: unlock.draw, drawn: unlock.claim, refunding: unlock.refund }[phase];
                 return run({
                     label: 'Organiser sends the pot to himself', actor: 'Organiser', kind: 'attack', locktime: state.height,
                     inputs: [ { coin: state.pot, unlockingBytecode: path }, { coin: fee, unlockingBytecode: new Uint8Array() } ],
@@ -303,7 +303,7 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
                 if (phase !== 'drawn') return cannot('Claim with a losing ticket', 'You', 'Needs a drawn pot: close sales and draw first.', 'attack');
                 const loser = state.tickets.find((ticket) => ticket.number !== number);
                 if (loser === undefined) return cannot('Claim with a losing ticket', 'You', 'Every remaining ticket is the winner.', 'attack');
-                return actions.claim(loser.owner, { ticketNumber: loser.number, kind: 'attack', label: `${loser.owner} claims with losing ticket #${loser.number}` });
+                return actions.claim(loser.owner, { ticketNumber: loser.number, kind: 'attack', label: `${loser.owner} ${loser.owner === 'You' ? 'try' : 'tries'} to claim with losing ticket #${loser.number}` });
             },
         },
         fakeTicket: {
