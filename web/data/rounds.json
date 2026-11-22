@@ -1,7 +1,273 @@
 {
-  "generatedAt": "2026-11-21T20:16:12.264Z",
+  "generatedAt": "2026-11-22T01:00:32.554Z",
   "repository": "https://github.com/nikhil-pn/lotry-xo",
   "rounds": [
+    {
+      "roundId": "round-20261121T2224",
+      "network": "chipnet",
+      "templateIdentifier": "ee7557b99478ff9f0b3e450a51b91612d9602ef445d0f5a427fad6da52d1cfee",
+      "ticketPrice": "2000",
+      "seedSatoshis": "2000",
+      "drawHeight": "333405",
+      "refundHeight": "333548",
+      "claimHeight": "333692",
+      "secretHash": "7f89cad977d941438c3230747c514c93840b01aef390d0c453890c66d76582f3",
+      "roundCategory": "ad79e5deee224787a57f85d963fae1d2035d7adeee1c27ddca4600168ba56c6a",
+      "openedAtHeight": 341996,
+      "openTransactionHash": "46c83ca89a6bd1e57c1b3f5061f8ee5e3297719db70d6f2319dd74a7515b6ef9",
+      "templateVersion": 2,
+      "status": "finished: ticket #3 claimed the pot",
+      "ticketsSold": 3,
+      "steps": [
+        {
+          "at": "2026-11-21T22:24:35.328Z",
+          "step": "open",
+          "transactionHash": "46c83ca89a6bd1e57c1b3f5061f8ee5e3297719db70d6f2319dd74a7515b6ef9",
+          "tickets": 0,
+          "potSatoshis": "2000",
+          "title": "Round opened",
+          "description": "Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets",
+          "link": "https://chipnet.imaginary.cash/tx/46c83ca89a6bd1e57c1b3f5061f8ee5e3297719db70d6f2319dd74a7515b6ef9"
+        },
+        {
+          "at": "2026-11-21T22:25:05.955Z",
+          "step": "buy",
+          "ticketNumber": 1,
+          "buyer": "buyer_a",
+          "transactionHash": "5f4e4f2ce1ccd617f8f075c53ed233e31e0c105f193ed09e51150c162cdcd370",
+          "title": "Ticket sold",
+          "description": "Ticket #1 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/5f4e4f2ce1ccd617f8f075c53ed233e31e0c105f193ed09e51150c162cdcd370"
+        },
+        {
+          "at": "2026-11-21T22:25:38.929Z",
+          "step": "buy",
+          "ticketNumber": 2,
+          "buyer": "buyer_b",
+          "transactionHash": "4d5822f2e6607af47ccb4b4ec197c97828ac5e83a50696b2f43925a2104ce6ad",
+          "title": "Ticket sold",
+          "description": "Ticket #2 to buyer B (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/4d5822f2e6607af47ccb4b4ec197c97828ac5e83a50696b2f43925a2104ce6ad"
+        },
+        {
+          "at": "2026-11-21T22:26:02.673Z",
+          "step": "buy",
+          "ticketNumber": 3,
+          "buyer": "buyer_a",
+          "transactionHash": "88688e5ac105111dd48bff1cebb3c24fdc03aaa4a5d57149054b0464a74d09e9",
+          "title": "Ticket sold",
+          "description": "Ticket #3 to buyer A (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/88688e5ac105111dd48bff1cebb3c24fdc03aaa4a5d57149054b0464a74d09e9"
+        },
+        {
+          "at": "2026-11-21T22:29:16.597Z",
+          "step": "close",
+          "tickets": 3,
+          "potSatoshis": 8000,
+          "transactionHash": "127f61857df71b68bf620a865f87b054cd545f56ce9e2e995cb7b8a3715c882f",
+          "title": "Sales closed",
+          "description": "After the draw height, sales close: the count is frozen at 3 before any reveal",
+          "link": "https://chipnet.imaginary.cash/tx/127f61857df71b68bf620a865f87b054cd545f56ce9e2e995cb7b8a3715c882f"
+        },
+        {
+          "at": "2026-11-21T23:29:28.047Z",
+          "step": "draw",
+          "winningTicket": 3,
+          "tickets": 3,
+          "potSatoshis": 8000,
+          "transactionHash": "10c066fb83c9a74358fd64c79535af2b239a23ea3f4d16d9861a7c34f6c758c4",
+          "title": "Winner drawn",
+          "description": "Secret revealed; the covenant picks ticket #3 of 3 (pot 8000 sats)",
+          "link": "https://chipnet.imaginary.cash/tx/10c066fb83c9a74358fd64c79535af2b239a23ea3f4d16d9861a7c34f6c758c4"
+        },
+        {
+          "at": "2026-11-22T00:59:48.672Z",
+          "step": "claim",
+          "winner": "buyer_a",
+          "ticketNumber": 3,
+          "transactionHash": "7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc",
+          "title": "Pot claimed",
+          "description": "The winner (buyer A) spends the pot with winning ticket #3; both NFTs burned",
+          "link": "https://chipnet.imaginary.cash/tx/7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc"
+        }
+      ],
+      "invitations": [
+        {
+          "name": "1-open",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/1-open.json"
+        },
+        {
+          "name": "buy-1-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-1-1-offer.json"
+        },
+        {
+          "name": "buy-1-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-1-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-1-2-buyer_a.json"
+        },
+        {
+          "name": "buy-1-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-1-3-sealed.json"
+        },
+        {
+          "name": "buy-2-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-2-1-offer.json"
+        },
+        {
+          "name": "buy-2-2-buyer_b",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-2-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-2-2-buyer_b.json"
+        },
+        {
+          "name": "buy-2-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-2-3-sealed.json"
+        },
+        {
+          "name": "buy-3-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-3-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-3-1-offer.json"
+        },
+        {
+          "name": "buy-3-2-buyer_a",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-3-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-3-2-buyer_a.json"
+        },
+        {
+          "name": "buy-3-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/buy-3-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/buy-3-3-sealed.json"
+        },
+        {
+          "name": "claim",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/claim.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/claim.json"
+        },
+        {
+          "name": "close",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/close.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/close.json"
+        },
+        {
+          "name": "draw",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2224/invitations/draw.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2224/invitations/draw.json"
+        }
+      ]
+    },
+    {
+      "roundId": "round-20261121T2226",
+      "network": "chipnet",
+      "templateIdentifier": "ee7557b99478ff9f0b3e450a51b91612d9602ef445d0f5a427fad6da52d1cfee",
+      "ticketPrice": "2000",
+      "seedSatoshis": "2000",
+      "drawHeight": "333405",
+      "refundHeight": "333406",
+      "claimHeight": "333407",
+      "secretHash": "2aa473383294e2102887fb649dca3750b6179b2ced3aa65828f7d8bd77687365",
+      "roundCategory": "519440df9c798ef6b128ae30851ec1dfc267a5222f276a993b8bb073ca06d39d",
+      "openedAtHeight": 341998,
+      "openTransactionHash": "b5edec54e3f848ae4f79ce1f1b2aad76155e8b9db7d00c099d6e38219410d004",
+      "templateVersion": 2,
+      "status": "drawn, unclaimed by the deadline: 1 of 1 tickets refunded",
+      "ticketsSold": 1,
+      "steps": [
+        {
+          "at": "2026-11-21T22:26:20.893Z",
+          "step": "open",
+          "transactionHash": "b5edec54e3f848ae4f79ce1f1b2aad76155e8b9db7d00c099d6e38219410d004",
+          "tickets": 0,
+          "potSatoshis": "2000",
+          "title": "Round opened",
+          "description": "Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets",
+          "link": "https://chipnet.imaginary.cash/tx/b5edec54e3f848ae4f79ce1f1b2aad76155e8b9db7d00c099d6e38219410d004"
+        },
+        {
+          "at": "2026-11-21T22:26:46.002Z",
+          "step": "buy",
+          "ticketNumber": 1,
+          "buyer": "buyer_b",
+          "transactionHash": "50d872c6c36a5879480a14aa526fbfd46ad5928716702cc2c476cb2d8f6aaceb",
+          "title": "Ticket sold",
+          "description": "Ticket #1 to buyer B (two-party invitation: organiser adds the pot, player adds coins + ticket)",
+          "link": "https://chipnet.imaginary.cash/tx/50d872c6c36a5879480a14aa526fbfd46ad5928716702cc2c476cb2d8f6aaceb"
+        },
+        {
+          "at": "2026-11-21T23:29:18.290Z",
+          "step": "close",
+          "tickets": 1,
+          "potSatoshis": 4000,
+          "transactionHash": "22dcc6b72a5540aa3ee342057282322004da626f0c7a4f9ef0c6a96d70830cc7",
+          "title": "Sales closed",
+          "description": "After the draw height, sales close: the count is frozen at 1 before any reveal",
+          "link": "https://chipnet.imaginary.cash/tx/22dcc6b72a5540aa3ee342057282322004da626f0c7a4f9ef0c6a96d70830cc7"
+        },
+        {
+          "at": "2026-11-21T23:31:52.127Z",
+          "step": "draw",
+          "winningTicket": 1,
+          "tickets": 1,
+          "potSatoshis": 4000,
+          "transactionHash": "902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85",
+          "title": "Winner drawn",
+          "description": "Secret revealed; the covenant picks ticket #1 of 1 (pot 4000 sats)",
+          "link": "https://chipnet.imaginary.cash/tx/902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85"
+        },
+        {
+          "at": "2026-11-22T01:00:02.119Z",
+          "step": "refund",
+          "ticketNumber": 1,
+          "holder": "buyer_b",
+          "transactionHash": "5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5",
+          "title": "Ticket refunded",
+          "description": "Ticket #1 burned, price paid back to buyer B",
+          "link": "https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5"
+        }
+      ],
+      "invitations": [
+        {
+          "name": "1-open",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/1-open.json"
+        },
+        {
+          "name": "buy-1-1-offer",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/buy-1-1-offer.json"
+        },
+        {
+          "name": "buy-1-2-buyer_b",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/buy-1-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/buy-1-2-buyer_b.json"
+        },
+        {
+          "name": "buy-1-3-sealed",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/buy-1-3-sealed.json"
+        },
+        {
+          "name": "close",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/close.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/close.json"
+        },
+        {
+          "name": "draw",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/draw.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/draw.json"
+        },
+        {
+          "name": "refund-1",
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T2226/invitations/refund-1.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T2226/invitations/refund-1.json"
+        }
+      ]
+    }
+  ],
+  "earlierRounds": [
     {
       "roundId": "round-20261121T1936",
       "network": "chipnet",
@@ -14,6 +280,7 @@
       "roundCategory": "c6c72d696287cc52050eebaed34c24cb511a12941745fd3b050e155a14ad398c",
       "openedAtHeight": 341549,
       "openTransactionHash": "a237f153c0b5e98fb082ade21baa38e46c0b4f0bb00e38bbe9e0513363daf569",
+      "templateVersion": 1,
       "status": "open, 3 tickets sold",
       "ticketsSold": 3,
       "steps": [
@@ -61,53 +328,53 @@
       "invitations": [
         {
           "name": "1-open",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/1-open.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/1-open.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/1-open.json"
         },
         {
           "name": "buy-1-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-1-1-offer.json"
         },
         {
           "name": "buy-1-2-buyer_a",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-2-buyer_a.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-2-buyer_a.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-1-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-1-2-buyer_a.json"
         },
         {
           "name": "buy-1-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-1-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-1-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-1-3-sealed.json"
         },
         {
           "name": "buy-2-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-2-1-offer.json"
         },
         {
           "name": "buy-2-2-buyer_b",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-2-buyer_b.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-2-buyer_b.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-2-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-2-2-buyer_b.json"
         },
         {
           "name": "buy-2-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-2-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-2-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-2-3-sealed.json"
         },
         {
           "name": "buy-3-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-3-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-3-1-offer.json"
         },
         {
           "name": "buy-3-2-buyer_a",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-2-buyer_a.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-2-buyer_a.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-3-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-3-2-buyer_a.json"
         },
         {
           "name": "buy-3-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1936/invitations/buy-3-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1936/invitations/buy-3-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1936/invitations/buy-3-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1936/invitations/buy-3-3-sealed.json"
         }
       ]
     },
@@ -123,6 +390,7 @@
       "roundCategory": "ee827168693366d7d256ab548437c3a0c8e314c88508292d9722f526f479ad90",
       "openedAtHeight": 341562,
       "openTransactionHash": "3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e",
+      "templateVersion": 1,
       "status": "finished: ticket #1 claimed the pot",
       "ticketsSold": 3,
       "steps": [
@@ -191,63 +459,63 @@
       "invitations": [
         {
           "name": "1-open",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/1-open.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/1-open.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/1-open.json"
         },
         {
           "name": "buy-1-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-1-1-offer.json"
         },
         {
           "name": "buy-1-2-buyer_a",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-2-buyer_a.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-2-buyer_a.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-1-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-1-2-buyer_a.json"
         },
         {
           "name": "buy-1-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-1-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-1-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-1-3-sealed.json"
         },
         {
           "name": "buy-2-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-2-1-offer.json"
         },
         {
           "name": "buy-2-2-buyer_b",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-2-buyer_b.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-2-buyer_b.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-2-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-2-2-buyer_b.json"
         },
         {
           "name": "buy-2-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-2-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-2-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-2-3-sealed.json"
         },
         {
           "name": "buy-3-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-3-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-3-1-offer.json"
         },
         {
           "name": "buy-3-2-buyer_a",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-2-buyer_a.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-2-buyer_a.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-3-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-3-2-buyer_a.json"
         },
         {
           "name": "buy-3-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/buy-3-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/buy-3-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/buy-3-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/buy-3-3-sealed.json"
         },
         {
           "name": "claim",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/claim.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/claim.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/claim.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/claim.json"
         },
         {
           "name": "draw",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1949/invitations/draw.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1949/invitations/draw.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1949/invitations/draw.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1949/invitations/draw.json"
         }
       ]
     },
@@ -263,6 +531,7 @@
       "roundCategory": "01f3902b2205a24d1e65da815f98aa098394d691b224835f7b23ee0f0a11be4b",
       "openedAtHeight": 341563,
       "openTransactionHash": "89a163f54b1fe185375d2edb13f9a06ab69a48b186dc702bc70fa4cd11a2389e",
+      "templateVersion": 1,
       "status": "undrawn: 2 of 2 tickets refunded",
       "ticketsSold": 2,
       "steps": [
@@ -321,43 +590,43 @@
       "invitations": [
         {
           "name": "1-open",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/1-open.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/1-open.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/1-open.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/1-open.json"
         },
         {
           "name": "buy-1-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-1-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-1-1-offer.json"
         },
         {
           "name": "buy-1-2-buyer_b",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-2-buyer_b.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-2-buyer_b.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-1-2-buyer_b.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-1-2-buyer_b.json"
         },
         {
           "name": "buy-1-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-1-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-1-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-1-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-1-3-sealed.json"
         },
         {
           "name": "buy-2-1-offer",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-1-offer.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-1-offer.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-2-1-offer.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-2-1-offer.json"
         },
         {
           "name": "buy-2-2-buyer_a",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-2-buyer_a.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-2-buyer_a.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-2-2-buyer_a.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-2-2-buyer_a.json"
         },
         {
           "name": "buy-2-3-sealed",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/buy-2-3-sealed.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/buy-2-3-sealed.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/buy-2-3-sealed.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/buy-2-3-sealed.json"
         },
         {
           "name": "refund-1",
-          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds/round-20261121T1951/invitations/refund-1.json",
-          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds/round-20261121T1951/invitations/refund-1.json"
+          "url": "https://github.com/nikhil-pn/lotry-xo/blob/main/rounds-v1/round-20261121T1951/invitations/refund-1.json",
+          "raw": "https://raw.githubusercontent.com/nikhil-pn/lotry-xo/main/rounds-v1/round-20261121T1951/invitations/refund-1.json"
         }
       ]
     }

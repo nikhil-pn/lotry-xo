@@ -327,7 +327,7 @@ const steps = {
             inputs: [ outpointOf(pot, 'potCloseInput') ],
         });
         const { invitationIdentifier } = created.invitation;
-        const feeCoin = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 5_000n);
+        const feeCoin = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 2_200n);
         await engine.appendInvitation(invitationIdentifier, {
             templateIdentifier: round.templateIdentifier, actionIdentifier: 'closeRound',
             outputs: [ { outputIdentifier: 'potClosedOutput' } ], inputs: [ outpointOf(feeCoin) ],
@@ -369,7 +369,7 @@ const steps = {
         });
         const { invitationIdentifier } = created.invitation;
         // The organiser pays the draw fee from its own coins; the pot keeps every satoshi.
-        const feeCoin = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 5_000n);
+        const feeCoin = (await engine.listSpendableUnspentOutputs()).find((output) => output.tokenCategory === undefined && BigInt(output.valueSatoshis) >= 2_200n);
         await engine.appendInvitation(invitationIdentifier, {
             templateIdentifier: round.templateIdentifier,
             actionIdentifier: 'drawRound',

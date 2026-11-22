@@ -2,3 +2,6 @@
 {"at":"2026-11-21T22:25:05.955Z","step":"buy","ticketNumber":1,"buyer":"buyer_a","transactionHash":"5f4e4f2ce1ccd617f8f075c53ed233e31e0c105f193ed09e51150c162cdcd370"}
 {"at":"2026-11-21T22:25:38.929Z","step":"buy","ticketNumber":2,"buyer":"buyer_b","transactionHash":"4d5822f2e6607af47ccb4b4ec197c97828ac5e83a50696b2f43925a2104ce6ad"}
 {"at":"2026-11-21T22:26:02.673Z","step":"buy","ticketNumber":3,"buyer":"buyer_a","transactionHash":"88688e5ac105111dd48bff1cebb3c24fdc03aaa4a5d57149054b0464a74d09e9"}
+{"at":"2026-11-21T22:29:16.597Z","step":"close","tickets":3,"potSatoshis":8000,"transactionHash":"127f61857df71b68bf620a865f87b054cd545f56ce9e2e995cb7b8a3715c882f"}
+{"at":"2026-11-21T23:29:28.047Z","step":"draw","winningTicket":3,"tickets":3,"potSatoshis":8000,"transactionHash":"10c066fb83c9a74358fd64c79535af2b239a23ea3f4d16d9861a7c34f6c758c4"}
+{"at":"2026-11-22T00:59:48.672Z","step":"claim","winner":"buyer_a","ticketNumber":3,"transactionHash":"7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc"}

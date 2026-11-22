@@ -18,26 +18,28 @@ transaction against the real covenant and runs it in the BCH 2026 VM, including 
 
 ## Live on Chipnet
 
-Three rounds, every step a real Chipnet transaction made from an XO invitation built with this template. The full list,
-with every invitation file, is in [`docs/PROOF.md`](docs/PROOF.md). Round 2 is the whole story:
+Two rounds on the current template, every step a **confirmed** Chipnet transaction made from an XO invitation. The full
+list, with every invitation file, is in [`docs/PROOF.md`](docs/PROOF.md). Round A is the whole story:
 
 | Step | What happened | Transaction |
 |---|---|---|
-| Open | Token genesis: the pot gets the round's minting NFT, commitment = 0 tickets | [3a40b9ce…](https://chipnet.imaginary.cash/tx/3a40b9ce534ec4eda7a8e2b8fc9dac9fda5b76315448d53c1dc4949f1831030e) |
-| Ticket #1 | Two-party invitation: organiser adds the pot, buyer A pays and receives ticket #1 | [f1b34916…](https://chipnet.imaginary.cash/tx/f1b34916085e85a10b0dfa0f33272463423dc5fd7b2f38ffca99a777df59d0f4) |
-| Ticket #2 | Same, buyer B | [4f829aaf…](https://chipnet.imaginary.cash/tx/4f829aaf43eebd08c360464b72225f10ca6a33d699a588654cd5908670194320) |
-| Ticket #3 | Same, buyer A | [50446427…](https://chipnet.imaginary.cash/tx/504464270b3a898837f9a112e50f62b913826137e6126967fbff3be2039acbc2) |
-| Draw | Secret revealed after the draw height; the covenant writes "ticket #1 won" into the pot | [4e2f31b3…](https://chipnet.imaginary.cash/tx/4e2f31b3f05704e66e4956c35b6fbc16263e63165f8622f773bc23ca4d3c7a5c) |
-| Claim | Buyer A spends the pot with ticket #1; both NFTs burned, 62,000 sats paid out | [3b8c58ef…](https://chipnet.imaginary.cash/tx/3b8c58efc45d1267d071020d3a8881ab2329e0e442d6c7b86fff2a435d21e5d6) |
+| Open | Token genesis: the pot gets the round's minting NFT, commitment = 0 tickets | [46c83ca8…](https://chipnet.imaginary.cash/tx/46c83ca89a6bd1e57c1b3f5061f8ee5e3297719db70d6f2319dd74a7515b6ef9) |
+| Ticket #1 | Two-party invitation: organiser adds the pot, buyer A pays and receives ticket #1 (after checking the round's genesis) | [5f4e4f2c…](https://chipnet.imaginary.cash/tx/5f4e4f2ce1ccd617f8f075c53ed233e31e0c105f193ed09e51150c162cdcd370) |
+| Ticket #2 | Two-party invitation: organiser adds the pot, buyer B pays and receives ticket #2 (after checking the round's genesis) | [4d5822f2…](https://chipnet.imaginary.cash/tx/4d5822f2e6607af47ccb4b4ec197c97828ac5e83a50696b2f43925a2104ce6ad) |
+| Ticket #3 | Two-party invitation: organiser adds the pot, buyer A pays and receives ticket #3 (after checking the round's genesis) | [88688e5a…](https://chipnet.imaginary.cash/tx/88688e5ac105111dd48bff1cebb3c24fdc03aaa4a5d57149054b0464a74d09e9) |
+| Close | After the draw height anyone closes sales: count frozen at 3 (`…c1`) | [127f6185…](https://chipnet.imaginary.cash/tx/127f61857df71b68bf620a865f87b054cd545f56ce9e2e995cb7b8a3715c882f) |
+| Draw | Secret revealed on the closed pot; the covenant writes "ticket #3 won" into it | [10c066fb…](https://chipnet.imaginary.cash/tx/10c066fb83c9a74358fd64c79535af2b239a23ea3f4d16d9861a7c34f6c758c4) |
+| Claim | Buyer A spends the pot with ticket #3; both NFTs burned, the pot paid out | [7b0c247e…](https://chipnet.imaginary.cash/tx/7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc) |
 
-Round 3 shows the other ending: never drawn, both tickets refunded after the refund height
-([c6fea214…](https://chipnet.imaginary.cash/tx/c6fea21452e827632730d8476b8b5f939b2eb83ff6b1a1e25496a0f67bfe8560),
-[1fe5647d…](https://chipnet.imaginary.cash/tx/1fe5647d591b5e6baab78ee28acfc0139d31dc9686cfd7adbbda35abbbb86b3f)).
+Round B shows the safety net: drawn ([902e28f8…](https://chipnet.imaginary.cash/tx/902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85)), nobody claimed by the claim deadline, so the ticket
+holder refunded ([5f3485a3…](https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5)). Earlier rounds on the first version of the template are kept under
+[`rounds-v1/`](rounds-v1) as history; they were funded from a faucet whose payouts paid too little fee and never confirmed,
+which is why these rounds were re-run from the on-chain faucet contracts ([`scripts/faucet-contract.mjs`](scripts/faucet-contract.mjs)).
 
 ### In the XO debug tool
 
 The template imports into [blaze.xo.cash](https://blaze.xo.cash) with the same identifier the invitations carry
-("Lotry · 2 roles · 5 actions · 23 scripts"). Each committed invitation opens with its signed commits and its broadcast
+(screenshots below are from the v1 rounds; the current template imports the same way). Each committed invitation opens with its signed commits and its broadcast
 result, and the draw transaction verifies and can be stepped opcode by opcode:
 
 | Ticket sale (buyTicket, organiser + player) | Draw (drawRound) | Draw transaction, stepped |

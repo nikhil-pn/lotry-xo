@@ -10,6 +10,7 @@ const blobLink = (file) => `${REPOSITORY}/blob/main/${file}`;
 const STEP_TITLES = {
     open: 'Round opened',
     buy: 'Ticket sold',
+    close: 'Sales closed',
     draw: 'Winner drawn',
     claim: 'Pot claimed',
     refund: 'Ticket refunded',
@@ -21,6 +22,7 @@ const describe = (step) => {
     switch (step.step) {
         case 'open': return 'Organiser creates the pot: token genesis, minting NFT, commitment = 0 tickets';
         case 'buy': return `Ticket #${step.ticketNumber} to ${who(step.buyer)} (two-party invitation: organiser adds the pot, player adds coins + ticket)`;
+        case 'close': return `After the draw height, sales close: the count is frozen at ${step.tickets} before any reveal`;
         case 'draw': return `Secret revealed; the covenant picks ticket #${step.winningTicket} of ${step.tickets} (pot ${step.potSatoshis} sats)`;
         case 'claim': return `The winner (${who(step.winner)}) spends the pot with winning ticket #${step.ticketNumber}; both NFTs burned`;
         case 'refund': return `Ticket #${step.ticketNumber} burned, price paid back to ${who(step.holder)}`;
@@ -53,6 +55,7 @@ const summarise = ({ directory, roundId }) => {
     if (draw) status = `drawn: ticket #${draw.winningTicket} won`;
     if (claim) status = `finished: ticket #${claim.ticketNumber} claimed the pot`;
     if (refunds > 0 && !draw) status = `undrawn: ${refunds} of ${sold} tickets refunded`;
+    if (refunds > 0 && draw && !claim) status = `drawn, unclaimed by the deadline: ${refunds} of ${sold} tickets refunded`;
     return { ...round, templateVersion: directory === 'rounds' ? 2 : 1, status, ticketsSold: sold, steps, invitations };
 };
 

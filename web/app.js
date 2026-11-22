@@ -126,12 +126,22 @@ const describeRound = (round) => {
       kind: 'claimed',
       pill: 'Claimed',
       title: 'Drawn, then claimed',
-      summary: `${tickets} tickets sold. After the draw height the organiser revealed the secret, the covenant picked ticket #${draw.winningTicket}, and its holder took the ${sats(won)}-sat pot.`,
+      summary: `${tickets} tickets sold. After the draw height sales closed, the organiser revealed the secret, the covenant picked ticket #${draw.winningTicket}, and its holder took the ${sats(won)}-sat pot.`,
       money: [ 'Pot claimed', `${sats(won)} sats` ],
       winner: draw.winningTicket,
       pot: won,
       tickets,
       claimLink: claim.link,
+    };
+  }
+  if (refunds.length > 0 && draw) {
+    return {
+      kind: 'refunded',
+      pill: 'Refunded',
+      title: 'Drawn, never claimed, refunded',
+      summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold and drawn, but nobody claimed by the claim deadline. So the pot didn’t stay locked: each ticket was burned for its ${sats(price)}-sat price back.`,
+      money: [ 'Paid back', `${sats(price * BigInt(refunds.length))} sats` ],
+      tickets,
     };
   }
   if (refunds.length > 0) {
