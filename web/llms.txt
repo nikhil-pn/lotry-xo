@@ -33,6 +33,7 @@ EMBER2026 votes / prizes (CashTokens address): bitcoincash:zrz5rqqcmsmk08yv6lv9n
 ## Stated limits
 - The organiser knows the secret: one who also buys tickets could steer the winner, or refuse to reveal (which sends the round to refunds). The covenant guarantees the pot only pays a winning ticket or refunds. Next step: commit-reveal by all players.
 - Chipnet only (test coins). Ticket buying runs from the CLI with XO wallets; no browser wallet flow yet.
+- The template does not force the draw, refund and claim heights into order; buyers should check them in the round's open invitation (our rounds always use draw < refund < claim deadline).
 - The organiser's 2,000-sat seed and the pot NFT stay in the covenant when a round ends; a round that sells no tickets can't be drawn or refunded.
 
 ## Built with
