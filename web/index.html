@@ -93,7 +93,7 @@
         <dl class="stats">
           <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">2</dd></div>
           <div><dt>Confirmed transactions, all public</dt><dd data-stat="txs">12</dd></div>
-          <div><dt>Tests: every path, 25+ attacks</dt><dd>43</dd></div>
+          <div><dt>Tests: every path, 41 attacks refused</dt><dd>60</dd></div>
           <div><dt>Keys that can move the pot</dt><dd>0</dd></div>
         </dl>
       </div>
@@ -328,7 +328,7 @@
           <button class="code__copy" type="button" data-copy="try-code">Copy</button>
 <pre id="try-code"><code><span class="c-cmd">git clone https://github.com/nikhil-pn/lotry-xo &amp;&amp; cd lotry-xo</span>
 <span class="c-cmd">npm install</span>
-<span class="c-cmd">npm test</span>                                    <span class="c-com"># 43 tests: every covenant path, 25+ attacks, BCH 2026 VM</span>
+<span class="c-cmd">npm test</span>                                    <span class="c-com"># 60 tests: every covenant path, 41 attacks refused, BCH 2026 VM</span>
 
 <span class="c-cmd">node scripts/make-wallets.mjs</span>               <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
 <span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>          <span class="c-com"># a wallet's Chipnet address</span>
