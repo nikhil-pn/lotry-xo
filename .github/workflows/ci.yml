@@ -1,0 +1,22 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # --ignore-scripts: a native SQLite add-on deep in the XO dependencies fails to compile, and nothing here uses it.
+      - run: npm ci --ignore-scripts
+      # 61 tests: every covenant path and 41 attacks in libauth's BCH 2026 VM, plus sandbox rounds. No network needed.
+      - run: npm test
