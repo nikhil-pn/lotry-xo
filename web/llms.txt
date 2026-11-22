@@ -9,7 +9,7 @@ EMBER2026 votes / prizes (CashTokens address): bitcoincash:zrz5rqqcmsmk08yv6lv9n
 ## Links
 - [Website](https://lotry-xo.exprmnts.fun): overview, live rounds read from Chipnet, the film
 - [Play in the browser](https://lotry-xo.exprmnts.fun/play.html): every button builds a real transaction against the real covenant and runs it in the BCH 2026 VM; includes 8 cheat attempts the covenant refuses
-- [The film, 1:04, presented by Hina Hanan](https://youtu.be/DM54m16yEHg) (also self-hosted: https://lotry-xo.exprmnts.fun/film/lotry-film.mp4, captions: https://lotry-xo.exprmnts.fun/film/lotry-film.en.vtt)
+- [The film, 1:04, presented by Hina Hanan: "A coin with no key: how Bitcoin Cash runs a lottery nobody can steal"](https://youtu.be/DM54m16yEHg) (Media Track entry; its own EMBER2026 address is in the YouTube description) (also self-hosted: https://lotry-xo.exprmnts.fun/film/lotry-film.mp4, captions: https://lotry-xo.exprmnts.fun/film/lotry-film.en.vtt)
 - [Slides](https://lotry-xo.exprmnts.fun/slides.html)
 - [Source code, MIT](https://github.com/nikhil-pn/lotry-xo)
 - [The XO template](https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs) and as [XO JSON](https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json)
