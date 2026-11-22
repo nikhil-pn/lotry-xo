@@ -12,7 +12,20 @@ now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.ca
 **Play it in your browser:** [lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html). Every button builds a real
 transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
 
-**Watch the film (1 min, presented by Hina Hanan):** [youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg)
+### Watch the film (1:04, presented by Hina Hanan)
+
+[![Lotry: the pot has no key. A one-minute film presented by Hina Hanan. Click to watch on YouTube.](docs/media/film-thumbnail.jpg)](https://youtu.be/DM54m16yEHg)
+
+[youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg) · also plays on the [website](https://lotry-xo.exprmnts.fun/#film) (with captions) · our Media Track entry
+
+### Screenshots
+
+| The website: the claimed round, and Hina's film one click away | The sandbox: real transactions in the BCH 2026 VM, cheats refused |
+|---|---|
+| [![Lotry on XO website](docs/media/site-home.jpg)](https://lotry-xo.exprmnts.fun) | [![Play a round, try to cheat](docs/media/site-play.jpg)](https://lotry-xo.exprmnts.fun/play.html) |
+
+For AI agents and crawlers: a plain-text summary of the whole project, with every link and transaction, is at
+[lotry-xo.exprmnts.fun/llms.txt](https://lotry-xo.exprmnts.fun/llms.txt).
 
 - One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
 - **Tickets are numbered NFTs** (CashTokens) that the players hold in their own wallets.
@@ -76,7 +89,7 @@ has five paths, picked by the unlocking script:
 | 4 refund | any ticket holder | past the refund height if never drawn (open or closed), or past the **claim deadline** if drawn and unclaimed; input 1 is a real ticket (immutable NFT, 4-byte number, no fungible amount); the pot carries on with exactly one ticket price less, marked refunding for good, and the ticket is burned |
 
 There is no signature path in the covenant. 57 tests ([`test/covenant.test.mjs`](test/covenant.test.mjs)) run every path
-and 41 attacks in libauth's BCH 2026 VM, and check that every rejection comes from the covenant itself; 3 more
+and 41 attacks in libauth's BCH 2026 VM, and check that every rejection comes from the covenant itself; 4 more
 ([`test/sandbox.test.mjs`](test/sandbox.test.mjs)) play whole rounds and ten cheats through the browser sandbox's engine.
 
 ### Reviewed, then hardened
@@ -124,7 +137,7 @@ Node 24. Chipnet coins come free from the proof-of-work faucet at chipnet.bch.ni
 
 ```bash
 npm install
-npm test                                        # 60 tests: covenant paths + attacks in the BCH 2026 VM, and the sandbox
+npm test                                        # 61 tests: covenant paths + attacks in the BCH 2026 VM, and the sandbox
 
 node scripts/make-wallets.mjs                   # three demo wallets, mnemonics in ~/.config/pi/lotry-xo.env (outside the repo)
 node scripts/addresses.mjs ORGANISER            # then BUYER_A, BUYER_B
