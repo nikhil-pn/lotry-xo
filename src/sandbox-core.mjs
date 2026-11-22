@@ -185,10 +185,11 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
             const fee = newCoin(ANYONE, 10_000n);
             const outputs = [ { lockingBytecode: potLock, valueSatoshis: state.pot.valueSatoshis, token: potToken(withMarker(winner, PHASE_MARKERS.drawn)) } ];
             return run({
-                label: label ?? (phase === 'closed' ? `Organiser reveals the secret: ticket #${winner} wins` : 'Organiser tries to draw'), actor: 'Organiser', kind,
+                label: label ?? (phase === 'closed' ? (count > 0 ? `Organiser reveals the secret: ticket #${winner} wins` : 'Organiser tries to draw a round with no tickets') : 'Organiser tries to draw'), actor: 'Organiser', kind,
                 inputs: [ { coin: state.pot, unlockingBytecode: wrongSecret ? unlock.drawWrongSecret : unlock.draw }, { coin: fee, unlockingBytecode: new Uint8Array() } ],
                 outputs,
-                stoppedBy: phase !== 'closed' ? 'The draw only runs on a closed pot, so the count is frozen before the secret is seen.' : undefined,
+                stoppedBy: phase !== 'closed' ? 'The draw only runs on a closed pot, so the count is frozen before the secret is seen.'
+                    : count === 0 ? 'A round with no tickets has no winner to draw.' : undefined,
                 apply: () => { state.pot = newCoin(potLock, outputs[0].valueSatoshis, outputs[0].token); state.secretRevealed = true; },
             });
         },
@@ -310,7 +311,14 @@ export const createSandbox = ({ ticketPrice = 20_000n, drawHeight = 10, refundHe
             title: 'Refund a fake ticket',
             what: 'Someone holding a fungible token of the round\'s category tries to pass it off as a ticket for a refund.',
             stoppedBy: 'A ticket must be an immutable NFT with a 4-byte number and no fungible amount.',
-            run: () => actions.refund('You', { fake: true, kind: 'attack', label: 'You refund a fungible token posing as a ticket' }),
+            run: () => {
+                const { phase } = potPhase();
+                // Set the scene so only the ticket rule can refuse it: past the refund height, with ticket money in the pot.
+                if (state.height < refundHeight || state.tickets.length === 0 || ![ 'open', 'closed', 'refunding' ].includes(phase)) {
+                    return cannot('Refund a fake ticket', 'You', `Needs an undrawn round with tickets sold, at lock height ${refundHeight} or later: buy a ticket and press +10 twice first.`, 'attack');
+                }
+                return actions.refund('You', { fake: true, kind: 'attack', label: 'You refund a fungible token posing as a ticket' });
+            },
         },
     };
 

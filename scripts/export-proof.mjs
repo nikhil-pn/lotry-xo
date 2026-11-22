@@ -60,7 +60,9 @@ const summarise = ({ directory, roundId }) => {
 };
 
 const rounds = listRounds('rounds').map(summarise);
-const earlierRounds = listRounds('rounds-v1').map(summarise);
+// The rounds-v1 transactions were funded by an under-fee faucet chain, never confirmed and were dropped from the
+// mempool, so they are not proof and are not published (the folder stays in git as history).
+const earlierRounds = [];
 
 fs.mkdirSync('web/data', { recursive: true });
 fs.writeFileSync('web/data/rounds.json', `${JSON.stringify({ generatedAt: new Date().toISOString(), repository: REPOSITORY, rounds, earlierRounds }, null, 2)}\n`);

@@ -15,7 +15,7 @@ transaction against the real covenant and runs it in the BCH 2026 VM, including 
 - One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
 - **Tickets are numbered NFTs** (CashTokens) that the players hold in their own wallets.
 - **The chain picks the winner.** The organiser commits to a secret when opening the round. After the draw height anyone closes ticket sales, then the organiser reveals the secret and the covenant itself computes `sha256(secret) mod tickets + 1`.
-- **Nothing gets stuck:** if the round is never drawn, every ticket refunds after the refund height; if the winner never claims, every ticket refunds after the claim deadline.
+- **Ticket money never gets stuck:** if the round is never drawn, every ticket refunds after the refund height; if the winner never claims, every ticket refunds after the claim deadline. (The organiser's 2,000-sat seed and the pot NFT do stay in the covenant when a round ends, and a round that sells no tickets can't be drawn or refunded; both are small, stated limits.)
 - Everything runs through **XO invitations**: a ticket sale is a two-party invitation (the organiser adds the pot, the player adds coins and receives the ticket), and close, draw, claim and refund are **follow-up actions** of the pot and of the ticket.
 
 ## Live on Chipnet
@@ -34,17 +34,17 @@ list, with every invitation file, is in [`docs/PROOF.md`](docs/PROOF.md). Round 
 | Claim | Buyer A spends the pot with ticket #3; both NFTs burned, the pot paid out | [7b0c247e…](https://chipnet.imaginary.cash/tx/7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc) |
 
 Round B shows the safety net: drawn ([902e28f8…](https://chipnet.imaginary.cash/tx/902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85)), nobody claimed by the claim deadline, so the ticket
-holder refunded ([5f3485a3…](https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5)). Earlier rounds on the first version of the template are kept under
-[`rounds-v1/`](rounds-v1) as history; they were funded from a faucet whose payouts paid too little fee and never confirmed,
-which is why these rounds were re-run from the on-chain faucet contracts ([`scripts/faucet-contract.mjs`](scripts/faucet-contract.mjs)).
+holder refunded ([5f3485a3…](https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5)). Our first attempt (`rounds-v1/`, kept in git as history, not proof) was funded by a faucet whose payouts paid too little
+fee: it never confirmed and was dropped from the mempool. These rounds were re-run from the on-chain faucet contracts
+([`scripts/faucet-contract.mjs`](scripts/faucet-contract.mjs)) and are all mined.
 
 ### In the XO debug tool
 
 The template imports into [blaze.xo.cash](https://blaze.xo.cash) with the same identifier the invitations carry
-(screenshots below are from the v1 rounds; the current template imports the same way). Each committed invitation opens with its signed commits and its broadcast
+("Lotry · 2 roles · 6 actions"). Screenshots from round A: Each committed invitation opens with its signed commits and its broadcast
 result, and the draw transaction verifies and can be stepped opcode by opcode:
 
-| Ticket sale (buyTicket, organiser + player) | Draw (drawRound) | Draw transaction, stepped |
+| Ticket #2 sale (buyTicket, organiser + player) | Draw (drawRound) | Draw transaction 10c066fb…, stepped |
 |---|---|---|
 | ![sale](docs/debug-tool/invitation-buy-2-3-sealed.jpg) | ![draw](docs/debug-tool/invitation-draw.jpg) | ![inspect](docs/debug-tool/inspect-draw.jpg) |
 
@@ -110,6 +110,7 @@ commits, adds the pot's unlocking script and broadcasts (`buy-N-3-sealed.json`).
 | Randomness from Chainlink VRF (`RandomWalletPicker.sol`) | Commit-reveal: the secret's hash is fixed when the round opens, the covenant checks the reveal and computes the winner |
 | The contract pays the winner | The winner claims by burning the winning ticket with the pot |
 | (no refund if the draw never happens) | Every ticket refundable after the refund height if the round is never drawn |
+| A bonding-curve ticket market (ERC-20 tickets, trading tax, staking) | Not migrated: this is Lotry's core raffle round at a fixed ticket price; the market is future work |
 
 Before BLAZE: [lotry.fun](https://www.lotry.fun) (live demo) and the contracts at
 [exprmnts/Lotry_contract](https://github.com/exprmnts/Lotry_contract). Everything in this repository was written during
@@ -121,7 +122,7 @@ Node 24. Chipnet coins come free from the proof-of-work faucet at chipnet.bch.ni
 
 ```bash
 npm install
-npm test                                        # 38 covenant tests in the BCH 2026 VM
+npm test                                        # 60 tests: covenant paths + attacks in the BCH 2026 VM, and the sandbox
 
 node scripts/make-wallets.mjs                   # three demo wallets, mnemonics in ~/.config/pi/lotry-xo.env (outside the repo)
 node scripts/addresses.mjs ORGANISER            # then BUYER_A, BUYER_B
@@ -139,7 +140,7 @@ node scripts/export-proof.mjs                   # rebuilds docs/PROOF.md
 
 To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash), create a throwaway chipnet account,
 **Import Template** → paste [`templates/lotry.json`](templates/lotry.json), then **Join Invitation** → paste any file from
-[`rounds/round-20261121T1949/invitations/`](rounds/round-20261121T1949/invitations) and **View invitation**, or
+[`rounds/round-20261121T2224/invitations/`](rounds/round-20261121T2224/invitations) and **View invitation**, or
 **Inspect** → paste a transaction id from the table above.
 
 ## Found while building
@@ -159,8 +160,9 @@ To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash)
 ## Stated plainly
 
 - **The organiser knows the secret.** An organiser who also buys tickets before sales close could steer which ticket
-  wins, like any raffle host who also plays. The covenant guarantees the pot can only pay a winning ticket or refunds;
-  it can't stop the organiser from playing. Removing that trust needs every buyer to add randomness (commit-reveal by
+  wins, like any raffle host who also plays, and an organiser who dislikes the result can refuse to reveal, which
+  sends the round to refunds. The covenant guarantees the pot can only pay a winning ticket or refunds; it can't stop
+  the organiser from playing. Removing that trust needs every buyer to add randomness (commit-reveal by
   all players), our next step.
 - **Chipnet only**, test coins. Ticket buying works from the CLI with any XO wallet; there is no browser wallet flow yet.
 - A buyer should check the round's genesis transaction (one minting NFT, commitment 0) before buying; the CLI's rounds

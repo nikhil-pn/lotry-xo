@@ -43,7 +43,7 @@ test('sandbox: every cheat is refused by the covenant', () => {
     const sandbox = createSandbox();
     accepted(sandbox.actions.buy('Alice'));
     accepted(sandbox.actions.buy('Bob'));
-    for (const name of [ 'stealPot', 'freeTicket', 'underpay', 'mintingTicket', 'earlyDraw', 'fakeTicket' ]) refusedByCovenant(sandbox.attacks[name].run());
+    for (const name of [ 'stealPot', 'freeTicket', 'underpay', 'mintingTicket', 'earlyDraw' ]) refusedByCovenant(sandbox.attacks[name].run());
     sandbox.actions.advance(10);
     accepted(sandbox.actions.close());
     refusedByCovenant(sandbox.attacks.stealPot.run());
@@ -54,4 +54,15 @@ test('sandbox: every cheat is refused by the covenant', () => {
     refusedByCovenant(sandbox.attacks.losingClaim.run());
     // The failure report names the opcode that stopped it.
     assert.ok(sandbox.state.log.find((entry) => entry.kind === 'attack' && entry.failure?.opcode));
+});
+
+test('sandbox: the fake-ticket cheat is refused by the ticket rule, not by timing', () => {
+    const sandbox = createSandbox();
+    const early = sandbox.attacks.fakeTicket.run();
+    assert.equal(early.skipped, true); // not staged yet: explains what to do instead of a misleading refusal
+    sandbox.actions.buy('Alice');
+    sandbox.actions.advance(25);
+    const entry = sandbox.attacks.fakeTicket.run();
+    refusedByCovenant(entry);
+    assert.doesNotMatch(entry.error, /CHECKLOCKTIMEVERIFY|dust/i);
 });
