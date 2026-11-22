@@ -108,7 +108,7 @@
             <h2 class="h2" id="how-title">A coin with <em>no key.</em></h2>
           </div>
           <div class="prose">
-            <p>On Bitcoin Cash, money sits in coins, and every coin carries a small script that says how it may be spent. Most scripts ask for a signature from one key. The pot's script asks for none. It only lists the next moves it allows: one more ticket sold, the right winner written down, the winner paid, or a ticket refunded after the deadline.</p>
+            <p>On Bitcoin Cash, money sits in coins, and every coin carries a small script that says how it may be spent. Most scripts ask for a signature from one key. The pot's script asks for none. It only lists the next moves it allows: one more ticket sold, sales closed, the right winner written down, the winner paid, or a ticket refunded after a deadline.</p>
             <p>No key means nothing to lose, leak, or run away with. The organiser runs the round but can never move the money.</p>
           </div>
         </div>
@@ -130,29 +130,36 @@
           </li>
           <li class="step">
             <span class="step__num">3</span>
-            <h3 class="step__name">Draw</h3>
-            <p class="step__who">Organiser, after the draw height</p>
-            <p class="step__text">The organiser reveals the secret. The covenant checks it against the hash and works out the winner itself: sha256(secret) mod tickets + 1.</p>
-            <p class="step__state"><span>pot</span> winner #k</p>
+            <h3 class="step__name">Close</h3>
+            <p class="step__who">Anyone, after the draw height</p>
+            <p class="step__text">Sales stop and the ticket count is frozen, before any secret is revealed. Value and NFT stay as they are.</p>
+            <p class="step__state"><span>pot</span> closed at n</p>
           </li>
           <li class="step">
             <span class="step__num">4</span>
+            <h3 class="step__name">Draw</h3>
+            <p class="step__who">Organiser, on a closed pot</p>
+            <p class="step__text">The organiser reveals the secret. The covenant checks it against the hash and works out the winner itself: sha256(secret) mod tickets + 1. It refuses a pot that is not closed.</p>
+            <p class="step__state"><span>pot</span> winner #k</p>
+          </li>
+          <li class="step">
+            <span class="step__num">5</span>
             <h3 class="step__name">Claim</h3>
             <p class="step__who">Whoever holds the winning ticket</p>
             <p class="step__text">The winner spends the ticket together with the pot. Both NFTs are burned and the whole pot is paid out.</p>
             <p class="step__state"><span>pot</span> paid to the winner</p>
           </li>
           <li class="step step--alt">
-            <span class="step__num">5</span>
-            <p class="step__or">or, if never drawn</p>
+            <span class="step__num">6</span>
+            <p class="step__or">or, if no claim</p>
             <h3 class="step__name">Refund</h3>
-            <p class="step__who">Any ticket holder, after the refund height</p>
-            <p class="step__text">Each ticket burns for its price back. Nobody has to say yes, the organiser included. The first refund closes the round: no draw after it.</p>
+            <p class="step__who">Any ticket holder, after a deadline</p>
+            <p class="step__text">After the refund height if the round was never drawn, or after the claim deadline if it was drawn but nobody claimed. Each ticket burns for its price back; nobody has to say yes. The first refund ends the round: no draw or claim after it.</p>
             <p class="step__state"><span>pot</span> refunds only</p>
           </li>
         </ol>
 
-        <p class="footnote">The pot's state is its NFT commitment: a 4-byte ticket count while the round is open, then the winning number plus the byte <code>0xd0</code> once drawn, or the count plus <code>0xee</code> once refunds begin. The covenant checks every move against it.</p>
+        <p class="footnote">The pot's state is its NFT commitment: a 4-byte ticket count while the round is open; the count plus <code>0xc1</code> once sales close; the winning number plus <code>0xd0</code> once drawn; or the 4 bytes plus <code>0xee</code> once refunds begin. The covenant checks every move against it.</p>
       </div>
     </section>
 

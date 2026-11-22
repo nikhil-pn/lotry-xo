@@ -414,7 +414,7 @@ code, pre { font-family: var(--mono); }
   margin: clamp(48px, 6vw, 72px) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 0;
 }
 .step {
@@ -431,7 +431,7 @@ code, pre { font-family: var(--mono); }
   border-top: 1px solid var(--line-2);
 }
 .step:first-child::before { left: 20px; }
-.step:nth-child(4)::before { border-top-style: dashed; border-top-color: var(--muted); }
+.step:nth-child(5)::before { border-top-style: dashed; border-top-color: var(--muted); }
 .step--alt::before { display: none; }
 .step__num {
   position: relative;
@@ -446,7 +446,7 @@ code, pre { font-family: var(--mono); }
   font-size: 20px;
   color: var(--text);
 }
-.step:nth-child(4) .step__num { background: var(--mint); border-color: var(--mint); color: var(--mint-ink); }
+.step:nth-child(5) .step__num { background: var(--mint); border-color: var(--mint); color: var(--mint-ink); }
 .step--alt .step__num { border-style: dashed; border-color: var(--muted); }
 .step__or {
   position: absolute;
@@ -955,7 +955,7 @@ code, pre { font-family: var(--mono); }
   .step { padding: 0 0 34px 64px; }
   .step::before { top: 0; bottom: 0; left: 19px; right: auto; border-top: 0; border-left: 1px solid var(--line-2); }
   .step:first-child::before { left: 19px; top: 20px; }
-  .step:nth-child(4)::before { border-top: 0; border-left-style: dashed; border-left-color: var(--muted); }
+  .step:nth-child(5)::before { border-top: 0; border-left-style: dashed; border-left-color: var(--muted); }
   .step--alt::before { display: none; }
   .step__num { position: absolute; left: 0; top: 0; }
   .step__name { margin-top: 4px; }
