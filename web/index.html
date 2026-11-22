@@ -320,7 +320,7 @@
             <h2 class="h2" id="try-title">Run it <em>yourself.</em></h2>
           </div>
           <div class="prose">
-            <p>Node 24. Chipnet coins are free from the proof-of-work faucet at chipnet.bch.ninja. Or run nothing at all: import <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry-v1.json"><code>templates/lotry-v1.json</code></a> (the version the live rounds used) into <a href="https://blaze.xo.cash">blaze.xo.cash</a> and open any invitation file from round 2.</p>
+            <p>Node 24. Chipnet coins are free from the on-chain faucet contracts (<code>scripts/faucet-contract.mjs</code>). Or run nothing at all: import <a href="https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json"><code>templates/lotry.json</code></a> (the template both live rounds use) into <a href="https://blaze.xo.cash">blaze.xo.cash</a> and open any invitation file from <a href="https://github.com/nikhil-pn/lotry-xo/tree/main/rounds/round-20261121T2224/invitations">Round A</a>. Or play a round in the browser at <a href="/play.html">/play.html</a>.</p>
           </div>
         </div>
 
@@ -328,20 +328,21 @@
           <button class="code__copy" type="button" data-copy="try-code">Copy</button>
 <pre id="try-code"><code><span class="c-cmd">git clone https://github.com/nikhil-pn/lotry-xo &amp;&amp; cd lotry-xo</span>
 <span class="c-cmd">npm install</span>
-<span class="c-cmd">npm test</span>                                    <span class="c-com"># 60 tests: every covenant path, 41 attacks refused, BCH 2026 VM</span>
+<span class="c-cmd">npm test</span>                                             <span class="c-com"># 60 tests: every covenant path, 41 attacks refused, BCH 2026 VM</span>
 
-<span class="c-cmd">node scripts/make-wallets.mjs</span>               <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
-<span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>          <span class="c-com"># a wallet's Chipnet address</span>
-<span class="c-cmd">node scripts/faucet.mjs &lt;bchtest:address&gt;</span>   <span class="c-com"># free test coins</span>
+<span class="c-cmd">node scripts/make-wallets.mjs</span>                        <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
+<span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>                   <span class="c-com"># a wallet's Chipnet address</span>
+<span class="c-cmd">node scripts/faucet-contract.mjs &lt;bchtest:address&gt;</span>   <span class="c-com"># free test coins</span>
 
-<span class="c-cmd">node scripts/lotry.mjs open</span>                 <span class="c-com"># organiser opens a round</span>
-<span class="c-cmd">node scripts/lotry.mjs offer</span>                <span class="c-com"># organiser starts a ticket sale invitation</span>
-<span class="c-cmd">node scripts/lotry.mjs take BUYER_A</span>         <span class="c-com"># player adds coins, takes the ticket, signs</span>
-<span class="c-cmd">node scripts/lotry.mjs seal</span>                 <span class="c-com"># organiser signs the pot input and broadcasts</span>
-<span class="c-cmd">node scripts/lotry.mjs draw</span>                 <span class="c-com"># after the draw lock height</span>
-<span class="c-cmd">node scripts/lotry.mjs claim BUYER_A</span>        <span class="c-com"># the winning ticket takes the pot</span>
-<span class="c-cmd">node scripts/lotry.mjs refund BUYER_B</span>       <span class="c-com"># undrawn rounds, after the refund height</span>
-<span class="c-cmd">node scripts/lotry.mjs status</span>               <span class="c-com"># the pot as the organiser sees it</span></code></pre>
+<span class="c-cmd">node scripts/lotry.mjs open</span>                          <span class="c-com"># organiser opens a round</span>
+<span class="c-cmd">node scripts/lotry.mjs offer</span>                         <span class="c-com"># organiser starts a ticket sale invitation</span>
+<span class="c-cmd">node scripts/lotry.mjs take BUYER_A</span>                  <span class="c-com"># player adds coins, takes the ticket, signs</span>
+<span class="c-cmd">node scripts/lotry.mjs seal</span>                          <span class="c-com"># organiser adds the pot's unlocking script and broadcasts</span>
+<span class="c-cmd">node scripts/lotry.mjs close</span>                         <span class="c-com"># after the draw lock height (anyone may): sales stop</span>
+<span class="c-cmd">node scripts/lotry.mjs draw</span>                          <span class="c-com"># organiser reveals the secret on the closed pot</span>
+<span class="c-cmd">node scripts/lotry.mjs claim BUYER_A</span>                 <span class="c-com"># the winning ticket takes the pot</span>
+<span class="c-cmd">node scripts/lotry.mjs refund BUYER_B</span>                <span class="c-com"># never drawn, or drawn and unclaimed by the deadline</span>
+<span class="c-cmd">node scripts/lotry.mjs status</span>                        <span class="c-com"># the pot as the organiser sees it</span></code></pre>
         </div>
       </div>
     </section>
