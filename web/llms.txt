@@ -1,0 +1,39 @@
+# Lotry on XO
+
+> The lottery the organiser can't run away with. Lotry.fun (an on-chain lottery, Base Batch India 2025 runner-up, now on Solana) migrated to Bitcoin Cash as one XO wallet template. One round lives in one coin, the pot, locked by a covenant with no keys: it can only pay the winning ticket or refund tickets. Live on Chipnet (BCH testnet). Built for BCH BLAZE 2026.
+
+Entered in: BCH BLAZE 2026 (DoraHacks) - Mainnet Track entry with the "Migrate to XO" and "Build with XO" bounties (General Protocols), plus a separate Media Track film.
+Team: Nikhil PN (builds it) and Hina Hanan (ideas and product direction; presents the film). Exprmnts.
+EMBER2026 votes / prizes (CashTokens address): bitcoincash:zrz5rqqcmsmk08yv6lv9nnvjp0r5emu9avrccdlefu
+
+## Links
+- [Website](https://lotry-xo.exprmnts.fun): overview, live rounds read from Chipnet, the film
+- [Play in the browser](https://lotry-xo.exprmnts.fun/play.html): every button builds a real transaction against the real covenant and runs it in the BCH 2026 VM; includes 8 cheat attempts the covenant refuses
+- [The film, 1:04, presented by Hina Hanan](https://youtu.be/DM54m16yEHg) (also self-hosted: https://lotry-xo.exprmnts.fun/film/lotry-film.mp4, captions: https://lotry-xo.exprmnts.fun/film/lotry-film.en.vtt)
+- [Slides](https://lotry-xo.exprmnts.fun/slides.html)
+- [Source code, MIT](https://github.com/nikhil-pn/lotry-xo)
+- [The XO template](https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs) and as [XO JSON](https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json)
+- [Proof: every confirmed Chipnet transaction](https://github.com/nikhil-pn/lotry-xo/blob/main/docs/PROOF.md)
+- [Hackathon requirements checklist](https://github.com/nikhil-pn/lotry-xo/blob/main/docs/REQUIREMENTS.md)
+- [How AI was used](https://github.com/nikhil-pn/lotry-xo/blob/main/AI_USAGE.md)
+- Before BLAZE: [lotry.fun](https://www.lotry.fun) and [old contracts](https://github.com/exprmnts/Lotry_contract)
+
+## How a round works
+- The organiser opens a round: token genesis gives the pot a minting NFT whose commitment (a 4-byte ticket count) is the round's state, and fixes sha256(secret).
+- Buying a ticket is a two-party XO invitation: the organiser adds the pot, the player pays and receives an immutable, numbered CashTokens NFT in their own wallet.
+- After the draw lock height anyone closes sales (count frozen). Then the organiser reveals the secret and the covenant computes winner = sha256(secret) mod tickets + 1.
+- The winner claims by burning the winning ticket together with the pot. If the round is never drawn, or the winner never claims by the deadline, every ticket refunds.
+- The covenant has five paths (buy, close, draw, claim, refund) and no signature path. 61 tests run every path and 41 attacks in libauth's BCH 2026 VM.
+
+## Proof on Chipnet (all confirmed)
+- Round A: open 46c83ca89a6bd1e57c1b3f5061f8ee5e3297719db70d6f2319dd74a7515b6ef9, 3 ticket sales, close 127f61857df71b68bf620a865f87b054cd545f56ce9e2e995cb7b8a3715c882f, draw 10c066fb83c9a74358fd64c79535af2b239a23ea3f4d16d9861a7c34f6c758c4 (ticket #3 of 3 won), claim 7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc (8,000 sats paid).
+- Round B: drawn 902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85, nobody claimed by the deadline, refund 5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5.
+- Explorer: https://chipnet.imaginary.cash/tx/<txid>
+
+## Stated limits
+- The organiser knows the secret: one who also buys tickets could steer the winner, or refuse to reveal (which sends the round to refunds). The covenant guarantees the pot only pays a winning ticket or refunds. Next step: commit-reveal by all players.
+- Chipnet only (test coins). Ticket buying runs from the CLI with XO wallets; no browser wallet flow yet.
+- The organiser's 2,000-sat seed and the pot NFT stay in the covenant when a round ends; a round that sells no tickets can't be drawn or refunded.
+
+## Built with
+Bitcoin Cash, CashTokens, XO stack (@xo-cash/engine, libauth wallet templates), libauth BCH 2026 VM, Electrum (Chipnet), plain HTML/CSS/JS site on Vercel.
