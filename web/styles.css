@@ -995,3 +995,49 @@ code, pre { font-family: var(--mono); }
   .ticket--hero { padding: 26px 28px 24px; transform: rotate(-1.5deg); }
   .ticket__clover { width: 64px; height: 64px; bottom: 66px; right: 16px; }
 }
+
+/* ---------- The film ---------- */
+.film { padding-top: clamp(24px, 4vw, 48px); }
+.film__head { max-width: 780px; }
+.film__sub { margin-top: 18px; color: var(--soft); font-size: 17.5px; max-width: 60ch; }
+.film__frame { margin: 34px 0 0; }
+.film__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.film__cap { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 13.5px; color: var(--muted); }
+.film__cap a { color: var(--text); text-underline-offset: 3px; text-decoration-color: var(--line-2); display: inline-flex; gap: 6px; align-items: center; }
+.film__video::cue { font-family: var(--sans); background: rgba(0, 0, 0, 0.72); }
+
+/* Presenter bubble in the hero: Hina's face, plays the film inline */
+.hero__ticket { position: relative; }
+.presenter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 34px 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 10px 8px 8px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  text-decoration: none;
+  transform: rotate(1.5deg);
+  transition: border-color 160ms, transform 160ms;
+}
+.presenter:hover { border-color: var(--mint); transform: rotate(0deg) translateY(-2px); }
+.presenter img { width: 76px; height: 76px; border-radius: 50%; border: 2px solid var(--mint); flex: none; }
+.presenter__text { display: grid; gap: 2px; font-size: 15.5px; line-height: 1.25; }
+.presenter__text span { color: var(--muted); font-size: 13px; }
+.presenter__play { width: 44px; height: 44px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; flex: none; margin-left: 6px; }
+.presenter__play svg { width: 18px; height: 18px; fill: var(--mint-ink); margin-left: 2px; }
+@media (max-width: 900px) { .presenter { margin: 28px auto 0; } }
+@media (prefers-reduced-motion: reduce) { .presenter { transition: none; transform: none; } }

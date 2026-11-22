@@ -11,12 +11,90 @@
   <meta property="og:description" content="The lottery the organiser can't run away with. A Bitcoin Cash XO template, live on Chipnet.">
   <meta property="og:url" content="https://lotry-xo.exprmnts.fun">
   <meta property="og:image" content="https://lotry-xo.exprmnts.fun/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Hina Hanan next to the headline: The pot has no key. Lotry on XO, Bitcoin Cash.">
+  <meta property="og:video" content="https://lotry-xo.exprmnts.fun/film/lotry-film.mp4">
+  <meta name="twitter:image" content="https://lotry-xo.exprmnts.fun/assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="Project summary for AI agents">
+  <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebSite",
+   "@id": "https://lotry-xo.exprmnts.fun/#site",
+   "url": "https://lotry-xo.exprmnts.fun/",
+   "name": "Lotry on XO",
+   "description": "The lottery the organiser can't run away with: Lotry.fun migrated to Bitcoin Cash as an XO template. The pot is a coin with no key. Live on Chipnet.",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Exprmnts",
+    "url": "https://exprmnts.xyz"
+   }
+  },
+  {
+   "@type": "SoftwareSourceCode",
+   "@id": "https://lotry-xo.exprmnts.fun/#code",
+   "name": "Lotry on XO",
+   "description": "An XO wallet template for a trustless lottery round on Bitcoin Cash: a keyless CashTokens covenant pot with buy, close, draw, claim and refund paths, numbered NFT tickets and a commit-reveal draw. 61 tests in libauth's BCH 2026 VM; full lifecycle confirmed on Chipnet.",
+   "codeRepository": "https://github.com/nikhil-pn/lotry-xo",
+   "programmingLanguage": [
+    "JavaScript",
+    "Bitcoin Cash Script (libauth wallet templates)"
+   ],
+   "license": "https://opensource.org/licenses/MIT",
+   "runtimePlatform": "Node.js 24, Bitcoin Cash (Chipnet)",
+   "keywords": "Bitcoin Cash, CashTokens, XO, covenant, lottery, BCH BLAZE 2026, Migrate to XO, Build with XO",
+   "author": [
+    {
+     "@type": "Person",
+     "name": "Nikhil PN",
+     "url": "https://github.com/nikhil-pn"
+    },
+    {
+     "@type": "Person",
+     "name": "Hina Hanan"
+    }
+   ],
+   "isBasedOn": "https://www.lotry.fun"
+  },
+  {
+   "@type": "VideoObject",
+   "@id": "https://lotry-xo.exprmnts.fun/#film",
+   "name": "Lotry: the lottery the organiser can't run away with",
+   "description": "A one-minute film for the BCH BLAZE 2026 Media Track, presented by Hina Hanan. On Bitcoin Cash the pot is a coin with no key, tickets are CashTokens NFTs, the chain picks the winner from a secret locked in at the start, and if the organiser disappears everyone is refunded. Every transaction shown is real (Chipnet).",
+   "thumbnailUrl": "https://lotry-xo.exprmnts.fun/film/thumbnail.jpg",
+   "uploadDate": "2026-11-22",
+   "duration": "PT1M4S",
+   "contentUrl": "https://lotry-xo.exprmnts.fun/film/lotry-film.mp4",
+   "embedUrl": "https://www.youtube.com/embed/DM54m16yEHg",
+   "sameAs": "https://youtu.be/DM54m16yEHg",
+   "inLanguage": "en",
+   "actor": {
+    "@type": "Person",
+    "name": "Hina Hanan"
+   },
+   "creator": [
+    {
+     "@type": "Person",
+     "name": "Hina Hanan"
+    },
+    {
+     "@type": "Person",
+     "name": "Nikhil PN"
+    }
+   ]
+  }
+ ]
+}
+  </script>
 </head>
 <body>
 
@@ -69,7 +147,7 @@
           <p class="hero__sub">One round lives in one coin, the pot. The pot is locked by rules with no key, so nobody, the organiser included, can take it. The chain itself checks the draw, pays the winning ticket, or refunds the tickets.</p>
           <div class="hero__actions">
             <a class="btn btn--solid" href="/play.html">Play a round, try to cheat</a>
-            <a class="btn btn--ghost" href="#rounds">See the live rounds</a>
+            <a class="btn btn--ghost" href="#film">Watch the film (1 min)</a>
           </div>
           <p class="hero__credit">From the team behind <a href="https://www.lotry.fun">Lotry.fun</a>: built on Base for Base Batch India 2025 (runner-up), now running on Solana.</p>
         </div>
@@ -88,6 +166,11 @@
             </div>
             <img class="ticket__clover" src="assets/clover.png" alt="" width="96" height="96">
           </div>
+          <a class="presenter" href="#film" data-play-film>
+            <img src="film/hina-bubble.png" alt="Hina Hanan" width="76" height="76">
+            <span class="presenter__text"><strong>Watch Hina explain it</strong><span>the one-minute film · plays right here</span></span>
+            <span class="presenter__play" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.5v9l7.5-4.5z"/></svg></span>
+          </a>
         </aside>
       </div>
 
@@ -95,9 +178,32 @@
         <dl class="stats">
           <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">2</dd></div>
           <div><dt>Confirmed transactions, all public</dt><dd data-stat="txs">12</dd></div>
-          <div><dt>Tests: every path, 41 attacks refused</dt><dd>60</dd></div>
+          <div><dt>Tests: every path, 41 attacks refused</dt><dd>61</dd></div>
           <div><dt>Keys that can move the pot</dt><dd>0</dd></div>
         </dl>
+      </div>
+    </section>
+
+    <!-- The film (Media Track entry), presented by Hina Hanan -->
+    <section class="section film" id="film" aria-labelledby="film-title">
+      <div class="wrap">
+        <div class="film__head">
+          <p class="eyebrow">The film · one minute · presented by Hina Hanan</p>
+          <h2 class="h2" id="film-title">Watch it in <em>one minute.</em></h2>
+          <p class="film__sub">Why a lottery whose pot is a coin with no key can only exist on a chain like Bitcoin Cash. Every transaction on screen is a real Chipnet transaction from the rounds below.</p>
+        </div>
+        <figure class="film__frame">
+          <video class="film__video" controls playsinline preload="none" poster="film/poster.jpg"
+            aria-label="Lotry: the lottery the organiser can't run away with. A one-minute film presented by Hina Hanan.">
+            <source src="film/lotry-film.mp4" type="video/mp4">
+            <track kind="captions" src="film/lotry-film.en.vtt" srclang="en" label="English" default>
+            Your browser can't play this video. <a href="https://youtu.be/DM54m16yEHg">Watch it on YouTube</a>.
+          </video>
+          <figcaption class="film__cap">
+            <span>Lotry, the film · BCH BLAZE 2026 Media Track · 1:04 · captions on</span>
+            <a href="https://youtu.be/DM54m16yEHg">Watch on YouTube <svg class="i" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
@@ -346,7 +452,7 @@
           <button class="code__copy" type="button" data-copy="try-code">Copy</button>
 <pre id="try-code"><code><span class="c-cmd">git clone https://github.com/nikhil-pn/lotry-xo &amp;&amp; cd lotry-xo</span>
 <span class="c-cmd">npm install</span>
-<span class="c-cmd">npm test</span>                                             <span class="c-com"># 60 tests: every covenant path, 41 attacks refused, BCH 2026 VM</span>
+<span class="c-cmd">npm test</span>                                             <span class="c-com"># 61 tests: every covenant path, 41 attacks refused, BCH 2026 VM</span>
 
 <span class="c-cmd">node scripts/make-wallets.mjs</span>                        <span class="c-com"># organiser + two buyers, mnemonics kept outside the repo</span>
 <span class="c-cmd">node scripts/addresses.mjs BUYER_A</span>                   <span class="c-com"># a wallet's Chipnet address</span>

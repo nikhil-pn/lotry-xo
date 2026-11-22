@@ -265,3 +265,15 @@ const renderRounds = async () => {
 };
 
 renderRounds();
+
+// The presenter bubble plays the film on this page (no trip to YouTube).
+document.querySelectorAll('[data-play-film]').forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const video = document.querySelector('.film__video');
+    if (!video) return;
+    event.preventDefault();
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('film').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    video.play().catch(() => {});
+  });
+});
