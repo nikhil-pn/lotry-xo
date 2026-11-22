@@ -124,7 +124,7 @@ const describeRound = (round) => {
       kind: 'refunded',
       pill: 'Refunded',
       title: 'Drawn, never claimed, refunded',
-      summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold and drawn, but nobody claimed by the claim deadline, so ticket holders could refund: each ticket was burned for its ${sats(price)}-sat price back. The ${sats(round.seedSatoshis ?? 0)}-sat seed and the pot NFT stay in the covenant.`,
+      summary: `${tickets === 1 ? '1 ticket' : `${tickets} tickets`} sold and drawn, but nobody claimed by the claim deadline, so the pot turned to refunds: ${refunds.length === 1 ? 'the ticket was' : 'each ticket was'} burned for its ${sats(price)}-sat price back. The ${sats(round.seedSatoshis ?? 0)}-sat seed and the pot NFT stay in the covenant.`,
       money: [ 'Paid back', `${sats(price * BigInt(refunds.length))} sats` ],
       tickets,
     };
@@ -182,7 +182,9 @@ const renderRound = ({ round, name, slug, info }, featured) => {
     [ 'Ticket price', `${sats(round.ticketPrice)} sats` ],
     [ 'Tickets sold', String(info.tickets) ],
     info.money,
-    [ 'Draw / refund from lock height', `${sats(round.drawHeight)} / ${sats(round.refundHeight)}` ],
+    round.claimHeight
+      ? [ 'Draw / refund / claim deadline (lock height)', `${sats(round.drawHeight)} / ${sats(round.refundHeight)} / ${sats(round.claimHeight)}` ]
+      : [ 'Draw / refund from lock height', `${sats(round.drawHeight)} / ${sats(round.refundHeight)}` ],
   ];
 
   const head = h('div', { class: 'round__head' },

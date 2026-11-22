@@ -515,6 +515,12 @@ code, pre { font-family: var(--mono); }
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: clamp(28px, 4vw, 56px);
 }
+/* a lone second round spans the row and lays out like the featured one */
+.rounds__rest > .round:only-child { grid-column: 1 / -1; }
+.rounds__rest > .round:only-child .round__grid {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(28px, 4vw, 56px);
+}
 .round__flag {
   font-family: var(--serif);
   font-style: italic;
@@ -940,7 +946,7 @@ code, pre { font-family: var(--mono); }
 @media (max-width: 960px) {
   .top__nav a:not(:nth-child(2)) { display: none; }
   .split { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .round--featured .round__grid { grid-template-columns: minmax(0, 1fr); }
+  .round--featured .round__grid, .rounds__rest > .round:only-child .round__grid { grid-template-columns: minmax(0, 1fr); }
   .rounds__rest { grid-template-columns: minmax(0, 1fr); }
   .why { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .shot { grid-template-columns: minmax(0, 1fr); }
