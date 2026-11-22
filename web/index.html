@@ -69,7 +69,7 @@
             <a class="btn btn--solid" href="/play.html">Play a round, try to cheat</a>
             <a class="btn btn--ghost" href="#rounds">See the live rounds</a>
           </div>
-          <p class="hero__credit">From the team behind <a href="https://www.lotry.fun">Lotry.fun</a>, Base Batch India 2025 runner-up.</p>
+          <p class="hero__credit">From the team behind <a href="https://www.lotry.fun">Lotry.fun</a>: built on Base for Base Batch India 2025 (runner-up), now running on Solana.</p>
         </div>
 
         <aside class="hero__ticket" aria-label="Round A result">
@@ -191,10 +191,10 @@
         <div class="split">
           <div>
             <p class="eyebrow"><b>03</b> · Migrated from Lotry.fun</p>
-            <h2 class="h2" id="migrated-title">Same round, <em>no owner.</em></h2>
+            <h2 class="h2" id="migrated-title">Its core round, <em>no owner.</em></h2>
           </div>
           <div class="prose">
-            <p><a href="https://www.lotry.fun">Lotry.fun</a> is our lottery on Base, a Base Batch India 2025 runner-up. For BLAZE we moved its core round, the part where money waits for a winner, to Bitcoin Cash. The Solidity code was the spec; everything here was written during BLAZE.</p>
+            <p><a href="https://www.lotry.fun">Lotry.fun</a> is our lottery: built on Base for Base Batch India 2025, where it was runner-up, and now running on Solana. There, tickets trade on a bonding curve. For BLAZE we did not port that market. We moved the core round, the part where money waits for a winner, to Bitcoin Cash as a fixed-price raffle round. The Solidity code was the spec; everything here was written during BLAZE.</p>
           </div>
         </div>
 
@@ -203,6 +203,11 @@
             <span role="columnheader"></span>
             <span role="columnheader">Lotry.fun · Base · Solidity</span>
             <span role="columnheader">Lotry on XO · Bitcoin Cash</span>
+          </div>
+          <div class="compare__row" role="row">
+            <span class="compare__what" role="rowheader">Sales</span>
+            <span role="cell">A bonding-curve ticket market: the price moves with every buy, and tickets can be sold back</span>
+            <span role="cell">A fixed-price raffle round: every ticket costs the price set at open. Not a port of the bonding curve</span>
           </div>
           <div class="compare__row" role="row">
             <span class="compare__what" role="rowheader">Ticket</span>
@@ -227,7 +232,7 @@
           <div class="compare__row" role="row">
             <span class="compare__what" role="rowheader">If no draw</span>
             <span role="cell">No refund if the draw never comes; tickets can only be sold back on the bonding curve</span>
-            <span role="cell">Every ticket refundable after the refund height</span>
+            <span role="cell">Tickets refundable after the refund height; if drawn but never claimed, after the claim deadline</span>
           </div>
         </div>
         <p class="footnote">Before BLAZE: <a href="https://www.lotry.fun">lotry.fun</a> and the original contracts at <a href="https://github.com/exprmnts/Lotry_contract">exprmnts/Lotry_contract</a>.</p>
@@ -371,7 +376,7 @@
           </div>
           <div class="person">
             <h3>Hina Hanan</h3>
-            <p>Ideas and product direction. She also presents the film.</p>
+            <p>Ideas and product direction.</p>
           </div>
         </div>
       </div>
