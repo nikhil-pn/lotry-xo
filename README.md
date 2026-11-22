@@ -49,8 +49,8 @@ list, with every invitation file, is in [`docs/PROOF.md`](docs/PROOF.md). Round 
 | Claim | Buyer A spends the pot with ticket #3; both NFTs burned, the pot paid out | [7b0c247e…](https://chipnet.imaginary.cash/tx/7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc) |
 
 Round B shows the safety net: drawn ([902e28f8…](https://chipnet.imaginary.cash/tx/902e28f8115f782c0c2332cf285ce66915f6cf4af11f186b71c431356d06cb85)), nobody claimed by the claim deadline, so the ticket
-holder refunded ([5f3485a3…](https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5)). Our first attempt (`rounds-v1/`, kept in git as history, not proof) was funded by a faucet whose payouts paid too little
-fee: it never confirmed and was dropped from the mempool. These rounds were re-run from the on-chain faucet contracts
+holder refunded ([5f3485a3…](https://chipnet.imaginary.cash/tx/5f3485a37c2fc05f541d2483de2c7f74dd49585d04be5771168a6724b520bee5)). Our first attempt (`rounds-v1/`, kept in git as history, not proof) ran on an earlier version of the template and was
+funded by a faucet whose payouts paid too little fee, so its steps stalled and we abandoned it. These rounds were re-run from the on-chain faucet contracts
 ([`scripts/faucet-contract.mjs`](scripts/faucet-contract.mjs)) and are all mined.
 
 ### In the XO debug tool
@@ -83,7 +83,7 @@ has five paths, picked by the unlocking script:
 | Path | Who | The covenant enforces |
 |---|---|---|
 | 1 buy | anyone, while open | the pot carries on (same script, same minting NFT), grows by exactly the ticket price, its count goes up by one, output 1 is an **immutable** ticket NFT numbered with the new count, and no other output carries a token (no extra tickets) |
-| 5 close | anyone, after the draw height | `OP_CHECKLOCKTIMEVERIFY` past the draw height; the count is frozen (`…c1`), value and NFT unchanged. Sales stop **before** any reveal |
+| 5 close | anyone, after the draw height (the covenant accepts any caller; the XO template offers it to the organiser) | `OP_CHECKLOCKTIMEVERIFY` past the draw height; the count is frozen (`…c1`), value and NFT unchanged. Sales stop **before** any reveal |
 | 2 draw | whoever knows the secret | the pot is closed, `sha256(secret)` equals the committed hash, at least one ticket sold, the new commitment is exactly `sha256(secret) mod tickets + 1`, the pot keeps every satoshi |
 | 3 claim | the winner | the pot is drawn, input 1 is a ticket of this round whose number is the winning number, and no output carries a token: the pot NFT and the ticket are burned and the satoshis go wherever the winner says |
 | 4 refund | any ticket holder | past the refund height if never drawn (open or closed), or past the **claim deadline** if drawn and unclaimed; input 1 is a real ticket (immutable NFT, 4-byte number, no fungible amount); the pot carries on with exactly one ticket price less, marked refunding for good, and the ticket is burned |
@@ -164,8 +164,8 @@ To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash)
   chipnet on 15 Nov 2026. A block-height `nLockTime` / `OP_CHECKLOCKTIMEVERIFY` value now means a 600-tick chunk, so it
   advances once every ten blocks. We measured the activation height (332,451) by finding which lock times the network
   accepts, and the round's draw and refund heights are set in those units ([`src/chain-time.mjs`](src/chain-time.mjs)).
-  Round 1 was opened before we knew, with a block height as its draw height, so its draw is about 57 days away; it stays
-  as proof of the open and ticket steps.
+  Our first round was opened before we knew, with a block height as its draw height, so its draw is weeks away; it stays
+  in `rounds-v1/` as history only.
 - **Engine notes** (XO engine `0.1.1-next.18230317763`): the `@xo-cash/state` SQLite backend is a stub in 0.0.5, so Node
   runs on IndexedDB (fake-indexeddb, snapshotted to disk); token commitment expressions evaluate to hex text, so computed
   commitments travel as `token_commitment` variables; fee estimates do not count a P2SH32 input's redeem script, so
@@ -179,6 +179,10 @@ To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash)
   sends the round to refunds. The covenant guarantees the pot can only pay a winning ticket or refunds; it can't stop
   the organiser from playing. Removing that trust needs every buyer to add randomness (commit-reveal by
   all players), our next step.
+- **Check a round's heights before buying.** The template does not force the draw, refund and claim heights into a
+  sensible order. A round opened with a refund height before the draw height could be refunded before any draw, and a
+  claim deadline set very soon after the draw gives the winner little time to claim. Our CLI always opens rounds with
+  draw < refund < claim deadline; a buyer should check the three heights in the round's open invitation.
 - **Chipnet only**, test coins. Ticket buying works from the CLI with any XO wallet; there is no browser wallet flow yet.
 - A buyer should check the round's genesis transaction (one minting NFT, commitment 0) before buying; the CLI's rounds
   are all opened that way.
