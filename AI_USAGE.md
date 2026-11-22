@@ -9,4 +9,8 @@ Lotry on XO was built during BCH BLAZE 2026 by Nikhil PN with an AI coding assis
   Faster Blocks lock-time behaviour described in the README.
 - **Docs and site**: the README, the proof table generator and the website were drafted with the assistant and reviewed
   by the team.
+- **The film** ([youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg)): Hina Hanan presents it with her own voice and face,
+  recorded on a green screen. The script was written by the team with the assistant; the animation is code (HTML and SVG
+  rendered frame by frame), and the music and sound effects are synthesised in code, with no AI-generated video, voice or
+  images. The thumbnail is a frame of Hina's real take on the site's own design.
 - **Not AI**: the feedback on XO submitted for the XO bounties is written by Nikhil himself, as the bounty requires.
