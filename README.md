@@ -12,6 +12,8 @@ now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.ca
 **Play it in your browser:** [lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html). Every button builds a real
 transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
 
+**Watch the film (1 min, presented by Hina Hanan):** [youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg)
+
 - One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
 - **Tickets are numbered NFTs** (CashTokens) that the players hold in their own wallets.
 - **The chain picks the winner.** The organiser commits to a secret when opening the round. After the draw height anyone closes ticket sales, then the organiser reveals the secret and the covenant itself computes `sha256(secret) mod tickets + 1`.
