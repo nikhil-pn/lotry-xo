@@ -1041,3 +1041,5 @@ code, pre { font-family: var(--mono); }
 .presenter__play svg { width: 18px; height: 18px; fill: var(--mint-ink); margin-left: 2px; }
 @media (max-width: 900px) { .presenter { margin: 28px auto 0; } }
 @media (prefers-reduced-motion: reduce) { .presenter { transition: none; transform: none; } }
+.person__links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.person p a.person__inline { display: inline; margin: 0; font-size: inherit; color: var(--text); }

@@ -3,7 +3,7 @@
 > The lottery the organiser can't run away with. Lotry.fun (an on-chain lottery, Base Batch India 2025 runner-up, now on Solana) migrated to Bitcoin Cash as one XO wallet template. One round lives in one coin, the pot, locked by a covenant with no keys: it can only pay the winning ticket or refund tickets. Live on Chipnet (BCH testnet). Built for BCH BLAZE 2026.
 
 Entered in: BCH BLAZE 2026 (DoraHacks) - Mainnet Track entry with the "Migrate to XO" and "Build with XO" bounties (General Protocols), plus a separate Media Track film.
-Team: Nikhil PN (builds it) and Hina Hanan (ideas and product direction; presents the film). Exprmnts.
+Team: Nikhil PN (builds it; X https://x.com/NikhilEth, GitHub https://github.com/nikhil-pn) and Hina Hanan (ideas and product direction; presents the film; X https://x.com/iam_hinaaaa, GitHub https://github.com/Hina-Hanan). Exprmnts (https://exprmnts.xyz).
 EMBER2026 votes / prizes (CashTokens address): bitcoincash:zrz5rqqcmsmk08yv6lv9nnvjp0r5emu9avrccdlefu
 
 ## Links
@@ -15,6 +15,7 @@ EMBER2026 votes / prizes (CashTokens address): bitcoincash:zrz5rqqcmsmk08yv6lv9n
 - [The XO template](https://github.com/nikhil-pn/lotry-xo/blob/main/src/lotry-template.mjs) and as [XO JSON](https://github.com/nikhil-pn/lotry-xo/blob/main/templates/lotry.json)
 - [Proof: every confirmed Chipnet transaction](https://github.com/nikhil-pn/lotry-xo/blob/main/docs/PROOF.md)
 - [Hackathon requirements checklist](https://github.com/nikhil-pn/lotry-xo/blob/main/docs/REQUIREMENTS.md)
+- [Notes for AI agents (AGENTS.md)](https://github.com/nikhil-pn/lotry-xo/blob/main/AGENTS.md) and [glossary (CONTEXT.md)](https://github.com/nikhil-pn/lotry-xo/blob/main/CONTEXT.md)
 - [How AI was used](https://github.com/nikhil-pn/lotry-xo/blob/main/AI_USAGE.md)
 - Before BLAZE: [lotry.fun](https://www.lotry.fun) and [old contracts](https://github.com/exprmnts/Lotry_contract)
 
