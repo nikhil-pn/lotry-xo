@@ -1,37 +1,57 @@
+<div align="center">
+
+<img src="web/assets/clover.png" width="72" alt="Lotry clover logo" />
+
 # Lotry on XO
 
-> **BCH BLAZE 2026** · deadline **22 Nov 2026, 09:00 UTC-5 (14:00 UTC)** · bounties: **Migrate to XO**, **Build with XO**
-
 **The lottery the organiser can't run away with.**
-[Lotry.fun](https://www.lotry.fun), our on-chain lottery (built on Base for Base Batch India 2025, where it was runner-up;
-now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.cash) template:
-[`src/lotry-template.mjs`](src/lotry-template.mjs) (as XO JSON: [`templates/lotry.json`](templates/lotry.json)).
 
-**EMBER2026 votes / prizes (CashTokens address):** `bitcoincash:zrz5rqqcmsmk08yv6lv9nnvjp0r5emu9avrccdlefu`
+Our on-chain lottery [Lotry.fun](https://www.lotry.fun), migrated to Bitcoin Cash as one [XO](https://stack.xo.cash) template.<br />
+The pot is a coin with no key: it can only pay the winning ticket or refund the tickets.
 
-**Play it in your browser:** [lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html). Every button builds a real
-transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
+**[Play it in your browser](https://lotry-xo.exprmnts.fun/play.html)** · [Watch the film](https://youtu.be/DM54m16yEHg) · [Website](https://lotry-xo.exprmnts.fun) · [Proof on Chipnet](docs/PROOF.md) · [Slides](https://lotry-xo.exprmnts.fun/slides.html)
 
-### Watch the film (1:04, presented by Hina Hanan)
+[![CI](https://github.com/nikhil-pn/lotry-xo/actions/workflows/ci.yml/badge.svg)](https://github.com/nikhil-pn/lotry-xo/actions/workflows/ci.yml)
+[![Chipnet](https://img.shields.io/badge/BCH-Chipnet-2fe68f)](docs/PROOF.md)
+[![Tests](https://img.shields.io/badge/tests-61%20passing-2fe68f)](test)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+</div>
 
 [![Lotry: the pot has no key. A one-minute film presented by Hina Hanan. Click to watch on YouTube.](docs/media/film-thumbnail.jpg)](https://youtu.be/DM54m16yEHg)
 
-[youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg) · also plays on the [website](https://lotry-xo.exprmnts.fun/#film) (with captions) · our Media Track entry
+<p align="center">
+<a href="https://youtu.be/DM54m16yEHg">Watch the one-minute film, presented by Hina Hanan</a> (also plays on the <a href="https://lotry-xo.exprmnts.fun/#film">website</a>, with captions)
+</p>
 
-### Screenshots
+<p align="center">
+<a href="#lotry-in-30-seconds">In 30 seconds</a> ·
+<a href="#live-on-chipnet">Live on Chipnet</a> ·
+<a href="#how-a-round-works">How it works</a> ·
+<a href="#try-it">Try it</a> ·
+<a href="#how-it-fits-each-bounty">Bounties</a> ·
+<a href="#stated-plainly">Limits</a> ·
+<a href="#repository">Repository</a>
+</p>
+
+> **BCH BLAZE 2026** · bounties **Migrate to XO** and **Build with XO** (General Protocols), plus a **Media Track** film.
+> **EMBER2026 votes / prizes (CashTokens address):** `bitcoincash:zrz5rqqcmsmk08yv6lv9nnvjp0r5emu9avrccdlefu`
+
+## Lotry in 30 seconds
+
+- **The pot has no key.** One round lives in one coin, locked to a covenant with no signature path at all. Nobody, the organiser included, can take it.
+- **Tickets are NFTs in your own wallet.** Each ticket is an immutable, numbered CashTokens NFT.
+- **The chain picks the winner.** The organiser commits to a secret when opening the round. After the draw height anyone closes sales, then the organiser reveals the secret and the covenant itself computes `sha256(secret) mod tickets + 1`.
+- **Ticket money never gets stuck.** Never drawn? Every ticket refunds after the refund height. Winner never claims? Every ticket refunds after the claim deadline.
+- **All of it is XO.** A ticket sale is a two-party invitation (the organiser adds the pot, the player pays and receives the ticket). Close, draw, claim and refund are follow-up actions of the pot and of the ticket.
+- **Try to cheat it.** The [play page](https://lotry-xo.exprmnts.fun/play.html) builds real transactions against the real covenant in the BCH 2026 VM, in your browser, with eight cheats for the covenant to refuse.
 
 | The website: the claimed round, and Hina's film one click away | The sandbox: real transactions in the BCH 2026 VM, cheats refused |
 |---|---|
 | [![Lotry on XO website](docs/media/site-home.jpg)](https://lotry-xo.exprmnts.fun) | [![Play a round, try to cheat](docs/media/site-play.jpg)](https://lotry-xo.exprmnts.fun/play.html) |
 
-For AI agents and crawlers: a plain-text summary of the whole project, with every link and transaction, is at
-[lotry-xo.exprmnts.fun/llms.txt](https://lotry-xo.exprmnts.fun/llms.txt).
-
-- One round lives in one coin, **the pot**, locked to a covenant with **no keys at all**. It only ever pays the winning ticket or refunds tickets.
-- **Tickets are numbered NFTs** (CashTokens) that the players hold in their own wallets.
-- **The chain picks the winner.** The organiser commits to a secret when opening the round. After the draw height anyone closes ticket sales, then the organiser reveals the secret and the covenant itself computes `sha256(secret) mod tickets + 1`.
-- **Ticket money never gets stuck:** if the round is never drawn, every ticket refunds after the refund height; if the winner never claims, every ticket refunds after the claim deadline. (The organiser's 2,000-sat seed and the pot NFT do stay in the covenant when a round ends, and a round that sells no tickets can't be drawn or refunded; both are small, stated limits.)
-- Everything runs through **XO invitations**: a ticket sale is a two-party invitation (the organiser adds the pot, the player adds coins and receives the ticket), and close, draw, claim and refund are **follow-up actions** of the pot and of the ticket.
+**For AI agents:** start with [`AGENTS.md`](AGENTS.md) and the glossary [`CONTEXT.md`](CONTEXT.md). A plain-text summary of the
+whole project, with every link and transaction, is at [lotry-xo.exprmnts.fun/llms.txt](https://lotry-xo.exprmnts.fun/llms.txt).
 
 ## Live on Chipnet
 
@@ -64,6 +84,17 @@ result, and the draw transaction verifies and can be stepped opcode by opcode:
 | ![sale](docs/debug-tool/invitation-buy-2-3-sealed.jpg) | ![draw](docs/debug-tool/invitation-draw.jpg) | ![inspect](docs/debug-tool/inspect-draw.jpg) |
 
 ## How a round works
+
+```mermaid
+flowchart LR
+  O["Organiser opens<br/>(secret hash fixed)"] --> P["The pot<br/>no key, NFT = ticket count"]
+  P -->|"buy: two-party invitation"| T["Ticket NFT<br/>in the player's wallet"]
+  P -->|"close: after the draw height"| C["Sales frozen"]
+  C -->|"draw: secret revealed"| D["Covenant writes<br/>the winning number"]
+  D -->|"claim: winning ticket"| W["Winner paid,<br/>pot + ticket burned"]
+  P -.->|"never drawn: after refund height"| R["Every ticket refunds"]
+  D -.->|"never claimed: after claim deadline"| R
+```
 
 ```
               organiser                   anyone, with the organiser            the winner / any ticket holder
@@ -133,30 +164,46 @@ BLAZE (first commit 21 Nov 2026); the Lotry.fun code was used only as the specif
 
 ## Try it
 
-Node 24. Chipnet coins come free from the proof-of-work faucet at chipnet.bch.ninja.
+### 1. In your browser, nothing to install (1 minute)
+
+Open **[lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html)**. Buy tickets as You, Alice and Bob, move the
+clock, close, draw and claim, or wait out the deadlines and refund. Then try the eight cheats. Every button builds a real
+transaction against the real pot covenant (compiled from our XO template) and runs it in the BCH 2026 virtual machine; the
+coins are pretend and player signatures are skipped. **You see** each step accepted, and each cheat refused with the opcode
+that stopped it.
+
+### 2. Check the real rounds without running anything (5 minutes)
+
+Open [blaze.xo.cash](https://blaze.xo.cash), create a throwaway chipnet account, **Import Template** and paste
+[`templates/lotry.json`](templates/lotry.json). Then **Join Invitation**, paste any file from
+[`rounds/round-20261121T2224/invitations/`](rounds/round-20261121T2224/invitations) and **View invitation**, or **Inspect** and
+paste a transaction id from the table above. **You see** the template as "Lotry · 2 roles · 6 actions", every signed commit, and
+the draw transaction stepped opcode by opcode.
+
+### 3. Run it yourself on Chipnet (about 30 minutes, mostly waiting for blocks)
+
+Node 24. Free Chipnet coins come from the on-chain faucet contracts ([`scripts/faucet-contract.mjs`](scripts/faucet-contract.mjs)).
 
 ```bash
-npm install
+npm install --ignore-scripts                    # skips a native SQLite add-on we never use (it often fails to compile)
 npm test                                        # 61 tests: covenant paths + attacks in the BCH 2026 VM, and the sandbox
 
 node scripts/make-wallets.mjs                   # three demo wallets, mnemonics in ~/.config/pi/lotry-xo.env (outside the repo)
 node scripts/addresses.mjs ORGANISER            # then BUYER_A, BUYER_B
-node scripts/faucet.mjs <address> 300000        # fund each one
+node scripts/faucet-contract.mjs <address> --until 30000   # fund each one (1,000 sats per faucet claim)
 
-node scripts/lotry.mjs open --price 20000 --draw-in 1 --refund-in 144
+node scripts/lotry.mjs open --price 2000 --draw-in 1 --refund-in 144 --claim-in 288
 node scripts/lotry.mjs offer                    # organiser: starts a ticket sale invitation
-node scripts/lotry.mjs take BUYER_A             # player: joins, adds the ticket, pays, signs
+node scripts/lotry.mjs take BUYER_A             # player: checks the round's genesis, joins, adds the ticket, pays, signs
 node scripts/lotry.mjs seal                     # organiser: adds the pot's unlocking script, broadcasts
-node scripts/lotry.mjs draw                     # after the draw lock height (about 10 minutes)
+node scripts/lotry.mjs close                    # anyone, after the draw lock height (about 10 minutes)
+node scripts/lotry.mjs draw                     # organiser reveals the secret once the close is mined
 node scripts/lotry.mjs claim BUYER_A            # whoever holds the winning ticket
-node scripts/lotry.mjs refund BUYER_B <round>   # undrawn rounds, after the refund lock height
+node scripts/lotry.mjs refund BUYER_B <round>   # after the refund height (never drawn) or the claim deadline (never claimed)
 node scripts/export-proof.mjs                   # rebuilds docs/PROOF.md
 ```
 
-To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash), create a throwaway chipnet account,
-**Import Template** → paste [`templates/lotry.json`](templates/lotry.json), then **Join Invitation** → paste any file from
-[`rounds/round-20261121T2224/invitations/`](rounds/round-20261121T2224/invitations) and **View invitation**, or
-**Inspect** → paste a transaction id from the table above.
+`LOTRY_ENV` and `LOTRY_STATE` pick another wallet file and state folder, so several sets of wallets can run side by side.
 
 ## Found while building
 
@@ -188,6 +235,57 @@ To inspect without running anything: open [blaze.xo.cash](https://blaze.xo.cash)
   are all opened that way.
 - Built with AI assistance: see [`AI_USAGE.md`](AI_USAGE.md).
 
+## How it fits each bounty
+
+The full checklist, requirement by requirement, is in [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md).
+
+**Migrate to XO.** Lotry.fun's core round (tickets, pot, draw, payout) is migrated to a new XO template,
+[`src/lotry-template.mjs`](src/lotry-template.mjs). The [migration table](#migrated-from-lotryfun) maps each Base contract
+feature to its XO version and says what was not migrated. Links to the original: [lotry.fun](https://www.lotry.fun) and
+[exprmnts/Lotry_contract](https://github.com/exprmnts/Lotry_contract).
+
+**Build with XO.** A novel template with 2 roles, 6 actions, a two-party action (`buyTicket`) and follow-up actions on both
+the pot and the ticket. 12 Chipnet transactions made from invitations, all confirmed ([`docs/PROOF.md`](docs/PROOF.md)), with
+every invitation file committed under [`rounds/`](rounds) and screenshots from the debug tool. Personal feedback on XO:
+[`FEEDBACK.md`](FEEDBACK.md).
+
+**Media Track.** A one-minute film, presented by Hina Hanan, that explains a keyless covenant, CashTokens tickets and a
+commit-reveal draw in plain words, using only real Chipnet transactions: [youtu.be/DM54m16yEHg](https://youtu.be/DM54m16yEHg).
+
+## Repository
+
+```text
+src/lotry-template.mjs    the XO template: roles, actions, the pot covenant (potRedeem) and the ticket script
+src/round-state.mjs       commitment formulas compiled from the template, and the pot's locking bytecode
+src/chain-time.mjs        lock heights under Faster Blocks (chipnet activation 332,451)
+src/sandbox-core.mjs      the browser sandbox's engine: real transactions in the BCH 2026 VM
+scripts/lotry.mjs         the CLI: open, offer, take, seal, close, draw, claim, refund, status
+scripts/                  wallets, faucets, genesis check, proof and template export
+templates/lotry.json      the template as XO JSON (import it into blaze.xo.cash)
+rounds/                   every invitation file of the two proof rounds (rounds-v1/ is history, not proof)
+test/                     61 tests: every covenant path and 41 attacks, plus whole sandbox rounds
+web/                      the website (static, on Vercel): home, play page, slides, film, llms.txt
+web-src/play.mjs          source of web/play.js (npm run build:play)
+docs/                     PROOF.md, REQUIREMENTS.md, debug-tool screenshots, README media
+AGENTS.md, CONTEXT.md     how an AI agent should work here, and the glossary
+```
+
+## Hackathon notes
+
+- **Built during BCH BLAZE 2026.** This repository's first commit is from 22 Nov 2026 00:57 IST (21 Nov 19:27 UTC), inside the
+  event. Lotry.fun's earlier code (Base, 2025) was used only as the specification of what a round does.
+- **Entered for:** Migrate to XO and Build with XO (General Protocols bounties), and the Media Track with the film.
+- **Written with AI assistance:** Nikhil built it with Claude Code; see [`AI_USAGE.md`](AI_USAGE.md). The feedback in
+  [`FEEDBACK.md`](FEEDBACK.md) is Nikhil's own.
+- **Libraries:** `@xo-cash/engine`, `@xo-cash/state`, `@xo-cash/templates`, `@bitauth/libauth` (compiler and BCH 2026 VM),
+  `@electrum-cash/network`, `fake-indexeddb`, `esbuild`. The site is plain HTML, CSS and JavaScript.
+- **License:** MIT. See [LICENSE](LICENSE).
+
 ## Team
 
-Nikhil PN (builds it) and Hina Hanan (ideas and product direction). MIT licence.
+| | Role | X | GitHub |
+|---|---|---|---|
+| **Nikhil PN** | builds it | [@NikhilEth](https://x.com/NikhilEth) | [nikhil-pn](https://github.com/nikhil-pn) |
+| **Hina Hanan** | ideas and product direction; presents the film | [@iam_hinaaaa](https://x.com/iam_hinaaaa) | [Hina-Hanan](https://github.com/Hina-Hanan) |
+
+From [Exprmnts](https://exprmnts.xyz) ([@exprmntsdotfun](https://x.com/exprmntsdotfun)).
