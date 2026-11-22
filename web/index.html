@@ -64,7 +64,7 @@
         <div class="hero__copy">
           <p class="eyebrow">Lotry.fun, migrated to Bitcoin Cash · an XO template · live on Chipnet</p>
           <h1>The lottery the organiser <em>can’t run away with.</em></h1>
-          <p class="hero__sub">One round lives in one coin, the pot. The pot is locked by rules with no key, so nobody, the organiser included, can take it. The chain itself checks the draw, pays the winner, or refunds every ticket.</p>
+          <p class="hero__sub">One round lives in one coin, the pot. The pot is locked by rules with no key, so nobody, the organiser included, can take it. The chain itself checks the draw, pays the winning ticket, or refunds the tickets.</p>
           <div class="hero__actions">
             <a class="btn btn--solid" href="/play.html">Play a round, try to cheat</a>
             <a class="btn btn--ghost" href="#rounds">See the live rounds</a>
@@ -109,7 +109,7 @@
           </div>
           <div class="prose">
             <p>On Bitcoin Cash, money sits in coins, and every coin carries a small script that says how it may be spent. Most scripts ask for a signature from one key. The pot's script asks for none. It only lists the next moves it allows: one more ticket sold, sales closed, the right winner written down, the winner paid, or a ticket refunded after a deadline.</p>
-            <p>No key means nothing to lose, leak, or run away with. The organiser runs the round but can never move the money.</p>
+            <p>No key means nothing to lose, leak, or run away with. The organiser runs the round but can never move the pot. What it does hold is the secret that picks the winner; the limits below say what that allows.</p>
           </div>
         </div>
 
@@ -281,14 +281,18 @@
             <h2 class="h2" id="plainly-title">Stated <em>plainly.</em></h2>
           </div>
           <div class="prose">
-            <p>What this round does not do yet, so nobody has to find out the hard way.</p>
+            <p>No key can spend the pot, and it only ever pays the winning ticket or refunds tickets. Here is what that does not cover, so nobody has to find out the hard way.</p>
           </div>
         </div>
 
         <ul class="limits">
           <li>
             <h3>The organiser knows the secret.</h3>
-            <p>So an organiser who also buys the last ticket could steer which ticket wins, like any raffle host who also plays. It still can never take the pot. Planned for v2: buyer-supplied randomness.</p>
+            <p>So an organiser who buys tickets before sales close could steer which ticket wins, like any raffle host who also plays. It could also refuse to reveal, and the round falls back to refunds. Either way it can never take the pot. Next: buyer-supplied randomness, so no one party picks the winner.</p>
+          </li>
+          <li>
+            <h3>Some coins stay behind.</h3>
+            <p>When a round ends, its 2,000-sat seed and the pot NFT stay in the covenant; no path pays them out. A round with zero tickets can be closed, but never drawn or refunded.</p>
           </li>
           <li>
             <h3>Chipnet only.</h3>
