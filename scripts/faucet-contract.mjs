@@ -1,6 +1,7 @@
 // Claims Chipnet coins from 2qx's on-chain faucet contracts (faucet.cash, the contract XO's faucet template encodes):
 // each contract pays out 1000 sats (fee included) once its coin is a block old. Several contracts are funded, so one
-// round of claims can hit each of them. Usage: node scripts/faucet-contract.mjs <bchtest:address> [rounds]
+// round of claims can hit each of them.
+// Usage: node scripts/faucet-contract.mjs <bchtest:address> [rounds]   or   ... <address> --until <sats>
 import { createRequire } from 'node:module';
 import {
     bigIntToVmNumber, binToHex, cashAddressToLockingBytecode, createCompilerBch, encodeTransaction, hash160,
@@ -11,7 +12,9 @@ import { faucetCashTemplate } from '@xo-cash/templates';
 const require = createRequire(import.meta.url);
 const { ElectrumClient } = await import(require.resolve('@electrum-cash/network'));
 
-const [ address, rounds = '1' ] = process.argv.slice(2);
+const [ address, roundsArgument = '1', untilSats ] = process.argv.slice(2);
+const target = roundsArgument === '--until' ? BigInt(untilSats) : undefined;
+const rounds = target === undefined ? Number(roundsArgument) : Infinity;
 const recipient = cashAddressToLockingBytecode(address);
 if (typeof recipient === 'string') throw new Error(recipient);
 
@@ -40,12 +43,14 @@ const scriptHashOf = (lockingBytecode) => binToHex(sha256.hash(lockingBytecode).
 const client = new ElectrumClient('lotry-faucet-claim', '1.5', 'chipnet.bch.ninja');
 await client.connect();
 let claimed = 0n;
-for (let round = 0; round < Number(rounds); round += 1) {
+for (let round = 0; round < rounds && (target === undefined || claimed < target); round += 1) {
+    const tip = (await client.request('blockchain.headers.subscribe')).height;
     for (let index = 1; index <= 10; index += 1) {
         const redeem = redeemFor(index);
         const lockingBytecode = p2sh20(redeem);
         const unspent = await client.request('blockchain.scripthash.listunspent', scriptHashOf(lockingBytecode));
-        const coin = Array.isArray(unspent) ? unspent.find((output) => output.height > 0 && output.value > Number(PAYOUT) * 2) : undefined;
+        // A coin can pay again once it is a block old (relative lock of 1): mined below the tip.
+        const coin = Array.isArray(unspent) ? unspent.find((output) => output.height > 0 && output.height < tip && output.value > Number(PAYOUT) * 2) : undefined;
         if (coin === undefined) continue;
         const transaction = {
             version: 2,
@@ -69,7 +74,7 @@ for (let round = 0; round < Number(rounds); round += 1) {
             console.log(`faucet #${index}: ${String(result).slice(0, 140)}`);
         }
     }
-    if (round + 1 < Number(rounds)) await new Promise((resolve) => { setTimeout(resolve, 70_000); });
+    if (round + 1 < rounds && (target === undefined || claimed < target)) await new Promise((resolve) => { setTimeout(resolve, 25_000); });
 }
 console.log(`claimed ${claimed} sats to ${address}`);
 await client.disconnect();
