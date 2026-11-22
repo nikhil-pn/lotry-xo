@@ -7,6 +7,8 @@
 now running on Solana), migrated to Bitcoin Cash as one [XO](https://stack.xo.cash) template:
 [`src/lotry-template.mjs`](src/lotry-template.mjs) (as XO JSON: [`templates/lotry.json`](templates/lotry.json)).
 
+**EMBER2026 votes / prizes (CashTokens address):** `bitcoincash:zrz5rqqcmsmk08yv6lv9nnvjp0r5emu9avrccdlefu`
+
 **Play it in your browser:** [lotry-xo.exprmnts.fun/play.html](https://lotry-xo.exprmnts.fun/play.html). Every button builds a real
 transaction against the real covenant and runs it in the BCH 2026 VM, including eight ways to try to cheat it.
 
