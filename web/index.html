@@ -72,17 +72,17 @@
           <p class="hero__credit">From the team behind <a href="https://www.lotry.fun">Lotry.fun</a>, Base Batch India 2025 runner-up.</p>
         </div>
 
-        <aside class="hero__ticket" aria-label="Round 2 result">
+        <aside class="hero__ticket" aria-label="Round A result">
           <div class="ticket ticket--hero">
             <div class="ticket__row">
-              <span class="ticket__label" data-hero="label">Round 2 · Chipnet</span>
+              <span class="ticket__label" data-hero="label">Round A · Chipnet</span>
               <span class="ticket__stamp">Claimed</span>
             </div>
-            <p class="ticket__big"><span data-hero="pot">62,000</span> <span class="ticket__unit">sats</span></p>
-            <p class="ticket__line">won by ticket <strong>#<span data-hero="winner">1</span></strong> of <span data-hero="tickets">3</span></p>
+            <p class="ticket__big"><span data-hero="pot">8,000</span> <span class="ticket__unit">sats</span></p>
+            <p class="ticket__line">won by ticket <strong>#<span data-hero="winner">3</span></strong> of <span data-hero="tickets">3</span></p>
             <p class="ticket__mono">winner = sha256(secret) mod <span data-hero="tickets">3</span> + 1</p>
             <div class="ticket__foot">
-              <a data-hero="claim" href="https://chipnet.imaginary.cash/tx/3b8c58efc45d1267d071020d3a8881ab2329e0e442d6c7b86fff2a435d21e5d6">See the claim on the explorer <svg class="i" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
+              <a data-hero="claim" href="https://chipnet.imaginary.cash/tx/7b0c247e842d160646c7aeb4a57db881256efe3c7684a33fa63235a8f07238dc">See the claim on the explorer <svg class="i" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
             </div>
             <img class="ticket__clover" src="assets/clover.png" alt="" width="96" height="96">
           </div>
@@ -91,8 +91,8 @@
 
       <div class="wrap">
         <dl class="stats">
-          <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">3</dd></div>
-          <div><dt>Transactions, all public</dt><dd data-stat="txs">15</dd></div>
+          <div><dt>Rounds on Chipnet</dt><dd data-stat="rounds">2</dd></div>
+          <div><dt>Confirmed transactions, all public</dt><dd data-stat="txs">12</dd></div>
           <div><dt>Tests: every path, 25+ attacks</dt><dd>43</dd></div>
           <div><dt>Keys that can move the pot</dt><dd>0</dd></div>
         </dl>
@@ -165,7 +165,7 @@
             <h2 class="h2" id="rounds-title">Every step, <em>on chain.</em></h2>
           </div>
           <div class="prose">
-            <p>Live rounds on Chipnet, the Bitcoin Cash test network. Every row below is a real transaction built from an XO invitation, and every invitation file is public, so each step can be replayed in the <a href="https://blaze.xo.cash">XO debug tool</a>. The first card is the whole story: open, tickets, draw, claim.</p>
+            <p>Two rounds on Chipnet, the Bitcoin Cash test network, on the current template. Every row below is a confirmed transaction built from an XO invitation, and every invitation file is public, so each step can be replayed in the <a href="https://blaze.xo.cash">XO debug tool</a>. Round A is the whole story: open, tickets, close, draw, claim. Round B shows the safety net: drawn, never claimed, refunded.</p>
           </div>
         </div>
 
@@ -298,7 +298,7 @@
             <p class="eyebrow"><b>Found while building</b></p>
             <h3>Faster Blocks changed what a lock height means on Chipnet.</h3>
             <p>Chipnet switched to 1-minute blocks on 15 Nov 2026 (CHIP-2025-03, Faster Blocks). Lock-time heights kept their 10-minute meaning, so a lock height now advances once every ten blocks. We measured the activation height on the live network: at block 341,561 Chipnet accepted <code>nLockTime</code> 333,361 and refused 333,362, which puts activation at block <strong>332,451</strong>.</p>
-            <p>The round's draw and refund heights use this rule (<a href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/chain-time.mjs"><code>src/chain-time.mjs</code></a>). Round 1 was opened before we caught it. Anyone using <code>OP_CHECKLOCKTIMEVERIFY</code> on Chipnet needs it today; mainnet follows on 15 May 2027.</p>
+            <p>The round's draw and refund heights use this rule (<a href="https://github.com/nikhil-pn/lotry-xo/blob/main/src/chain-time.mjs"><code>src/chain-time.mjs</code></a>). Anyone using <code>OP_CHECKLOCKTIMEVERIFY</code> on Chipnet needs it today; mainnet follows on 15 May 2027.</p>
           </div>
           <div class="finding__viz" aria-hidden="true">
             <p class="finding__label">Blocks, 1 minute each</p>

@@ -549,13 +549,6 @@ code, pre { font-family: var(--mono); }
   line-height: 1.02;
 }
 .round__summary { margin-top: 14px; font-size: 15.5px; }
-.round__note {
-  margin-top: 14px;
-  font-size: 14px;
-  color: var(--soft);
-  border-left: 2px solid var(--mint);
-  padding: 2px 0 2px 12px;
-}
 .round__facts {
   margin: 20px 0 0;
   display: grid;
@@ -686,22 +679,6 @@ code, pre { font-family: var(--mono); }
 .invites__list a:hover { color: var(--mint); }
 .invites__raw { font-size: 11px; color: var(--muted) !important; }
 
-.round__ver {
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  padding: 1px 6px;
-}
-.rounds__note {
-  margin-bottom: 18px;
-  font-size: 14px;
-  color: var(--muted);
-  max-width: 56em;
-}
-.rounds__divider { margin: 44px 0 0; border-top: 1px solid var(--line-2); padding-top: 22px; }
-.rounds__divider h3 { font-family: var(--serif); font-size: 30px; }
-.rounds__divider p { margin-top: 6px; font-size: 14px; color: var(--muted); max-width: 56em; }
 
 /* featured round: a paper ticket, like lotry.fun's */
 .round--featured {
@@ -751,7 +728,6 @@ code, pre { font-family: var(--mono); }
 .round--featured .tl__tx:hover { border-color: var(--ink); color: var(--ink); background: var(--mint); }
 .round--featured .invites summary::before { border-color: rgba(18, 18, 16, 0.35); }
 .round--featured .invites__list a:hover { color: #0f7a46; }
-.round--featured .round__note { color: #2b2a26; }
 .round--featured :focus-visible { outline-color: var(--ink); }
 
 /* ---------- Migration table ---------- */

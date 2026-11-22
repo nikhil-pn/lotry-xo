@@ -52,24 +52,9 @@ document.querySelectorAll('[data-copy]').forEach((button) => {
 
 const REPO = 'https://github.com/nikhil-pn/lotry-xo';
 
-// Context that is not in the data file, keyed by round id.
-const ROUND_NOTES = {
-  'round-20261121T1936':
-    'Opened before we caught Chipnet’s Faster Blocks lock-time rule: its draw height was written as a block height, '
-    + 'which the chain now reads as a lock height about 57 days away. It stays open as proof of the open and ticket steps.',
-};
-
-// The first Chipnet rounds ran on template v1; v2 changed only the refund path (the first refund closes the round).
-// scripts/export-proof.mjs writes v2 rounds to `rounds` and v1 rounds to `earlierRounds`, from rounds/ and rounds-v1/.
-const V1_TEMPLATE = '603c2fdf32ff29e39e274de536ff4355f2113b9c99f8da5a639b6034e553fa9d';
-const templateVersion = (round, fromEarlier) => {
-  if (round.templateVersion) return Number(round.templateVersion);
-  if (fromEarlier || round.templateIdentifier === V1_TEMPLATE) return 1;
-  return 2;
-};
-const roundFolder = (version) => (version === 1 ? 'rounds-v1' : 'rounds');
-// Invitation links follow the round's folder (v1 rounds were moved from rounds/ to rounds-v1/).
-const inFolder = (url, roundId, folder) => url.replace(`/main/rounds/${roundId}/`, `/main/${folder}/${roundId}/`);
+// Rounds are named by letter in the order they opened (Round A, Round B, ...), as in the README and docs/PROOF.md.
+// Only `rounds` is shown: every one of its transactions is confirmed on Chipnet.
+const roundName = (index) => `Round ${String.fromCharCode(65 + index)}`;
 
 const h = (tag, attrs = {}, ...children) => {
   const el = document.createElement(tag);
@@ -139,7 +124,7 @@ const describeRound = (round) => {
       kind: 'refunded',
       pill: 'Refunded',
       title: 'Drawn, never claimed, refunded',
-      summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold and drawn, but nobody claimed by the claim deadline. So the pot didn’t stay locked: each ticket was burned for its ${sats(price)}-sat price back.`,
+      summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold and drawn, but nobody claimed by the claim deadline, so ticket holders could refund: each ticket was burned for its ${sats(price)}-sat price back. The ${sats(round.seedSatoshis ?? 0)}-sat seed and the pot NFT stay in the covenant.`,
       money: [ 'Paid back', `${sats(price * BigInt(refunds.length))} sats` ],
       tickets,
     };
@@ -149,7 +134,7 @@ const describeRound = (round) => {
       kind: 'refunded',
       pill: 'Refunded',
       title: 'Never drawn, refunded',
-      summary: `${tickets} tickets sold and no draw. After the refund height each ticket was burned for its ${sats(price)}-sat price back, with no one’s permission needed.`,
+      summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold and no draw. After the refund height each ticket was burned for its ${sats(price)}-sat price back, with no one’s permission needed.`,
       money: [ 'Paid back', `${sats(price * BigInt(refunds.length))} sats` ],
       tickets,
     };
@@ -157,8 +142,8 @@ const describeRound = (round) => {
   return {
     kind: 'open',
     pill: 'Open',
-    title: `Open, ${tickets} tickets sold`,
-    summary: `${tickets} tickets sold. The pot waits for its draw height, and every ticket stays refundable if the draw never comes.`,
+    title: `Open, ${tickets} ticket${tickets === 1 ? '' : 's'} sold`,
+    summary: `${tickets} ticket${tickets === 1 ? '' : 's'} sold. The pot waits for its draw height, and every ticket stays refundable if the round is never drawn.`,
     money: [ 'In the pot', `${sats(pot)} sats` ],
     tickets,
   };
@@ -176,19 +161,15 @@ const renderStep = (step) => h('li', { class: `tl tl--${step.step}` },
     : null,
 );
 
-const renderInvitations = (round, folder) => {
-  const files = (round.invitations ?? []).map((file) => ({
-    ...file,
-    url: inFolder(file.url, round.roundId, folder),
-    raw: file.raw ? inFolder(file.raw, round.roundId, folder) : file.raw,
-  }));
+const renderInvitations = (round) => {
+  const files = round.invitations ?? [];
   if (files.length === 0) return null;
   return h('details', { class: 'invites' },
     h('summary', {}, `Invitation files (${files.length})`),
     h('p', { class: 'invites__legend' },
       'A sale is three files: ', h('code', { text: 'offer' }), ' (organiser starts it with the pot), ',
       h('code', { text: 'buyer_x' }), ' (the player adds coins, takes the ticket, signs), ',
-      h('code', { text: 'sealed' }), ' (organiser signs the pot input and broadcasts).'),
+      h('code', { text: 'sealed' }), ' (organiser adds the pot’s unlocking script and broadcasts; the pot has no key, so nothing signs for it).'),
     h('ul', { class: 'invites__list' }, files.map((file) => h('li', {},
       h('a', { href: file.url }, `${file.name}.json`),
       file.raw ? h('a', { class: 'invites__raw', href: file.raw, 'aria-label': `${file.name}.json, raw` }, 'raw') : null,
@@ -196,10 +177,7 @@ const renderInvitations = (round, folder) => {
   );
 };
 
-const renderRound = ({ round, number, version }, featured) => {
-  const info = describeRound(round);
-  const folder = roundFolder(version);
-  const note = ROUND_NOTES[round.roundId];
+const renderRound = ({ round, name, slug, info }, featured) => {
   const facts = [
     [ 'Ticket price', `${sats(round.ticketPrice)} sats` ],
     [ 'Tickets sold', String(info.tickets) ],
@@ -209,7 +187,7 @@ const renderRound = ({ round, number, version }, featured) => {
 
   const head = h('div', { class: 'round__head' },
     h('div', {},
-      h('p', { class: 'round__kicker' }, `Round ${number}`, version === 1 ? h('span', { class: 'round__ver', text: 'template v1' }) : null, h('span', { class: 'round__id', text: round.roundId })),
+      h('p', { class: 'round__kicker' }, name, h('span', { class: 'round__id', text: round.roundId })),
       h('h3', { class: 'round__title', text: info.title }),
     ),
     h('span', { class: `pill pill--${info.kind}`, text: info.pill }),
@@ -218,29 +196,29 @@ const renderRound = ({ round, number, version }, featured) => {
   const intro = h('div', { class: 'round__intro' },
     head,
     h('p', { class: 'round__summary', text: info.summary }),
-    note ? h('p', { class: 'round__note', text: note }) : null,
     h('dl', { class: 'round__facts' }, facts.map(([ label, value ]) => h('div', {}, h('dt', { text: label }), h('dd', { text: value })))),
   );
 
-  const timeline = h('ol', { class: 'timeline', 'aria-label': `Round ${number} transactions` }, (round.steps ?? []).map(renderStep));
+  const timeline = h('ol', { class: 'timeline', 'aria-label': `${name} transactions` }, (round.steps ?? []).map(renderStep));
 
   const foot = h('p', { class: 'round__foot' },
     'Token category ', h('code', { title: round.roundCategory, text: shortHash(round.roundCategory) }),
     ' · secret hash ', h('code', { title: round.secretHash, text: shortHash(round.secretHash) }),
-    ' · ', h('a', { href: `${REPO}/tree/main/${folder}/${round.roundId}` }, 'round files ', svgArrow()),
+    ' · ', h('a', { href: `${REPO}/tree/main/rounds/${round.roundId}` }, 'round files ', svgArrow()),
   );
 
-  return h('article', { class: `round round--${info.kind}${featured ? ' round--featured' : ''}`, id: `round-${number}` },
+  return h('article', { class: `round round--${info.kind}${featured ? ' round--featured' : ''}`, id: slug },
     featured ? h('p', { class: 'round__flag', text: 'The whole story' }) : null,
     h('div', { class: 'round__grid' }, intro, timeline),
-    renderInvitations(round, folder),
+    renderInvitations(round),
     foot,
   );
 };
 
-const fillHero = (round, info) => {
-  if (!round || info.kind !== 'claimed') return;  // round = { number, ... }
-  document.querySelectorAll('[data-hero="label"]').forEach((el) => { el.textContent = `Round ${round.number} · Chipnet`; });
+const fillHero = (entry) => {
+  const { info } = entry ?? {};
+  if (!info || info.kind !== 'claimed') return;
+  document.querySelectorAll('[data-hero="label"]').forEach((el) => { el.textContent = `${entry.name} · Chipnet`; });
   document.querySelectorAll('[data-hero="pot"]').forEach((el) => { el.textContent = sats(info.pot); });
   document.querySelectorAll('[data-hero="winner"]').forEach((el) => { el.textContent = String(info.winner); });
   document.querySelectorAll('[data-hero="tickets"]').forEach((el) => { el.textContent = String(info.tickets); });
@@ -254,40 +232,26 @@ const renderRounds = async () => {
     const response = await fetch('data/rounds.json', { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    const all = [
-      ...(data.rounds ?? []).map((round) => ({ round, version: templateVersion(round, false) })),
-      ...(data.earlierRounds ?? []).map((round) => ({ round, version: templateVersion(round, true) })),
-    ].sort((a, b) => a.round.openedAtHeight - b.round.openedAtHeight);
+    const all = (data.rounds ?? [])
+      .slice()
+      .sort((a, b) => a.openedAtHeight - b.openedAtHeight)
+      .map((round, index) => ({
+        round,
+        name: roundName(index),
+        slug: `round-${String.fromCharCode(97 + index)}`,
+        info: describeRound(round),
+      }));
     if (all.length === 0) throw new Error('no rounds in the file yet');
-    all.forEach((entry, index) => { entry.number = index + 1; entry.info = describeRound(entry.round); });
 
-    // The newest drawn-and-claimed round leads (current template first); the rest follow newest first,
-    // with v1-template rounds grouped as earlier rounds when there are newer ones.
-    const newestFirst = [ ...all ].reverse();
-    const featured = newestFirst.find((entry) => entry.version !== 1 && entry.info.kind === 'claimed')
-      ?? newestFirst.find((entry) => entry.info.kind === 'claimed')
-      ?? newestFirst[0];
-    const rest = newestFirst.filter((entry) => entry !== featured);
-    const current = rest.filter((entry) => entry.version !== 1);
-    const earlier = rest.filter((entry) => entry.version === 1);
-    const anyCurrent = all.some((entry) => entry.version !== 1);
-    const v1Note = 'These rounds ran on the first version of the template (v1). v2, now in the repo, changes only the refund path: '
-      + 'the first refund closes the round, so it can never be drawn afterwards.';
+    // The newest drawn-and-claimed round leads; the rest follow, oldest first (Round A, Round B, ...).
+    const featured = [ ...all ].reverse().find((entry) => entry.info.kind === 'claimed') ?? all[0];
+    const rest = all.filter((entry) => entry !== featured);
 
-    const blocks = [];
-    if (!anyCurrent) blocks.push(h('p', { class: 'rounds__note', text: v1Note }));
-    blocks.push(renderRound(featured, true));
-    if (current.length > 0) blocks.push(h('div', { class: 'rounds__rest' }, current.map((entry) => renderRound(entry, false))));
-    if (earlier.length > 0) {
-      if (anyCurrent) {
-        blocks.push(h('div', { class: 'rounds__divider' },
-          h('h3', { text: 'Earlier rounds, template v1' }), h('p', { text: v1Note })));
-      }
-      blocks.push(h('div', { class: 'rounds__rest' }, earlier.map((entry) => renderRound(entry, false))));
-    }
+    const blocks = [ renderRound(featured, true) ];
+    if (rest.length > 0) blocks.push(h('div', { class: 'rounds__rest' }, rest.map((entry) => renderRound(entry, false))));
     list.replaceChildren(...blocks);
 
-    fillHero(featured, featured.info);
+    fillHero(featured);
     const txs = all.reduce((total, entry) => total + (entry.round.steps ?? []).filter((step) => step.transactionHash).length, 0);
     document.querySelectorAll('[data-stat="rounds"]').forEach((el) => { el.textContent = String(all.length); });
     document.querySelectorAll('[data-stat="txs"]').forEach((el) => { el.textContent = String(txs); });
